@@ -37,7 +37,6 @@ calc_d <- function(X0, X, VAR){
 
 dist <- matrix(-1, nrow = nrow(x0) * nrow(x), ncol = 6)
 insertHere <- 0
-
 # Calculate distance
 for(i in seq_along(1:nrow(x0)) ){
   for(j in seq_along(1:nrow(x))){
@@ -49,12 +48,12 @@ for(i in seq_along(1:nrow(x0)) ){
 }
 rm(i, j, insertHere)
 
-#Group wise rank distance
-windowStart <- 1 - nrow(x0)
+#rank distance by point in x0
+windowStart <- 1 - nrow(x)
 windowEnd <- 0
 for(i in seq_along(1:nrow(x0)) ){
-  windowStart <- windowStart + nrow(x0)
-  windowEnd <- windowEnd + nrow(x0)
+  windowStart <- windowStart + nrow(x)
+  windowEnd <- windowEnd + nrow(x)
   dist[windowStart:windowEnd, 4] <- rank(dist[windowStart:windowEnd, 3])
 }
 rm(windowStart, windowEnd)
@@ -83,8 +82,6 @@ for(i in seq_along(1:nrow(x0))){
   windowStart <- windowStart + nrow(x0)
   windowEnd <- windowEnd + nrow(x0)
 
-  print(windowStart)
-
   weights[i, 1] <- sum(dist[windowStart:windowEnd, 5])
 }
 rm(windowStart, windowEnd)
@@ -94,7 +91,6 @@ unique(y0)
 
 grandMean <- matrix(colMeans(x0), nrow = 1, ncol = ncol(x0))
 groupMeans <- matrix(0, nrow = length(unique(y0)), ncol = ncol(x0))
-
 
 calc_weighted_mean <- function(X0, VAR, WEIGHTS){
   temp <- matrix(0, nrow = nrow(X0), ncol = ncol(X0))
@@ -113,22 +109,72 @@ for(i in seq_along(1:length(unique(y0))) ){
 }
 
 # Weighted between sum of squares
-pis <- matrix(-1, nrow = length(unique(y0)), ncol = 1)
-for(i in seq_along(1:nrow(pis))){
-  pis[i, ] <- sum(weights[which(y0 == unique(y0)[i, ]), 1]) / sum(weights)
+betweenSS <- matrix(-1, nrow = ncol(grandMean), ncol = ncol(grandMean))
+#pis <- matrix(c(5, 5, 4, 5), nrow = length(unique(y0)), ncol = 1)
+pis <- matrix(c(floor(rows/2), ceiling(rows/2)), nrow = length(unique(y0)), ncol = 1)
+
+dot <- function(a, b){
+  return(sum(a*b))
 }
 
-betweenSS <- matrix(-1, nrow = length(unique(y0)), ncol = ncol(grandMean))
-for(i in seq_along(1:nrow(betweenSS))){
-  betweenSS[i, ] <- pis[i, ] * (groupMeans[i, ] - grandMean) * (groupMeans[i, ] - grandMean)
+for(i in seq_along(1:nrow(betweenSS))) {
+  for(j in seq_along(1:ncol(betweenSS))) {
+    temp <- matrix(-1, nrow = nrow(groupMeans), ncol = 1)
+    for(k in seq_along(1:nrow(temp))) {
+      tempV1 <- groupMeans[k, i] - grandMean[1,i]
+      tempV2 <- groupMeans[k, j] - grandMean[1,j]
+
+      temp[k, 1] <- pis[k]*dot(tempV1, tempV2)
+    }
+    betweenSS[i, j] <- colSums(temp)
+  }
 }
+#betweenSS
+isSymmetric(betweenSS)
+all(diag(betweenSS)>0)
 
 # Weighted within sum of squares
-withinSS <- matrix(-1, nrow = length(unique(y0)), ncol = ncol(grandMean))
-for(j in seq_along(1:nrow(withinSS))){
-  for(i in seq_along(1:nrow(x0)))
-    withinSS[j, ] <- weights[i, ] * (x0[i, ] - groupMeans[j, ]) * (x0[i, ] - groupMeans[j, ]) / sum(weights)
-}
+withinSS <- matrix(-1, nrow = ncol(grandMean), ncol = ncol(grandMean))
 
-S <- withinSS^-.5 %*% t(betweenSS) %*% withinSS^-.5
+for(i in seq_along(1:nrow(withinSS))) {
+  for(j in seq_along(1:ncol(withinSS))) {
+    temp <- matrix(-1, nrow = nrow(x0), ncol = 1)
+    for(k in seq_along(1:nrow(temp))) {
+
+      currentGroupMean1 <- groupMeans[which(y0[k,] == unique(y0)), i]
+      currentGroupMean2 <- groupMeans[which(y0[k,] == unique(y0)), j]
+
+      tempV1 <- x0[k, i] - currentGroupMean1
+      tempV2 <- x0[k, j] - currentGroupMean2
+
+      temp[k, 1] <- dot(tempV1, tempV2)
+    }
+    withinSS[i, j] <- colSums(temp)
+  }
+}
+#withinSS
+isSymmetric(withinSS)
+all(diag(withinSS)>0)
+
+# Total sum of squares
+
+totalSS <- matrix(-1, nrow = ncol(grandMean), ncol = ncol(grandMean))
+
+for(i in seq_along(1:nrow(withinSS))) {
+  for(j in seq_along(1:ncol(withinSS))) {
+    temp <- matrix(-1, nrow = nrow(x0), ncol = 1)
+    for(k in seq_along(1:nrow(temp))) {
+      tempV1 <- x0[k, i] - grandMean[1,i]
+      tempV2 <- x0[k, j] - grandMean[1,j]
+
+      temp[k, 1] <- dot(tempV1, tempV2)
+    }
+    totalSS[i, j] <- colSums(temp)
+  }
+}
+#totalSS
+isSymmetric(totalSS)
+all(diag(totalSS)>0)
+
+max(totalSS - (withinSS + betweenSS))
 
