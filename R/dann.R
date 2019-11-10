@@ -2,7 +2,7 @@
 # DANN
 #
 # Hastie and Tibshirani's Discriminant Adaptive Nearest Neighbors (DANN) 1996
-# A R port of See https://github.com/christopherjenness/ML-lib
+# An R port of DANN from https://github.com/christopherjenness/ML-lib
 #
 ####################################################################################
 
