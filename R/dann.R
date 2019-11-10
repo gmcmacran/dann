@@ -1,179 +1,120 @@
-
-rows <- 50
-cols <- 3
-
-x0 <- matrix(0, nrow = rows, ncol = cols)
-x <- matrix(0, nrow = rows, ncol = cols)
-
-x0[,1] <- 1:rows
-x0[,2] <- 1:rows
-x0[,3] <- 1:rows
-y0 <- matrix(c(rep(0, rows/2), rep(1, rows/2)), nrow = rows, ncol = 1)
-
-x[,1] <- 11:60
-x[,2] <- 21:70
-x[,3] <- 31:80
-y <- matrix(c(rep(0, rows/2), rep(1, rows/2)), nrow = rows, ncol = 1)
-
-S <- matrix(0, nrow = cols, ncol = cols)
-diag(S) <- 1
-
-h <- min(nrow(rows) / 5, 50)
-K <- 5
-
-while(h > K){
-  calc_d <- function(X0, X, VAR){
-    temp <- VAR^.5 %*% (X0 - X)
-    out <- 0
-    for(i in seq_along(1:nrow(temp))){
-      out <- out + temp[i,1]^2
-    }
-    out <- out^.5
-
-    return(out)
-  }
-
-  dist <- matrix(-1, nrow = nrow(x0) * nrow(x), ncol = 6)
-  insertHere <- 0
-  # Calculate distance
-  for(i in seq_along(1:nrow(x0)) ){
-    for(j in seq_along(1:nrow(x))){
-      insertHere <- insertHere + 1
-      dist[insertHere, 1] <- i
-      dist[insertHere, 2] <- j
-      dist[insertHere, 3] <- calc_d(x0[i,], x[j,], S)
-    }
-  }
-  rm(i, j, insertHere)
-
-  #rank distance by point in x0
-  windowStart <- 1 - nrow(x)
-  windowEnd <- 0
-  for(i in seq_along(1:nrow(x0)) ){
-    windowStart <- windowStart + nrow(x)
-    windowEnd <- windowEnd + nrow(x)
-    dist[windowStart:windowEnd, 4] <- rank(dist[windowStart:windowEnd, 3])
-  }
-  rm(windowStart, windowEnd)
-
-  #Group wise tri cube
-  windowStart <- 1 - nrow(x0)
-  windowEnd <- 0
-  for(i in seq_along(1:nrow(x0)) ){
-    windowStart <- windowStart + nrow(x0)
-    windowEnd <- windowEnd + nrow(x0)
-
-    tempH <- ifelse(dist[windowStart:windowEnd, 4] <= h, dist[windowStart:windowEnd, 3], 0)
-    tempH <- max(tempH)
-    dist[windowStart:windowEnd, 5] <- ifelse(dist[windowStart:windowEnd, 3] <= tempH,
-                                             (1 - (dist[windowStart:windowEnd, 3]/tempH)^3)^3,
-                                             0)
-  }
-  rm(windowStart, windowEnd)
-
-  # Weight matrix
-  weights <- matrix(-1, nrow = nrow(x0), ncol = 1)
-
-  windowStart <- 1 - nrow(x0)
-  windowEnd <- 0
-  for(i in seq_along(1:nrow(x0))){
-    windowStart <- windowStart + nrow(x0)
-    windowEnd <- windowEnd + nrow(x0)
-
-    weights[i, 1] <- sum(dist[windowStart:windowEnd, 5])
-  }
-  rm(windowStart, windowEnd)
-
-  grandMean <- matrix(colMeans(x0), nrow = 1, ncol = ncol(x0))
-  groupMeans <- matrix(0, nrow = length(unique(y0)), ncol = ncol(x0))
-
-  calc_weighted_mean <- function(X0, VAR, WEIGHTS){
-    temp <- matrix(0, nrow = nrow(X0), ncol = ncol(X0))
-    for( i in seq_along(1:nrow(temp))){
-      temp[i, ] <- X0[i, ] %*% VAR
-    }
-
-    out <- WEIGHTS * temp / sum(WEIGHTS)
-    out <- matrix(out, nrow = 1, ncol = ncol(X0))
-
-    return(out)
-  }
-
-  for(i in seq_along(1:length(unique(y0))) ){
-    groupMeans[i, ] <- calc_weighted_mean(x0[which(y0 == unique(y0)[i, ]), ], S, weights[which(y0 == unique(y0)[i, ]), 1])
-  }
+####################################################################################
+# DANN
+#
+# A R port of See https://github.com/christopherjenness/ML-lib
+####################################################################################
 
 
-  #calculaite pis
-  pis <- matrix(-1, nrow = length(unique(y0)), ncol = 1)
-  for(i in nrow(pis)){
-    pis[i,1] <- sum(weights[y0 == unique(y0)[i,1],1])
-  }
+###################################
+# Create some data to work with
+###################################
+rows <- 19
+cols <- 2
 
-  dot <- function(a, b){
-    return(sum(a*b))
-  }
+xTest <- matrix(0, nrow = rows, ncol = cols)
+xTrain <- matrix(0, nrow = rows, ncol = cols)
 
-  # Weighted between sum of squares
-  betweenSS <- matrix(-1, nrow = ncol(grandMean), ncol = ncol(grandMean))
-  for(i in seq_along(1:nrow(betweenSS))) {
-    for(j in seq_along(1:ncol(betweenSS))) {
-      temp <- matrix(-1, nrow = nrow(groupMeans), ncol = 1)
-      for(k in seq_along(1:nrow(temp))) {
-        tempV1 <- groupMeans[k, i] - grandMean[1,i]
-        tempV2 <- groupMeans[k, j] - grandMean[1,j]
+xTrain[,1] <- c(11, 17, 16, 14, 15, 12, 10, 15, 19, 11, 23, 20, 18, 17, 27, 33, 22, 26, 28)
+xTrain[,2] <- c(11, 17, 16, 14, 15, 12, 10, 15, 19, 11, 23, 20, 18, 17, 27, 33, 22, 26, 28)
+yTrain <- matrix(c(rep(1, 5), rep(2, 5), rep(3, 4), rep(4, 5)), nrow = rows, ncol = 1)
 
-        temp[k, 1] <- pis[k]*dot(tempV1, tempV2)
-      }
-      betweenSS[i, j] <- colSums(temp)
-    }
-  }
-  #betweenSS
-  isSymmetric(betweenSS)
-  #all(diag(betweenSS)>0)
+xTest[,1] <- c(11, 17, 16, 14, 15, 12, 10, 15, 19, 11, 23, 20, 18, 17, 27, 33, 22, 26, 28)
+xTest[,2] <- c(11, 17, 16, 14, 15, 12, 10, 15, 19, 11, 23, 20, 18, 17, 27, 33, 22, 26, 28)
+yTest <- matrix(c(rep(1, 5), rep(2, 5), rep(3, 4), rep(4, 5)), nrow = rows, ncol = 1)
 
-  # Weighted within sum of squares
-  withinSS <- matrix(-1, nrow = ncol(grandMean), ncol = ncol(grandMean))
-  for(i in seq_along(1:nrow(withinSS))) {
-    for(j in seq_along(1:ncol(withinSS))) {
-      temp <- matrix(-1, nrow = nrow(x0), ncol = 1)
-      for(k in seq_along(1:nrow(temp))) {
 
-        currentGroupMean1 <- groupMeans[which(y0[k,] == unique(y0)), i]
-        currentGroupMean2 <- groupMeans[which(y0[k,] == unique(y0)), j]
+###################################
+# Initalize values
+###################################
+S <- diag(cols)
+epsilon <- 1
+neighborhood_size <- 10
+k <- 3
 
-        tempV1 <- x0[k, i] - currentGroupMean1
-        tempV2 <- x0[k, j] - currentGroupMean2
+predictions <- vector(mode = "numeric", length = nrow(xTest))
 
-        temp[k, 1] <- weights[i,1]* dot(tempV1, tempV2)/sum(weights)
-      }
-      withinSS[i, j] <- colSums(temp)
-    }
-  }
-  #withinSS
-  isSymmetric(withinSS)
-  all(diag(withinSS)>0)
-
-  # Total sum of squares
-  epsilon <- 1
-  I <- matrix(0, nrow = ncol(x0), ncol = ncol(x0))
-  diag(I) <- 1
-  S <- withinSS^(-1/2) %*% (withinSS^(-1/2) %*% betweenSS %*% withinSS^(-1/2) + epsilon*I) %*% withinSS^(-1/2)
-
-  h <- pmax(floor(h *.90), K)
-  print(h)
+###################################
+# Helper functions
+###################################
+# Computes the distance between x0 and x1 using the DANN metric
+# which is adaptively defined at query locus
+# Args:
+# x1 (np.array): query point of shape[n_features]
+# x2 (np.array): reference point of shape[n_features]
+# sigma (np.ndarray): array of shape[n_features, n_features]
+DANN_distance <- function(x0, x1, sigma){
+  difference <- x0 - x1
+  distance <- difference %*% sigma %*% t(difference)
+  return(distance)
 }
 
-#Classes of closest points
-dist <- dist[dist[,5]>0,]
-
-classes <- matrix(-1, nrow = nrow(x0), ncol = K)
-for(i in seq_along(1:nrow(classes))){
-  for(j in seq_along(1:ncol(classes))){
-    classes[i,j] <- dist[j]
+#https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode
+mode <- function(x, na.rm = FALSE) {
+  if(na.rm){
+    x = x[!is.na(x)]
   }
+
+  ux <- unique(x)
+  return(ux[which.max(tabulate(match(x, ux)))])
 }
 
+###################################
+# Calculate predictions
+###################################
+for (i in 1:nrow(xTest)) {
 
+  distances <- vector(mode = "numeric", length = nrow(xTrain))
+  for(j in 1:nrow(xTrain)){
+    distances[j] <- sum( (xTest[i, ]-xTrain[j,])^2) ^ .5
+  }
 
+  nearest_neighbors <- order(distances)[1:neighborhood_size]
+  neighborhood_xTrain <- xTrain[nearest_neighbors, 1:ncol(xTrain), drop = FALSE]
+  neighborhood_X_mean <- colMeans(neighborhood_xTrain)
+  neighborhood_y <- yTrain[nearest_neighbors, 1 , drop = FALSE]
+  neighborhood_classes <- unique(neighborhood_y)
 
+  class_frequencies <- vector(mode = "numeric", length = length(neighborhood_classes))
+  within_class_cov <- matrix(0, nrow = ncol(xTrain), ncol = ncol(xTrain))
+  between_class_cov <- matrix(0, nrow = ncol(xTrain), ncol = ncol(xTrain))
+
+  for (k in 1:length(neighborhood_classes)){
+    target_class <- neighborhood_classes[k]
+    class_indices = which(neighborhood_y == target_class)
+    class_frequencies[target_class] = sum(neighborhood_y == target_class) / neighborhood_size
+
+    class_covariance = var(neighborhood_xTrain[class_indices,1:ncol(neighborhood_xTrain), drop = FALSE])
+
+    #Deal with 1 row edge case
+    if (all(is.na(class_covariance)))
+      class_covariance <- matrix(0, nrow = nrow(class_covariance), ncol = ncol(class_covariance))
+
+    within_class_cov = class_covariance * class_frequencies[target_class] + within_class_cov
+    class_mean = colMeans(neighborhood_xTrain[class_indices,1:ncol(neighborhood_xTrain), drop = FALSE])
+    between_class_cov <- outer(class_mean - neighborhood_X_mean, class_mean - neighborhood_X_mean) *
+      class_frequencies[target_class] + between_class_cov
+  }
+
+  # W* = W^-.5
+  # B* = W*BW*
+
+  W_star <- within_class_cov^.5
+  #Deal with NA case
+  for(k in 1:ncol(W_star)){
+    W_star[which(is.na(W_star[,k])),k] <- 0
+  }
+  B_star <- W_star %*% between_class_cov %*% W_star
+  I = diag(ncol(xTrain))
+
+  sigma <- W_star %*% (B_star + epsilon * I) %*% W_star
+
+  distances <- vector(mode = "numeric", length = nrow(xTrain))
+  for( k in 1:length(distances))
+    distances[k] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[k, 1:ncol(xTrain), drop = FALSE ], sigma)
+  nearest <- order(distances)[1:k]
+  predictions[i] = mode(yTrain[nearest])
+}
+
+predictions <- matrix(predictions, nrow = length(predictions), ncol = 1)
+all(predictions == yTest)
+mean(predictions == yTest)
