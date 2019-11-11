@@ -13,6 +13,7 @@
 #' Neighbor Classificastion publication.}.
 #' The code is a port of Christopher Jenness's
 #' python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
+#' @export
 dann <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nrow(xTrain) / 5), 50), epsilon = 1) {
   ###################################
   # Input checking
@@ -175,7 +176,7 @@ dann <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nro
     for (kth in seq_along(1:length(distances)))
       distances[kth] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[kth, 1:ncol(xTrain), drop = FALSE ], sigma)
     nearest <- order(distances, length(distances):1)[1:k]
-    predictions[i] <- mode(yTrain[nearest])
+    predictions[i] <- MODE(yTrain[nearest])
   }
 
   predictions <- matrix(predictions, nrow = length(predictions), ncol = 1)
@@ -203,7 +204,7 @@ DANN_distance <- function(x0, x1, sigma) {
 #' @param x A numeric vector.
 #' @param na.rm Should na be removed?
 #' @keywords internal
-mode <- function(x, na.rm = FALSE) {
+MODE <- function(x, na.rm = FALSE) {
   if (na.rm) {
     x <- x[!is.na(x)]
   }
