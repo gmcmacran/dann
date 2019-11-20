@@ -1,31 +1,209 @@
 context("dann")
 library(dann)
+library(mlbench)
+library(magrittr)
+library(dplyr)
 
 ###############################################
 # Same Resutls as python version?
 ###############################################
+######################
 # Problem 1
-###################################
-# xTest <- matrix(0, nrow = 5, ncol = 2)
-# xTrain <- matrix(0, nrow = 5, ncol = 2)
-#
-# xTrain[, 1] <- c(1, 2, 3, 4, 5)
-# xTrain[, 2] <- c(6, 7, 8, 9, 10)
-# yTrain <- matrix(c(rep(1, 2), rep(2, 3)), nrow = 5, ncol = 1)
-#
-# xTest[, 1] <- c(5, 4, 3, 2, 1)
-# xTest[, 2] <- c(10, 9, 8, 7, 6)
-# danPreds <- dann(xTrain, yTrain, xTest, 3, 3, 1) == c(2, 2, 2, 1, 1)
-#
-# test_that("Validate structure", {
-#   expect_true(is.matrix(danPreds))
-#   expect_true(is.numeric(danPreds))
-#   expect_true(nrow(danPreds) == nrow(xTest))
-# })
-#
-# test_that("Compare results to python version. Problem #1 ", {
-#   expect_true(all(dann(xTrain, yTrain, xTest, 3, 10, 1) == c(2, 2, 2, 1, 1)))
-# })
+######################
+xTest <- matrix(0, nrow = 5, ncol = 2)
+xTrain <- matrix(0, nrow = 5, ncol = 2)
+
+xTrain[, 1] <- c(1, 2, 3, 4, 5)
+xTrain[, 2] <- c(6, 7, 8, 9, 10)
+yTrain <- matrix(c(rep(1, 2), rep(2, 3)), nrow = 5, ncol = 1)
+
+xTest[, 1] <- c(5, 4, 3, 2, 1)
+xTest[, 2] <- c(10, 9, 8, 7, 6)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1)
+
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+})
+
+test_that("Compare results to python version. Problem #1", {
+  expect_true(all(dannPreds == c(2, 2, 2, 1, 1)))
+})
+
+rm(xTest, xTrain, yTrain, dannPreds)
+
+######################
+# Problem 2
+######################
+xTest <- matrix(0, nrow = 10, ncol = 3)
+xTrain <- matrix(0, nrow = 10, ncol = 3)
+
+xTrain[, 1] <- c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
+xTrain[, 2] <- c(6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+xTrain[, 3] <- c(10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+yTrain <- matrix(c(rep(1, 2), rep(2, 2), rep(3, 2), rep(4, 2), rep(5, 2)), nrow = 10, ncol = 1)
+
+xTest[, 1] <- c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
+xTest[, 2] <- c(7, 7, 8, 8, 10, 10, 12, 12, 14, 14)
+xTest[, 3] <- c(10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
+dannPreds <- dann(xTrain, yTrain, xTest, 1, 4, 1)
+
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+})
+
+test_that("Compare results to python version. Problem #2", {
+  expect_true(all(dannPreds == c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5)))
+})
+
+rm(xTest, xTrain, yTrain, dannPreds)
+
+###############################################
+# Easy problems
+###############################################
+######################
+# Problem 1
+######################
+set.seed(1)
+train <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
+  tibble::as_tibble()
+colnames(train) <- c("X1", "X2", "Y")
+
+xTrain <- train %>%
+  select(X1, X2) %>%
+  as.matrix()
+
+yTrain <- train %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+test <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
+  tibble::as_tibble()
+colnames(test) <- c("X1", "X2", "Y")
+
+xTest <- test %>%
+  select(X1, X2) %>%
+  as.matrix()
+
+yTest <- test %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1)
+
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+})
+
+test_that("Compare predictions to observed #1", {
+  expect_true(all(dannPreds == yTest))
+})
+
+rm(train, test)
+rm(xTrain, yTrain)
+rm(xTest, yTest)
+rm(dannPreds)
+
+######################
+# Problem 2
+######################
+set.seed(1)
+train <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) %>%
+  tibble::as_tibble()
+colnames(train) <- c("X1", "X2", "X3", "Y")
+
+xTrain <- train %>%
+  select(X1, X2, X3) %>%
+  as.matrix()
+
+yTrain <- train %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+test <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) %>%
+  tibble::as_tibble()
+colnames(test) <- c("X1", "X2", "X3", "Y")
+
+xTest <- test %>%
+  select(X1, X2, X3) %>%
+  as.matrix()
+
+yTest <- test %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+dannPreds <- dann(xTrain, yTrain, xTest, 7, 100, 1)
+
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+})
+
+test_that("Compare predictions to observed #2", {
+  expect_true(all(dannPreds == yTest))
+})
+
+rm(train, test)
+rm(xTrain, yTrain)
+rm(xTest, yTest)
+rm(dannPreds)
+
+######################
+# Problem 2
+######################
+set.seed(1)
+train <- mlbench.circle(500, 2) %>%
+  tibble::as_tibble()
+colnames(train) <- c("X1", "X2", "Y")
+
+xTrain <- train %>%
+  select(X1, X2) %>%
+  as.matrix()
+
+yTrain <- train %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+test <- mlbench.circle(500, 2) %>%
+  tibble::as_tibble()
+colnames(test) <- c("X1", "X2", "Y")
+
+xTest <- test %>%
+  select(X1, X2) %>%
+  as.matrix()
+
+yTest <- test %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1)
+
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+})
+
+test_that("Compare predictions to observed #3", {
+  expect_true(mean(dannPreds == yTest) > .95)
+})
+
+rm(train, test)
+rm(xTrain, yTrain)
+rm(xTest, yTest)
+rm(dannPreds)
 
 ###############################################
 # Input checking
