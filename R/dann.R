@@ -6,6 +6,7 @@
 #' @param k The number of data points used for final classificastion.
 #' @param neighborhood_size The number of data points used to calcualate between and within class covariance.
 #' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
+#' @param probability Should probabilities instead of classes be returned?
 #' @return  A numeric matrix containing class predictions.
 #' @details
 #' This is an implementation of Hastie and Tibshirani's
@@ -14,7 +15,7 @@
 #' The code is a port of Christopher Jenness's
 #' python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
 #' @export
-dann <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nrow(xTrain) / 5), 50), epsilon = 1) {
+dann <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
   ###################################
   # Input checking
   ###################################
@@ -109,12 +110,27 @@ dann <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nro
     stop("Argument epsilon should be at 0.")
   }
 
+  # probability is valid
+  if (length(probability) != 1) {
+    stop("Argument probability be at length 1 vector.")
+  }
+  if (!is.logical(probability)) {
+    stop("Argument probability should be logical.")
+  }
+
   S <- diag(ncol(xTrain))
 
   ###################################
   # Calculate predictions
   ###################################
-  predictions <- vector(mode = "numeric", length = nrow(xTest))
+
+  if (!probability) {
+    predictions <- vector(mode = "numeric", length = nrow(xTest))
+  } else {
+    predictions <- matrix(0, nrow = nrow(xTest), ncol = length(unique(yTrain)))
+    colnames(predictions) <- stringr::str_c("Class", as.character(unique(yTrain)))
+  }
+
   for (i in seq_along(1:nrow(xTest))) {
 
     ###########
@@ -176,39 +192,13 @@ dann <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nro
     for (kth in seq_along(1:length(distances)))
       distances[kth] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[kth, 1:ncol(xTrain), drop = FALSE ], sigma)
     nearest <- order(distances, length(distances):1)[1:k]
-    predictions[i] <- MODE(yTrain[nearest])
+    if (!probability) {
+      predictions[i] <- MODE(yTrain[nearest])
+      predictions <- matrix(predictions, nrow = length(predictions), ncol = 1)
+    } else {
+      predictions[i, ] <- class_proportions(yTrain[nearest], unique(yTrain))
+    }
   }
 
-  predictions <- matrix(predictions, nrow = length(predictions), ncol = 1)
   return(predictions)
-}
-
-###################################
-# Helper functions
-###################################
-#' Computes the distance between x0 and x1 using the DANN metric
-#'
-#' @param x1 A numeric matrix with training predictors as columns.
-#' @param x2 A numeric matrix with training predictors as columns.
-#' @param sigma A numeric matrix defined in Hastie's DANN publication.
-#' @keywords internal
-DANN_distance <- function(x0, x1, sigma) {
-  difference <- x0 - x1
-  distance <- difference %*% sigma %*% t(difference)
-  return(distance)
-}
-
-#' Computes mode.
-#' Code found at \href{https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode}{Stack Overflow}
-#'
-#' @param x A numeric vector.
-#' @param na.rm Should na be removed?
-#' @keywords internal
-MODE <- function(x, na.rm = FALSE) {
-  if (na.rm) {
-    x <- x[!is.na(x)]
-  }
-
-  ux <- sort(unique(x))
-  return(ux[which.max(tabulate(match(x, ux)))])
 }
