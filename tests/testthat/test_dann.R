@@ -1,4 +1,4 @@
-context("dann")
+context("testing dann")
 library(dann)
 library(mlbench)
 library(magrittr)
@@ -414,20 +414,49 @@ test_that("Confirm class probabilities are divisible by k", {
   expect_true(all(dannPreds %in% possibleProb))
 })
 
+rm(train, test)
+rm(xTrain, yTrain)
+rm(xTest, yTest)
+rm(K)
+
+###############################################
+# Create data for checking
+###############################################
+set.seed(1)
+xTest <- matrix(0, nrow = 100, ncol = 2)
+xTrain <- matrix(0, nrow = 100, ncol = 2)
+
+xTrain[, 1] <- runif(100, -10, 1)
+xTrain[, 2] <- runif(100, -1, 1)
+yTrain <- matrix(c(rep(1, 50), rep(2, 50)), nrow = 100, ncol = 1)
+
+xTest[, 1] <- runif(100, -1, 1)
+xTest[, 2] <- runif(100, -1, 1)
+
+###############################################
+# All legitimate values of probability work
+###############################################
+dannPreds <- dann(xTrain, yTrain, xTest, 2, 5, 1, FALSE)
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(ncol(dannPreds) == 1)
+  expect_true(all(colnames(dannPreds) == "Class"))
+})
+
+dannPreds <- dann(xTrain, yTrain, xTest, 2, 5, 1, TRUE)
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(ncol(dannPreds) == 2)
+  expect_true(all(colnames(dannPreds) == c("Class1", "Class2")))
+})
+
 ###############################################
 # Input checking
 ###############################################
-
-xTest <- matrix(0, nrow = 5, ncol = 2)
-xTrain <- matrix(0, nrow = 5, ncol = 2)
-
-xTrain[, 1] <- c(1, 2, 3, 4, 5)
-xTrain[, 2] <- c(6, 7, 8, 9, 10)
-yTrain <- matrix(c(rep(1, 2), rep(2, 3)), nrow = 5, ncol = 1)
-
-xTest[, 1] <- c(5, 4, 3, 2, 1)
-xTest[, 2] <- c(10, 9, 8, 7, 6)
-
 #######
 # Data checks
 #######
@@ -485,14 +514,14 @@ rm(TooManyyTrain)
 test_that("k checks works", {
   expect_error(dann(xTrain, yTrain, xTest, c(3, 2), 3, 1), NULL)
   expect_error(dann(xTrain, yTrain, xTest, "3", 3, 1), NULL)
-  expect_error(dann(xTrain, yTrain, xTest, 6, 3, 1), NULL)
+  expect_error(dann(xTrain, yTrain, xTest, 100000, 3, 1), NULL)
   expect_error(dann(xTrain, yTrain, xTest, 0, 3, 1), NULL)
 })
 
 test_that("neighborhood_size checks works", {
   expect_error(dann(xTrain, yTrain, xTest, 2, c(2, 3), 1), NULL)
   expect_error(dann(xTrain, yTrain, xTest, 2, "3", 1), NULL)
-  expect_error(dann(xTrain, yTrain, xTest, 2, 6, 1), NULL)
+  expect_error(dann(xTrain, yTrain, xTest, 2, 100000, 1), NULL)
   expect_error(dann(xTrain, yTrain, xTest, 2, 0, 1), NULL)
 })
 

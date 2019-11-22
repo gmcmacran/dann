@@ -1,0 +1,69 @@
+---
+title: "DANN"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dann}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Package Introduction
+DANN is a variation of k nearest neighbors where distance calculations take into account training data's class. The neighborhood is shunk orthogonally to the class boundries. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf)  by Hastie and Tibshirani. Specificaly DANN and sub-DANN in section 4.1 of the publication are implemented. This package is based on Christopher Jenness's python [implementation.](https://github.com/christopherjenness/ML-lib)
+
+
+# Example: Circle Data
+In what follows, a train and test set are created. Class 1 is inside a cirle and class 2 surounds class 1. Dann is a accurate model for these data.
+```{r setup}
+library(dann)
+library(mlbench)
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+
+######################
+# Circle Data
+######################
+set.seed(1)
+train <- mlbench.circle(500, 2) %>%
+  tibble::as_tibble()
+colnames(train) <- c("X1", "X2", "Y")
+
+ggplot(train, aes(x = X1, y = X2, colour = Y)) +
+  geom_point()
+
+xTrain <- train %>%
+  select(X1, X2) %>%
+  as.matrix()
+
+yTrain <- train %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+test <- mlbench.circle(500, 2) %>%
+  tibble::as_tibble()
+colnames(test) <- c("X1", "X2", "Y")
+
+xTest <- test %>%
+  select(X1, X2) %>%
+  as.matrix()
+
+yTest <- test %>%
+  pull(Y) %>%
+  as.numeric() %>%
+  as.matrix()
+
+dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
+mean(dannPreds == yTest) #An accurate model.
+
+rm(train, test)
+rm(xTrain, yTrain)
+rm(xTest, yTest)
+```

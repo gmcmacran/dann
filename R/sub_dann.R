@@ -1,4 +1,4 @@
-#' Discriminant Adaptive Nearest Neighbor Classification
+#' Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 #'
 #' @param xTrain Train features. Something easily converted to a numeric matrix.
 #' @param yTrain Train classes. Something easily converted to a numeric matrix.
@@ -7,9 +7,15 @@
 #' @param neighborhood_size The number of data points used to calcualate between and within class covariance.
 #' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
 #' @param probability Should probabilities instead of classes be returned?
+#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
+#' @param sphere weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
+#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord }} for details.
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @keywords internal
-dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
+sub_dann_source <- function(xTrain, yTrain, xTest,
+                            k = 5, neighborhood_size = min(floor(nrow(xTrain) / 5), 50),
+                            epsilon = 1, probability = FALSE,
+                            weighted = FALSE, sphere = "mcd", numDim = ncol(xTrain) / 2) {
   ###################################
   # Input checking
   ###################################
@@ -76,7 +82,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 
   # k is valid
   if (length(k) != 1) {
-    stop("Argument k be at length 1 vector.")
+    stop("Argument k should be a length 1 vector.")
   }
   if (!is.numeric(k)) {
     stop("Argument k should be numeric.")
@@ -90,7 +96,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 
   # neighborhood_size is valid
   if (length(neighborhood_size) != 1) {
-    stop("Argument neighborhood_size be at length 1 vector.")
+    stop("Argument neighborhood_size should be a length 1 vector.")
   }
   if (!is.numeric(neighborhood_size)) {
     stop("Argument neighborhood_size should be numeric.")
@@ -104,107 +110,70 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 
   # epsilon is valid
   if (length(epsilon) != 1) {
-    stop("Argument epsilon be at length 1 vector.")
+    stop("Argument epsilon should be a length 1 vector.")
   }
   if (!is.numeric(epsilon)) {
     stop("Argument epsilon should be numeric.")
   }
   if (epsilon < 0) {
-    stop("Argument epsilon should be at 0.")
+    stop("Argument epsilon should be at least 0.")
   }
 
   # probability is valid
   if (length(probability) != 1) {
-    stop("Argument probability be at length 1 vector.")
+    stop("Argument probability should be a length 1 vector.")
   }
   if (!is.logical(probability)) {
     stop("Argument probability should be logical.")
   }
 
-  ###################################
-  # Calculate predictions
-  ###################################
-
-  if (!probability) {
-    predictions <- matrix(-1, nrow = nrow(xTest), ncol = 1)
-    colnames(predictions) <- "Class"
-  } else {
-    predictions <- matrix(0, nrow = nrow(xTest), ncol = length(unique(yTrain)))
-    colnames(predictions) <- stringr::str_c("Class", as.character(unique(yTrain)))
+  # weighted is valid
+  if (length(weighted) != 1) {
+    stop("Argument weighted should be a length 1 vector.")
+  }
+  if (!is.logical(weighted)) {
+    stop("Argument weighted should be logical.")
   }
 
-  for (i in seq_along(1:nrow(xTest))) {
-
-    ###########
-    # Find neighborhood for x[i,]
-    ###########
-    distances <- vector(mode = "numeric", length = nrow(xTrain))
-    for (j in seq_along(1:nrow(xTrain))) {
-      # distances[j] <- sum( (xTest[i, ]-xTrain[j,])^2) ^ .5
-      distances[j] <- sum((xTrain[j, ] - xTest[i, ])^2)^.5
-    }
-
-    nearest_neighbors <- order(distances)[1:neighborhood_size]
-    neighborhood_xTrain <- xTrain[nearest_neighbors, 1:ncol(xTrain), drop = FALSE]
-    neighborhood_X_mean <- colMeans(neighborhood_xTrain)
-    neighborhood_y <- yTrain[nearest_neighbors, 1, drop = FALSE]
-    neighborhood_classes <- unique(neighborhood_y)
-
-    ###########
-    # Between and within matrices
-    ###########
-    class_frequencies <- vector(mode = "numeric", length = length(neighborhood_classes))
-    within_class_cov <- matrix(0, nrow = ncol(xTrain), ncol = ncol(xTrain))
-    between_class_cov <- matrix(0, nrow = ncol(xTrain), ncol = ncol(xTrain))
-
-    for (kth in seq_along(1:length(neighborhood_classes))) {
-      target_class <- neighborhood_classes[kth]
-      class_indices <- which(neighborhood_y == target_class)
-      class_frequencies[target_class] <- sum(neighborhood_y == target_class) / neighborhood_size
-
-      class_covariance <- stats::var(neighborhood_xTrain[class_indices, 1:ncol(neighborhood_xTrain), drop = FALSE])
-      # Deal with 1 row in class edge case
-      if (all(is.na(class_covariance))) {
-        class_covariance <- matrix(0, nrow = nrow(class_covariance), ncol = ncol(class_covariance))
-      }
-
-      within_class_cov <- class_covariance * class_frequencies[target_class] + within_class_cov
-      class_mean <- colMeans(neighborhood_xTrain[class_indices, 1:ncol(neighborhood_xTrain), drop = FALSE])
-      between_class_cov <- outer(class_mean - neighborhood_X_mean, class_mean - neighborhood_X_mean) *
-        class_frequencies[target_class] + between_class_cov
-    }
-
-    # W* = W^-.5
-    # B* = W*BW*
-    W_star <- within_class_cov^.5
-    # Deal with NA case
-    for (kth in seq_along(1:ncol(W_star))) {
-      W_star[which(is.na(W_star[, kth])), kth] <- 0
-    }
-    W_star <- MASS::ginv(W_star)
-    B_star <- W_star %*% between_class_cov %*% W_star
-    I <- diag(ncol(xTrain))
-
-    sigma <- W_star %*% (B_star + epsilon * I) %*% W_star
-
-    ###########
-    # DANN distance using sigma
-    ###########
-    distances <- vector(mode = "numeric", length = nrow(xTrain))
-    for (kth in seq_along(1:length(distances)))
-      distances[kth] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[kth, 1:ncol(xTrain), drop = FALSE ], sigma)
-    nearest <- order(distances, length(distances):1)[1:k]
-    if (!probability) {
-      predictions[i, ] <- MODE(yTrain[nearest])
-    } else {
-      predictions[i, ] <- class_proportions(yTrain[nearest], unique(yTrain))
-    }
+  # sphere is valid
+  if (length(sphere) != 1) {
+    stop("Argument sphere should be a length 1 vector.")
   }
+  if (!is.character(sphere)) {
+    stop("Argument sphere should be a character vector.")
+  }
+  if (!(sphere %in% c("mve", "mcd", "classical"))) {
+    stop("Argument sphere should be a one mve, mcd, or classical.")
+  }
+
+  # numDim is valid
+  if (length(numDim) != 1) {
+    stop("Argument numDim should be a length 1 vector.")
+  }
+  if (!is.numeric(numDim)) {
+    stop("Argument numDim should be numeric.")
+  }
+  if (numDim < 1) {
+    stop("Argument numDim should be at least 1.")
+  }
+
+  # Find subspace
+  subspace <- fpc::ncoord(
+    xd = xTrain, clvecd = yTrain,
+    nn = neighborhood_size, weighted = weighted,
+    sphere = "mcd", countmode = 999999999999999
+  )
+
+  xTrain2 <- subspace$proj[, 1:numDim, drop = FALSE]
+  xTest2 <- xTest %*% subspace$units[, 1:numDim, drop = FALSE]
+
+  # Get predictions
+  predictions <- dann(xTrain2, yTrain, xTest2, k, neighborhood_size, epsilon, probability)
 
   return(predictions)
 }
 
-#' Discriminant Adaptive Nearest Neighbor Classification
+#' Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 #'
 #' @param xTrain Train features. Something easily converted to a numeric matrix.
 #' @param yTrain Train classes. Something easily converted to a numeric matrix.
@@ -213,13 +182,15 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 #' @param neighborhood_size The number of data points used to calcualate between and within class covariance.
 #' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
 #' @param probability Should probabilities instead of classes be returned?
+#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
+#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
+#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord }} for details.
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @details
-#' This is an implementation of Hastie and Tibshirani's
+#' This is an implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
 #' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-#' Neighbor Classificastion publication.}.
-#' The code is a port of Christopher Jenness's
-#' python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
+#' Neighbor Classificastion publication.}. It uses package fpc's ncoord to find the subspace. Then calls
+#' dann.
 #' @examples
 #' library(dann)
 #' library(mlbench)
@@ -228,18 +199,25 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 #' library(ggplot2)
 #' 
 #' ######################
-#' # Circle Data
+#' # Circle data with unrelated variables
 #' ######################
 #' set.seed(1)
 #' train <- mlbench.circle(500, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
 #' 
-#' ggplot(train, aes(x = X1, y = X2, colour = Y)) +
-#'   geom_point()
+#' # Add 5 unrelated variables
+#' train <- train %>%
+#'   mutate(
+#'     U1 = runif(500, -1, 1),
+#'     U2 = runif(500, -1, 1),
+#'     U3 = runif(500, -1, 1),
+#'     U4 = runif(500, -1, 1),
+#'     U5 = runif(500, -1, 1)
+#'   )
 #' 
 #' xTrain <- train %>%
-#'   select(X1, X2) %>%
+#'   select(X1, X2, U1, U2, U3, U4, U5) %>%
 #'   as.matrix()
 #' 
 #' yTrain <- train %>%
@@ -251,11 +229,18 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 #'   tibble::as_tibble()
 #' colnames(test) <- c("X1", "X2", "Y")
 #' 
-#' ggplot(test, aes(x = X1, y = X2, colour = Y)) +
-#'   geom_point()
+#' # Add 5 unrelated variables
+#' test <- test %>%
+#'   mutate(
+#'     U1 = runif(500, -1, 1),
+#'     U2 = runif(500, -1, 1),
+#'     U3 = runif(500, -1, 1),
+#'     U4 = runif(500, -1, 1),
+#'     U5 = runif(500, -1, 1)
+#'   )
 #' 
 #' xTest <- test %>%
-#'   select(X1, X2) %>%
+#'   select(X1, X2, U1, U2, U3, U4, U5) %>%
 #'   as.matrix()
 #' 
 #' yTest <- test %>%
@@ -264,11 +249,14 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 #'   as.matrix()
 #' 
 #' dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
-#' mean(dannPreds == yTest) # An accurate model.
+#' mean(dannPreds == yTest) # Not a good model
+#' 
+#' subDannPreds <- sub_dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE, weighted = FALSE, sphere = "mcd", numDim = 2)
+#' mean(subDannPreds == yTest) # sub_dan does much better when unrelated variables are present.
 #' 
 #' rm(train, test)
 #' rm(xTrain, yTrain)
 #' rm(xTest, yTest)
-#' rm(dannPreds)
+#' rm(dannPreds, subDannPreds)
 #' @export
-dann <- compiler::cmpfun(f = dann_source, options = list(optimize = 3))
+sub_dann <- compiler::cmpfun(f = sub_dann_source, options = list(optimize = 3))

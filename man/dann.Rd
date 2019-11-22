@@ -24,7 +24,7 @@ dann(xTrain, yTrain, xTest, k = 5,
 \item{probability}{Should probabilities instead of classes be returned?}
 }
 \value{
-A numeric matrix containing class predictions.
+A numeric matrix containing class predictions or class probabilities.
 }
 \description{
 Discriminant Adaptive Nearest Neighbor Classification
@@ -35,4 +35,55 @@ This is an implementation of Hastie and Tibshirani's
 Neighbor Classificastion publication.}.
 The code is a port of Christopher Jenness's
 python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
+}
+\examples{
+library(dann)
+library(mlbench)
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+
+######################
+# Circle Data
+######################
+set.seed(1)
+train <- mlbench.circle(500, 2) \%>\%
+  tibble::as_tibble()
+colnames(train) <- c("X1", "X2", "Y")
+
+ggplot(train, aes(x = X1, y = X2, colour = Y)) +
+  geom_point()
+
+xTrain <- train \%>\%
+  select(X1, X2) \%>\%
+  as.matrix()
+
+yTrain <- train \%>\%
+  pull(Y) \%>\%
+  as.numeric() \%>\%
+  as.matrix()
+
+test <- mlbench.circle(500, 2) \%>\%
+  tibble::as_tibble()
+colnames(test) <- c("X1", "X2", "Y")
+
+ggplot(test, aes(x = X1, y = X2, colour = Y)) +
+  geom_point()
+
+xTest <- test \%>\%
+  select(X1, X2) \%>\%
+  as.matrix()
+
+yTest <- test \%>\%
+  pull(Y) \%>\%
+  as.numeric() \%>\%
+  as.matrix()
+
+dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
+mean(dannPreds == yTest) # An accurate model.
+
+rm(train, test)
+rm(xTrain, yTrain)
+rm(xTest, yTest)
+rm(dannPreds)
 }
