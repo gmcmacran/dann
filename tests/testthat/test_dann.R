@@ -242,7 +242,7 @@ yTest <- test %>%
 # K equal 1
 ######################
 K <- 1
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -264,7 +264,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 2
 ######################
 K <- 2
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -286,7 +286,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 3
 ######################
 K <- 3
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -308,7 +308,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 4
 ######################
 K <- 4
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -330,7 +330,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 5
 ######################
 K <- 5
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -352,7 +352,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 10
 ######################
 K <- 10
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -374,7 +374,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 50
 ######################
 K <- 50
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -396,7 +396,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 100
 ######################
 K <- 100
-dannPreds <- dann(xTrain, yTrain, xTest, K, 50, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -523,6 +523,7 @@ test_that("neighborhood_size checks works", {
   expect_error(dann(xTrain, yTrain, xTest, 2, "3", 1), NULL)
   expect_error(dann(xTrain, yTrain, xTest, 2, 100000, 1), NULL)
   expect_error(dann(xTrain, yTrain, xTest, 2, 0, 1), NULL)
+  expect_error(dann(xTrain, yTrain, xTest, 4, 3, 1), NULL)
 })
 
 test_that("epsilon checks works", {

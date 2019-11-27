@@ -12,6 +12,7 @@ Imports:
     MASS (>= 7.3),
     compiler (>= 3.5.3),
     stats (>= 3.5.3),
+    tibble (>= 2.1.1),
     dplyr (>= 0.8.0.1),
     ggplot2 (>= 3.1.1),
     stringr (>= 1.4.0),

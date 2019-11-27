@@ -15,11 +15,11 @@ knitr::opts_chunk$set(
 ```
 
 # Package Introduction
-DANN is a variation of k nearest neighbors where distance calculations take into account training data's class. The neighborhood is shunk orthogonally to the class boundries. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf)  by Hastie and Tibshirani. Specificaly DANN and sub-DANN in section 4.1 of the publication are implemented. This package is based on Christopher Jenness's python [implementation.](https://github.com/christopherjenness/ML-lib)
+DANN is a variation of k nearest neighbors where the shape of the neighborhood takes into account training data's class. The neighborhood is elongated along class boundaries and shrunk orthogonality to class boundaries. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf)  by Hastie and Tibshirani. This package implements DANN and sub-DANN in section 4.1 of the publication. This package is based on Christopher Jenness's python [implementation.](https://github.com/christopherjenness/ML-lib)
 
 
 # Example: Circle Data
-In what follows, a train and test set are created. Class 1 is inside a cirle and class 2 surounds class 1. Dann is a accurate model for these data.
+In what follows, a train and test set are created. Class 1 is inside a circle and class 2 surrounds class 1. Dann is a accurate model for these data.
 ```{r setup}
 library(dann)
 library(mlbench)
@@ -60,7 +60,7 @@ yTest <- test %>%
   as.numeric() %>%
   as.matrix()
 
-dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 mean(dannPreds == yTest) #An accurate model.
 
 rm(train, test)

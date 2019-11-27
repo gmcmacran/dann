@@ -7,9 +7,9 @@
 #' @param neighborhood_size The number of data points used to calcualate between and within class covariance.
 #' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
 #' @param probability Should probabilities instead of classes be returned?
-#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
-#' @param sphere weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
-#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord }} for details.
+#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @keywords internal
 sub_dann_source <- function(xTrain, yTrain, xTest,
@@ -107,6 +107,9 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
   if (neighborhood_size <= 1) {
     stop("Argument neighborhood_size should be at least 2.")
   }
+  if (k > neighborhood_size) {
+    stop("Argument k should be less than argument neighborhood_size.")
+  }
 
   # epsilon is valid
   if (length(epsilon) != 1) {
@@ -182,9 +185,9 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' @param neighborhood_size The number of data points used to calcualate between and within class covariance.
 #' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
 #' @param probability Should probabilities instead of classes be returned?
-#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
-#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord }} for details.
-#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord }} for details.
+#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @details
 #' This is an implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
@@ -204,7 +207,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' set.seed(1)
 #' train <- mlbench.circle(500, 2) %>%
 #'   tibble::as_tibble()
-#' colnames(train) <- c("X1", "X2", "Y")
+#' colnames(train)[1:3] <- c("X1", "X2", "Y")
 #' 
 #' # Add 5 unrelated variables
 #' train <- train %>%
@@ -227,7 +230,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' 
 #' test <- mlbench.circle(500, 2) %>%
 #'   tibble::as_tibble()
-#' colnames(test) <- c("X1", "X2", "Y")
+#' colnames(test)[1:3] <- c("X1", "X2", "Y")
 #' 
 #' # Add 5 unrelated variables
 #' test <- test %>%
@@ -248,10 +251,14 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #'   as.numeric() %>%
 #'   as.matrix()
 #' 
-#' dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
+#' dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 #' mean(dannPreds == yTest) # Not a good model
 #' 
-#' subDannPreds <- sub_dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE, weighted = FALSE, sphere = "mcd", numDim = 2)
+#' subDannPreds <- sub_dann(
+#'   xTrain, yTrain, xTest, 3, 50,
+#'   1, FALSE, FALSE,
+#'   "mcd", 2
+#' )
 #' mean(subDannPreds == yTest) # sub_dan does much better when unrelated variables are present.
 #' 
 #' rm(train, test)

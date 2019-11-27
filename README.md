@@ -1,10 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dann
+# DANN
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.org/gmcmacran/dann.svg?branch=master)](https://travis-ci.org/gmcmacran/dann)
 <!-- badges: end -->
 
 An Implementation of Hastie and Tibshirani’s Discriminant Adaptive

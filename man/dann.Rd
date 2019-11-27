@@ -79,7 +79,7 @@ yTest <- test \%>\%
   as.numeric() \%>\%
   as.matrix()
 
-dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 mean(dannPreds == yTest) # An accurate model.
 
 rm(train, test)

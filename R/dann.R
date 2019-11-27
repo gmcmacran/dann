@@ -101,6 +101,9 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
   if (neighborhood_size <= 1) {
     stop("Argument neighborhood_size should be at least 2.")
   }
+  if (k > neighborhood_size) {
+    stop("Argument k should be less than argument neighborhood_size.")
+  }
 
   # epsilon is valid
   if (length(epsilon) != 1) {
@@ -263,7 +266,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 #'   as.numeric() %>%
 #'   as.matrix()
 #' 
-#' dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
+#' dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 #' mean(dannPreds == yTest) # An accurate model.
 #' 
 #' rm(train, test)

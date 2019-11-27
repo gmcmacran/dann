@@ -24,11 +24,11 @@ sub_dann_source(xTrain, yTrain, xTest, k = 5,
 
 \item{probability}{Should probabilities instead of classes be returned?}
 
-\item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.}
+\item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{sphere}{weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.}
+\item{sphere}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{numDim}{Dimention of subspace used by dann. See \code{\link[fpc]{ncoord }} for details.}
+\item{numDim}{Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
 }
 \value{
 A numeric matrix containing class predictions or class probabilities.

@@ -24,11 +24,11 @@ sub_dann(xTrain, yTrain, xTest, k = 5,
 
 \item{probability}{Should probabilities instead of classes be returned?}
 
-\item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord }} for details.}
+\item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{sphere}{sphere argument to ncoord. See \code{\link[fpc]{ncoord }} for details.}
+\item{sphere}{sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{numDim}{Dimention of subspace used by dann. See \code{\link[fpc]{ncoord }} for details.}
+\item{numDim}{Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
 }
 \value{
 A numeric matrix containing class predictions or class probabilities.
@@ -55,7 +55,7 @@ library(ggplot2)
 set.seed(1)
 train <- mlbench.circle(500, 2) \%>\%
   tibble::as_tibble()
-colnames(train) <- c("X1", "X2", "Y")
+colnames(train)[1:3] <- c("X1", "X2", "Y")
 
 # Add 5 unrelated variables
 train <- train \%>\%
@@ -78,7 +78,7 @@ yTrain <- train \%>\%
 
 test <- mlbench.circle(500, 2) \%>\%
   tibble::as_tibble()
-colnames(test) <- c("X1", "X2", "Y")
+colnames(test)[1:3] <- c("X1", "X2", "Y")
 
 # Add 5 unrelated variables
 test <- test \%>\%
@@ -99,10 +99,14 @@ yTest <- test \%>\%
   as.numeric() \%>\%
   as.matrix()
 
-dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 mean(dannPreds == yTest) # Not a good model
 
-subDannPreds <- sub_dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE, weighted = FALSE, sphere = "mcd", numDim = 2)
+subDannPreds <- sub_dann(
+  xTrain, yTrain, xTest, 3, 50,
+  1, FALSE, FALSE,
+  "mcd", 2
+)
 mean(subDannPreds == yTest) # sub_dan does much better when unrelated variables are present.
 
 rm(train, test)

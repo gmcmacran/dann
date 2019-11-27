@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 # dann
 
 <!-- badges: start -->
+[![Travis build status](https://travis-ci.org/gmcmacran/dann.svg?branch=master)](https://travis-ci.org/gmcmacran/dann)
 <!-- badges: end -->
 
 An Implementation of Hastie and Tibshirani's Discriminant Adaptive Nearest Neighbor Classification in R.
