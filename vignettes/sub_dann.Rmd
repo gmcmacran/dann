@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-In general, dann will struggle as unrelated variables are intermingled with related variables. To deal with this, sub_dann projects the data onto a unique subspace and then calls dann. The number of features in the subspace is controlled by the numDim argument. sub_dan is able to mitigate the use of noise variables. See section 3 of [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) for details. Section 4 compares dann and sub_dann to a number of other approaches.
+In general, dann will struggle as unrelated variables are intermingled with related variables. To deal with this, sub_dann projects the data onto a unique subspace and then calls dann. The number of features in the subspace is controlled by the numDim argument. sub_dann is able to mitigate the use of noise variables. See section 3 of [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) for details. Section 4 compares dann and sub_dann to a number of other approaches.
 
 # Arguments
 * k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors. Same as dann function.

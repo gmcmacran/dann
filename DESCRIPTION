@@ -4,7 +4,7 @@ Title: An Implementation Of Adaptive Nearest Neighbor Classification
 Version: 0.1.0
 Author: Greg McMahan
 Maintainer: Greg McMahan <gmcmacran@gmail.com>
-Description: Calculate preditions using dann.
+Description: Calculate predictions using dann.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

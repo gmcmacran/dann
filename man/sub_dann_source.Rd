@@ -20,7 +20,7 @@ sub_dann_source(xTrain, yTrain, xTest, k = 5,
 
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
-\item{epsilon}{Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.}
+\item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
 
 \item{probability}{Should probabilities instead of classes be returned?}
 
@@ -28,7 +28,7 @@ sub_dann_source(xTrain, yTrain, xTest, k = 5,
 
 \item{sphere}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{numDim}{Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
+\item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
 }
 \value{
 A numeric matrix containing class predictions or class probabilities.

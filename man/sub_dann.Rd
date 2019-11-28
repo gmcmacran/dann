@@ -22,7 +22,7 @@ Generally columns should be centered and scaled according to xTrain beforehand.}
 
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
-\item{epsilon}{Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.}
+\item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
 
 \item{probability}{Should probabilities instead of classes be returned?}
 
@@ -30,7 +30,7 @@ Generally columns should be centered and scaled according to xTrain beforehand.}
 
 \item{sphere}{sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{numDim}{Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
+\item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
 }
 \value{
 A numeric matrix containing class predictions or class probabilities.
@@ -41,7 +41,7 @@ Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 \details{
 This is an implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
 \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-Neighbor Classificastion publication.}. It uses package fpc's ncoord to find the subspace. Then calls
+Neighbor Classification publication.}. It uses package fpc's ncoord to find the subspace. Then calls
 dann.
 
 dann's performance suffers when noise variables are included in the model. Simulations show sub_dann

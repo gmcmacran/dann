@@ -7,7 +7,7 @@
 #' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A ggplot graph.
 #' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
-#' should make a judgement call on how many eigen values are large and set sub_dann's
+#' should make a judgement call on how many eigenvalues are large and set sub_dann's
 #' numDim to that number.
 #' @importFrom rlang .data
 #' @examples

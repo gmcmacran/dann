@@ -21,7 +21,7 @@ Generally columns should be centered and scaled according to xTrain beforehand.}
 
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
-\item{epsilon}{Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.}
+\item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
 
 \item{probability}{Should probabilities instead of classes be returned?}
 }
@@ -34,7 +34,7 @@ Discriminant Adaptive Nearest Neighbor Classification
 \details{
 This is an implementation of Hastie and Tibshirani's
 \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-Neighbor Classificastion publication.}.
+Neighbor Classification publication.}.
 The code is a port of Christopher Jenness's
 python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
 }

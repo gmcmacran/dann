@@ -5,11 +5,11 @@
 #' @param xTest Test features. Something easily converted to a numeric matrix.
 #' @param k The number of data points used for final classification.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.
+#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param sphere weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
+#' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @keywords internal
 sub_dann_source <- function(xTrain, yTrain, xTest,
@@ -194,16 +194,16 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #'              Generally columns should be centered and scaled according to xTrain beforehand.
 #' @param k The number of data points used for final classification.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.
+#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param numDim Dimention of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
+#' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @details
 #' This is an implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
 #' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-#' Neighbor Classificastion publication.}. It uses package fpc's ncoord to find the subspace. Then calls
+#' Neighbor Classification publication.}. It uses package fpc's ncoord to find the subspace. Then calls
 #' dann.
 #'
 #' dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
