@@ -3,13 +3,13 @@
 #' @param xTrain Train features. Something easily converted to a numeric matrix.
 #' @param yTrain Train classes. Something easily converted to a numeric matrix.
 #' @param xTest Test features. Something easily converted to a numeric matrix.
-#' @param k The number of data points used for final classificastion.
-#' @param neighborhood_size The number of data points used to calcualate between and within class covariance.
+#' @param k The number of data points used for final classification.
+#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
 #' @param probability Should probabilities instead of classes be returned?
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @keywords internal
-dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
+dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
   ###################################
   # Input checking
   ###################################
@@ -72,6 +72,15 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
   }
   if (ncol(xTest) < 1) {
     stop("Argument xTest should have at least one column.")
+  }
+  if (nrow(xTrain) < 1) {
+    stop("Argument xTrain should have at least one row.")
+  }
+  if (nrow(yTrain) < 1) {
+    stop("Argument yTrain should have at least one row.")
+  }
+  if (nrow(xTest) < 1) {
+    stop("Argument xTest should have at least one row.")
   }
 
   # k is valid
@@ -210,10 +219,12 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = min(fl
 #' Discriminant Adaptive Nearest Neighbor Classification
 #'
 #' @param xTrain Train features. Something easily converted to a numeric matrix.
+#'               Generally columns should have mean zero and standard deviation one beforehand.
 #' @param yTrain Train classes. Something easily converted to a numeric matrix.
 #' @param xTest Test features. Something easily converted to a numeric matrix.
-#' @param k The number of data points used for final classificastion.
-#' @param neighborhood_size The number of data points used to calcualate between and within class covariance.
+#'              Generally columns should be centered and scaled according to xTrain beforehand.
+#' @param k The number of data points used for final classification.
+#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
 #' @param probability Should probabilities instead of classes be returned?
 #' @return  A numeric matrix containing class predictions or class probabilities.

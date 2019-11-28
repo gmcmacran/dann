@@ -5,7 +5,7 @@
 \title{Discriminant Adaptive Nearest Neighbor With Subspace Reduction}
 \usage{
 sub_dann_source(xTrain, yTrain, xTest, k = 5,
-  neighborhood_size = min(floor(nrow(xTrain)/5), 50), epsilon = 1,
+  neighborhood_size = max(floor(nrow(xTrain)/5), 50), epsilon = 1,
   probability = FALSE, weighted = FALSE, sphere = "mcd",
   numDim = ncol(xTrain)/2)
 }
@@ -16,9 +16,9 @@ sub_dann_source(xTrain, yTrain, xTest, k = 5,
 
 \item{xTest}{Test features. Something easily converted to a numeric matrix.}
 
-\item{k}{The number of data points used for final classificastion.}
+\item{k}{The number of data points used for final classification.}
 
-\item{neighborhood_size}{The number of data points used to calcualate between and within class covariance.}
+\item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
 \item{epsilon}{Diaginal elemnts of a diagional matrix. 1 is the identity matirx.}
 

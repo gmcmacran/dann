@@ -5,20 +5,22 @@
 \title{Discriminant Adaptive Nearest Neighbor With Subspace Reduction}
 \usage{
 sub_dann(xTrain, yTrain, xTest, k = 5,
-  neighborhood_size = min(floor(nrow(xTrain)/5), 50), epsilon = 1,
+  neighborhood_size = max(floor(nrow(xTrain)/5), 50), epsilon = 1,
   probability = FALSE, weighted = FALSE, sphere = "mcd",
   numDim = ncol(xTrain)/2)
 }
 \arguments{
-\item{xTrain}{Train features. Something easily converted to a numeric matrix.}
+\item{xTrain}{Train features. Something easily converted to a numeric matrix.
+Generally columns should have mean zero and standard deviation one beforehand.}
 
 \item{yTrain}{Train classes. Something easily converted to a numeric matrix.}
 
-\item{xTest}{Test features. Something easily converted to a numeric matrix.}
+\item{xTest}{Test features. Something easily converted to a numeric matrix.
+Generally columns should be centered and scaled according to xTrain beforehand.}
 
-\item{k}{The number of data points used for final classificastion.}
+\item{k}{The number of data points used for final classification.}
 
-\item{neighborhood_size}{The number of data points used to calcualate between and within class covariance.}
+\item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
 \item{epsilon}{Diaginal elemnts of a diagional matrix. 1 is the identity matirx.}
 
@@ -107,7 +109,8 @@ subDannPreds <- sub_dann(
   1, FALSE, FALSE,
   "mcd", 2
 )
-mean(subDannPreds == yTest) # sub_dan does much better when unrelated variables are present.
+# sub_dan does much better when unrelated variables are present.
+mean(subDannPreds == yTest)
 
 rm(train, test)
 rm(xTrain, yTrain)

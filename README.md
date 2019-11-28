@@ -29,6 +29,17 @@ And the development version from [GitHub](https://github.com/) with:
 devtools::install_github("gmcmacran/dann")
 ```
 
+# Package Introduction
+
+DANN is a variation of k nearest neighbors where the shape of the
+neighborhood takes into account training data’s class. The neighborhood
+is elongated along class boundaries and shrunk orthogonal to class
+boundaries. See [Discriminate Adaptive Nearest Neighbor
+Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf)
+by Hastie and Tibshirani. This package implements DANN and sub-DANN in
+section 4.1 of the publication and is based on Christopher Jenness’s
+python [implementation.](https://github.com/christopherjenness/ML-lib)
+
 ## Example 1: Circle Problem
 
 ``` r
@@ -153,6 +164,3 @@ dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1)
 mean(dannPreds == yTest)
 #> [1] 1
 ```
-
-This package in an R port of Christopher Jenness’s python
-[implementation.](https://github.com/christopherjenness/ML-lib).

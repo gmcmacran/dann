@@ -1,23 +1,34 @@
 ---
-title: "Sub Dann"
-output: html_document
+title: "SUB_DANN"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dann}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Introduction
-In general, dann will struggle as the number of unrelated variables increases. To deal with this, sub_dann projects the data onto a subspace and then calls dann. The number of features in the subspace is controlled by the numDim argument. Sub_dan is able to mitigate the use of noise variables. See section 3 of [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) for details. Section 4 compares dann and sub_dann to a number of other approaches.
+# Introduction
+In general, dann will struggle as unrelated variables are intermingled with related variables. To deal with this, sub_dann projects the data onto a unique subspace and then calls dann. The number of features in the subspace is controlled by the numDim argument. Sub_dan is able to mitigate the use of noise variables. See section 3 of [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) for details. Section 4 compares dann and sub_dann to a number of other approaches.
 
-## Example
-In the below example there are 2 related variables and 5 that are unrelated. Sub_dann outperforms dann when no features selection is done. Sub_dann does almost as well as dann if all unrelated variables had been removed.
+# Arguments
+* k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors. Same as dann function.
+* neighborhood_size - The number of data points used to estimate class boundaries. Same as dann function.
+* epsilon - Softening parameter. Usually has the least affect on performance. Same as dann function.
+* weighted - Should the individual between class covariance matrices be weighted? FALSE corresponds to original publication.
+* sphere - Type of covariance matrix to calculate.
 
-```{r example}
+# Example: Circle Data With Random Variables
+In the below example there are 2 related variables and 5 that are unrelated. Lets see how dann, sub_dann, and dann with only the correct features perform.
+
+```{r exampleP1}
  library(dann)
  library(mlbench)
  library(magrittr)
- library(dplyr)
+ library(dplyr, warn.conflicts = FALSE)
  library(ggplot2)
 
  ######################
@@ -69,22 +80,37 @@ In the below example there are 2 related variables and 5 that are unrelated. Sub
    pull(Y) %>%
    as.numeric() %>%
    as.matrix()
-
+ 
  dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
  mean(dannPreds == yTest) # Not a good model
+```
 
+Overall, dann did not do well as expected. Moving on to sub_dann, the dimension of the subspace should be chosen based on the number of large eigen values. The graph suggests 2 is good (the correct answer).
+
+```{r exampleP2}
+ 
+ graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")
  subDannPreds <- sub_dann(xTrain, yTrain, xTest, 3, 50,
                           1, FALSE, FALSE,
                           "mcd", 2)
  mean(subDannPreds == yTest) # sub_dan does much better when unrelated variables are present.
+```
+
+sub_dann did much better than dann. Lets see how dann does if only related variables are used.
  
+```{r exampleP3}
  variableSelectionDann <- dann(xTrain[, 1:2], yTrain, xTest[, 1:2], 3, 50, 1, FALSE)
  
  mean(variableSelectionDann == yTest) # Best model found when only true predictors are used.
+```
 
+Overall, dann with the correct variables did better than sub_dann. In simulations one can simply pick the correct variables. In real applications the correct variables are usually unknown. sub_dann was able to estimate the correct number of features and get reasonably close to a model that only used related variable without having to know which variables are truly predictive. 
+
+
+```{r exampleP4}
  rm(train, test)
  rm(xTrain, yTrain)
  rm(xTest, yTest)
- rm(dannPreds, subDannPreds)
+ rm(dannPreds, subDannPreds, variableSelectionDann)
 ```
 
