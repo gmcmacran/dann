@@ -20,7 +20,7 @@ sub_dann_source(xTrain, yTrain, xTest, k = 5,
 
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
-\item{epsilon}{Diaginal elemnts of a diagional matrix. 1 is the identity matirx.}
+\item{epsilon}{Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.}
 
 \item{probability}{Should probabilities instead of classes be returned?}
 

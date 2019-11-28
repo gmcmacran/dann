@@ -17,7 +17,7 @@ graph_eigenvalues(xTrain, yTrain,
 
 \item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{sphere}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
+\item{sphere}{sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 }
 \value{
 A ggplot graph.
@@ -26,7 +26,7 @@ A ggplot graph.
 A helper for sub_dann
 }
 \details{
-This functions plots the eigen values found by \code{\link[fpc]{ncoord}}. The user
+This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
 should make a judgement call on how many eigen values are large and set sub_dann's
 numDim to that number.
 }

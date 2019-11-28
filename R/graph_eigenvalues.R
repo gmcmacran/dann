@@ -4,9 +4,9 @@
 #' @param yTrain Train classes. Something easily converted to a numeric matrix.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A ggplot graph.
-#' @details This functions plots the eigen values found by \code{\link[fpc]{ncoord}}. The user
+#' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
 #' should make a judgement call on how many eigen values are large and set sub_dann's
 #' numDim to that number.
 #' @importFrom rlang .data
@@ -150,7 +150,7 @@ graph_eigenvalues <- function(xTrain, yTrain,
   graph <- ggplot2::ggplot(eigen, ggplot2::aes(x = .data$order, y = .data$eigenValues)) +
     ggplot2::geom_point() +
     ggplot2::scale_x_continuous(breaks = 1:nrow(eigen)) +
-    ggplot2::labs(x = "Rank Order", y = "Eigen Values")
+    ggplot2::labs(x = "Rank Order", y = "Eigenvalues")
 
   return(graph)
 }

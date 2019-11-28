@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
-In general, dann will struggle as unrelated variables are intermingled with related variables. To deal with this, sub_dann projects the data onto a unique subspace and then calls dann. The number of features in the subspace is controlled by the numDim argument. Sub_dan is able to mitigate the use of noise variables. See section 3 of [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) for details. Section 4 compares dann and sub_dann to a number of other approaches.
+In general, dann will struggle as unrelated variables are intermingled with related variables. To deal with this, sub_dann projects the data onto a unique subspace and then calls dann. The number of features in the subspace is controlled by the numDim argument. sub_dan is able to mitigate the use of noise variables. See section 3 of [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) for details. Section 4 compares dann and sub_dann to a number of other approaches.
 
 # Arguments
 * k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors. Same as dann function.
@@ -85,7 +85,7 @@ In the below example there are 2 related variables and 5 that are unrelated. Let
  mean(dannPreds == yTest) # Not a good model
 ```
 
-Overall, dann did not do well as expected. Moving on to sub_dann, the dimension of the subspace should be chosen based on the number of large eigen values. The graph suggests 2 is good (the correct answer).
+As expected, dann was not performant. Moving on to sub_dann, the dimension of the subspace should be chosen based on the number of large eigenvalues. The graph suggests 2 is good (the correct answer).
 
 ```{r exampleP2}
  
@@ -104,7 +104,7 @@ sub_dann did much better than dann. Lets see how dann does if only related varia
  mean(variableSelectionDann == yTest) # Best model found when only true predictors are used.
 ```
 
-Overall, dann with the correct variables did better than sub_dann. In simulations one can simply pick the correct variables. In real applications the correct variables are usually unknown. sub_dann was able to estimate the correct number of features and get reasonably close to a model that only used related variable without having to know which variables are truly predictive. 
+Overall, dann with the correct variables did better than sub_dann. In simulations one can simply pick the correct variables. In real applications the correct variables are usually unknown. sub_dann was able to estimate the correct number of features and get reasonably close to dann that only used related variables without having to know which variables are truly predictive. 
 
 
 ```{r exampleP4}

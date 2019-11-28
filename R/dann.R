@@ -5,7 +5,7 @@
 #' @param xTest Test features. Something easily converted to a numeric matrix.
 #' @param k The number of data points used for final classification.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
+#' @param epsilon Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @keywords internal
@@ -225,7 +225,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #'              Generally columns should be centered and scaled according to xTrain beforehand.
 #' @param k The number of data points used for final classification.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diaginal elemnts of a diagional matrix. 1 is the identity matirx.
+#' @param epsilon Diagonal elemnts of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
 #' @return  A numeric matrix containing class predictions or class probabilities.
 #' @details
