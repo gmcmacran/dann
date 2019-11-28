@@ -7,6 +7,10 @@
 
 [![Travis build
 status](https://travis-ci.org/gmcmacran/dann.svg?branch=master)](https://travis-ci.org/gmcmacran/dann)
+[![Codecov test
+coverage](https://codecov.io/gh/gmcmacran/dann/branch/master/graph/badge.svg)](https://codecov.io/gh/gmcmacran/dann?branch=master)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/dann)](https://cran.r-project.org/package=dann)
 <!-- badges: end -->
 
 An Implementation of Hastie and Tibshirani’s Discriminant Adaptive
