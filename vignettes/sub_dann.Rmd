@@ -2,7 +2,7 @@
 title: "SUB_DANN"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dann}
+  %\VignetteIndexEntry{sub_dann}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
