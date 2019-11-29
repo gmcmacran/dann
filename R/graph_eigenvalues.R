@@ -20,18 +20,18 @@
 #' # Circle data with 2 related variables and 5 unrelated variables
 #' ######################
 #' set.seed(1)
-#' train <- mlbench.circle(500, 2) %>%
+#' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train)[1:3] <- c("X1", "X2", "Y")
 #' 
 #' # Add 5 unrelated variables
 #' train <- train %>%
 #'   mutate(
-#'     U1 = runif(500, -1, 1),
-#'     U2 = runif(500, -1, 1),
-#'     U3 = runif(500, -1, 1),
-#'     U4 = runif(500, -1, 1),
-#'     U5 = runif(500, -1, 1)
+#'     U1 = runif(300, -1, 1),
+#'     U2 = runif(300, -1, 1),
+#'     U3 = runif(300, -1, 1),
+#'     U4 = runif(300, -1, 1),
+#'     U5 = runif(300, -1, 1)
 #'   )
 #' 
 #' xTrain <- train %>%

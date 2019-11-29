@@ -245,12 +245,13 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' # Circle Data
 #' ######################
 #' set.seed(1)
-#' train <- mlbench.circle(500, 2) %>%
+#' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
 #' 
 #' ggplot(train, aes(x = X1, y = X2, colour = Y)) +
-#'   geom_point()
+#'   geom_point() +
+#'   labs(title = "Train Data")
 #' 
 #' xTrain <- train %>%
 #'   select(X1, X2) %>%
@@ -261,12 +262,13 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #'   as.numeric() %>%
 #'   as.matrix()
 #' 
-#' test <- mlbench.circle(500, 2) %>%
+#' test <- mlbench.circle(100, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(test) <- c("X1", "X2", "Y")
 #' 
 #' ggplot(test, aes(x = X1, y = X2, colour = Y)) +
-#'   geom_point()
+#'   geom_point() +
+#'   labs(title = "Test Data")
 #' 
 #' xTest <- test %>%
 #'   select(X1, X2) %>%

@@ -59,18 +59,18 @@ library(ggplot2)
 # Circle data with unrelated variables
 ######################
 set.seed(1)
-train <- mlbench.circle(500, 2) \%>\%
+train <- mlbench.circle(300, 2) \%>\%
   tibble::as_tibble()
 colnames(train)[1:3] <- c("X1", "X2", "Y")
 
 # Add 5 unrelated variables
 train <- train \%>\%
   mutate(
-    U1 = runif(500, -1, 1),
-    U2 = runif(500, -1, 1),
-    U3 = runif(500, -1, 1),
-    U4 = runif(500, -1, 1),
-    U5 = runif(500, -1, 1)
+    U1 = runif(300, -1, 1),
+    U2 = runif(300, -1, 1),
+    U3 = runif(300, -1, 1),
+    U4 = runif(300, -1, 1),
+    U5 = runif(300, -1, 1)
   )
 
 xTrain <- train \%>\%
@@ -82,18 +82,18 @@ yTrain <- train \%>\%
   as.numeric() \%>\%
   as.matrix()
 
-test <- mlbench.circle(500, 2) \%>\%
+test <- mlbench.circle(100, 2) \%>\%
   tibble::as_tibble()
 colnames(test)[1:3] <- c("X1", "X2", "Y")
 
 # Add 5 unrelated variables
 test <- test \%>\%
   mutate(
-    U1 = runif(500, -1, 1),
-    U2 = runif(500, -1, 1),
-    U3 = runif(500, -1, 1),
-    U4 = runif(500, -1, 1),
-    U5 = runif(500, -1, 1)
+    U1 = runif(100, -1, 1),
+    U2 = runif(100, -1, 1),
+    U3 = runif(100, -1, 1),
+    U4 = runif(100, -1, 1),
+    U5 = runif(100, -1, 1)
   )
 
 xTest <- test \%>\%
@@ -108,10 +108,13 @@ yTest <- test \%>\%
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 mean(dannPreds == yTest) # Not a good model
 
+# Data suggests a subspace with 2 dimentions. The correct answer.
+graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")
+
 subDannPreds <- sub_dann(
   xTrain, yTrain, xTest, 3, 50,
   1, FALSE, FALSE,
-  "mcd", 2
+  "classical", 2
 )
 # sub_dan does much better when unrelated variables are present.
 mean(subDannPreds == yTest)

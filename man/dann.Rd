@@ -49,12 +49,13 @@ library(ggplot2)
 # Circle Data
 ######################
 set.seed(1)
-train <- mlbench.circle(500, 2) \%>\%
+train <- mlbench.circle(300, 2) \%>\%
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 
 ggplot(train, aes(x = X1, y = X2, colour = Y)) +
-  geom_point()
+  geom_point() +
+  labs(title = "Train Data")
 
 xTrain <- train \%>\%
   select(X1, X2) \%>\%
@@ -65,12 +66,13 @@ yTrain <- train \%>\%
   as.numeric() \%>\%
   as.matrix()
 
-test <- mlbench.circle(500, 2) \%>\%
+test <- mlbench.circle(100, 2) \%>\%
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "Y")
 
 ggplot(test, aes(x = X1, y = X2, colour = Y)) +
-  geom_point()
+  geom_point() +
+  labs(title = "Test Data")
 
 xTest <- test \%>\%
   select(X1, X2) \%>\%

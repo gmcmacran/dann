@@ -1,6 +1,6 @@
 Package: dann
 Type: Package
-Title: An Implementation Of Adaptive Nearest Neighbor Classification
+Title: An Implementation of Discriminant Adaptive Nearest Neighbor Classification
 Version: 0.1.0
 Author: Greg McMahan
 Maintainer: Greg McMahan <gmcmacran@gmail.com>
