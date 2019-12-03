@@ -206,13 +206,39 @@ rm(xTest, yTest)
 rm(dannPreds)
 
 ###############################################
+# Confirm values of yTrain don't break anything
+###############################################
+# xTest <- matrix(0, nrow = 5, ncol = 2)
+# xTrain <- matrix(0, nrow = 5, ncol = 2)
+#
+# xTrain[, 1] <- c(1, 2, 3, 4, 5)
+# xTrain[, 2] <- c(6, 7, 8, 9, 10)
+# yTrain <- matrix(c(rep(-3, 2), rep(-2, 3)), nrow = 5, ncol = 1)
+#
+# xTest[, 1] <- c(5, 4, 3, 2, 1)
+# xTest[, 2] <- c(10, 9, 8, 7, 6)
+# dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
+#
+# test_that("Validate structure", {
+#   expect_true(is.matrix(dannPreds))
+#   expect_true(is.numeric(dannPreds))
+#   expect_true(nrow(dannPreds) == nrow(xTest))
+# })
+#
+# test_that("Compare results to python version. Problem #1", {
+#   expect_true(all(dannPreds == c(2, 2, 2, 1, 1)))
+# })
+#
+# rm(xTest, xTrain, yTrain, dannPreds)
+
+###############################################
 # Confirm class probabilities look correct.
 ###############################################
 ######################
 # Generate problem
 ######################
 set.seed(1)
-train <- mlbench.circle(500, 2) %>%
+train <- mlbench.circle(20, 2) %>%
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 
@@ -225,7 +251,7 @@ yTrain <- train %>%
   as.numeric() %>%
   as.matrix()
 
-test <- mlbench.circle(500, 2) %>%
+test <- mlbench.circle(20, 2) %>%
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "Y")
 
@@ -242,7 +268,7 @@ yTest <- test %>%
 # K equal 1
 ######################
 K <- 1
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 15, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -264,7 +290,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 2
 ######################
 K <- 2
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 15, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -286,29 +312,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 3
 ######################
 K <- 3
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
-test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
-  expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
-  expect_true(ncol(dannPreds) == 2)
-  expect_true(all(colnames(dannPreds) == c("Class1", "Class2")))
-})
-
-test_that("Confirm class probabilities sum to 1", {
-  expect_true(all(rowSums(dannPreds) == 1))
-})
-
-possibleProb <- 0:K / K
-test_that("Confirm class probabilities are divisible by k", {
-  expect_true(all(dannPreds %in% possibleProb))
-})
-
-######################
-# K equal 4
-######################
-K <- 4
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 15, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -330,7 +334,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 5
 ######################
 K <- 5
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 15, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))
@@ -352,51 +356,7 @@ test_that("Confirm class probabilities are divisible by k", {
 # K equal 10
 ######################
 K <- 10
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
-test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
-  expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
-  expect_true(ncol(dannPreds) == 2)
-  expect_true(all(colnames(dannPreds) == c("Class1", "Class2")))
-})
-
-test_that("Confirm class probabilities sum to 1", {
-  expect_true(all(rowSums(dannPreds) == 1))
-})
-
-possibleProb <- 0:K / K
-test_that("Confirm class probabilities are divisible by k", {
-  expect_true(all(dannPreds %in% possibleProb))
-})
-
-######################
-# K equal 50
-######################
-K <- 50
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
-test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
-  expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
-  expect_true(ncol(dannPreds) == 2)
-  expect_true(all(colnames(dannPreds) == c("Class1", "Class2")))
-})
-
-test_that("Confirm class probabilities sum to 1", {
-  expect_true(all(rowSums(dannPreds) == 1))
-})
-
-possibleProb <- 0:K / K
-test_that("Confirm class probabilities are divisible by k", {
-  expect_true(all(dannPreds %in% possibleProb))
-})
-
-######################
-# K equal 100
-######################
-K <- 100
-dannPreds <- dann(xTrain, yTrain, xTest, K, 200, 1, TRUE)
+dannPreds <- dann(xTrain, yTrain, xTest, K, 15, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
   expect_true(is.numeric(dannPreds))

@@ -134,6 +134,16 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   }
 
   ###################################
+  # Shift classes if needed. Need min(yTrain) > 0
+  ###################################
+  if ( min(yTrain) <= 0) {
+    shiftedBy <- abs(min(yTrain)) + 1
+    yTrain <- yTrain + shiftedBy
+    shifted <- TRUE
+  } else
+    shifted <- FALSE
+
+  ###################################
   # Calculate predictions
   ###################################
 
@@ -142,7 +152,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     colnames(predictions) <- "Class"
   } else {
     predictions <- matrix(0, nrow = nrow(xTest), ncol = length(unique(yTrain)))
-    colnames(predictions) <- stringr::str_c("Class", as.character(unique(yTrain)))
+    colnames(predictions) <- stringr::str_c("Class", as.character(sort(unique(yTrain))))
   }
 
   for (i in seq_along(1:nrow(xTest))) {
@@ -209,8 +219,16 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     if (!probability) {
       predictions[i, ] <- MODE(yTrain[nearest])
     } else {
-      predictions[i, ] <- class_proportions(yTrain[nearest], unique(yTrain))
+      predictions[i, ] <- class_proportions(yTrain[nearest], sort(unique(yTrain)))
     }
+  }
+
+  ###################################
+  # Shift classes back if needed.
+  ###################################
+  if (shifted & probability) {
+    yTrain <- yTrain - shiftedBy
+    colnames(predictions) <- sort(unique(yTrain))
   }
 
   return(predictions)
@@ -240,7 +258,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' library(magrittr)
 #' library(dplyr)
 #' library(ggplot2)
-#' 
+#'
 #' ######################
 #' # Circle Data
 #' ######################
@@ -248,40 +266,40 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
-#' 
+#'
 #' ggplot(train, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Train Data")
-#' 
+#'
 #' xTrain <- train %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#' 
+#'
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.matrix()
-#' 
+#'
 #' test <- mlbench.circle(100, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(test) <- c("X1", "X2", "Y")
-#' 
+#'
 #' ggplot(test, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Test Data")
-#' 
+#'
 #' xTest <- test %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#' 
+#'
 #' yTest <- test %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.matrix()
-#' 
+#'
 #' dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 #' mean(dannPreds == yTest) # An accurate model.
-#' 
+#'
 #' rm(train, test)
 #' rm(xTrain, yTrain)
 #' rm(xTest, yTest)
