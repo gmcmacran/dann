@@ -22,9 +22,9 @@ xTest[, 2] <- c(10, 9, 8, 7, 6)
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
 
 test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
+  expect_true(is.vector(dannPreds))
   expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(length(dannPreds) == nrow(xTest))
 })
 
 test_that("Compare results to python version. Problem #1", {
@@ -50,9 +50,9 @@ xTest[, 3] <- c(10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
 dannPreds <- dann(xTrain, yTrain, xTest, 1, 4, 1, FALSE)
 
 test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
+  expect_true(is.vector(dannPreds))
   expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(length(dannPreds) == nrow(xTest))
 })
 
 test_that("Compare results to python version. Problem #2", {
@@ -97,9 +97,9 @@ yTest <- test %>%
 dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1, FALSE)
 
 test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
+  expect_true(is.vector(dannPreds))
   expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(length(dannPreds) == nrow(xTest))
 })
 
 test_that("Compare predictions to observed #1", {
@@ -144,9 +144,9 @@ yTest <- test %>%
 dannPreds <- dann(xTrain, yTrain, xTest, 7, 100, 1, FALSE)
 
 test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
+  expect_true(is.vector(dannPreds))
   expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(length(dannPreds) == nrow(xTest))
 })
 
 test_that("Compare predictions to observed #2", {
@@ -191,9 +191,9 @@ yTest <- test %>%
 dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
 
 test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
+  expect_true(is.vector(dannPreds))
   expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(length(dannPreds) == nrow(xTest))
 })
 
 test_that("Compare predictions to observed #3", {
@@ -206,30 +206,83 @@ rm(xTest, yTest)
 rm(dannPreds)
 
 ###############################################
-# Confirm values of yTrain don't break anything
+# Confirm class numeric value shifting works as expected
 ###############################################
-# xTest <- matrix(0, nrow = 5, ncol = 2)
-# xTrain <- matrix(0, nrow = 5, ncol = 2)
-#
-# xTrain[, 1] <- c(1, 2, 3, 4, 5)
-# xTrain[, 2] <- c(6, 7, 8, 9, 10)
-# yTrain <- matrix(c(rep(-3, 2), rep(-2, 3)), nrow = 5, ncol = 1)
-#
-# xTest[, 1] <- c(5, 4, 3, 2, 1)
-# xTest[, 2] <- c(10, 9, 8, 7, 6)
-# dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
-#
-# test_that("Validate structure", {
-#   expect_true(is.matrix(dannPreds))
-#   expect_true(is.numeric(dannPreds))
-#   expect_true(nrow(dannPreds) == nrow(xTest))
-# })
-#
-# test_that("Compare results to python version. Problem #1", {
-#   expect_true(all(dannPreds == c(2, 2, 2, 1, 1)))
-# })
-#
-# rm(xTest, xTrain, yTrain, dannPreds)
+######################
+# Class
+######################
+xTest <- matrix(0, nrow = 5, ncol = 2)
+xTrain <- matrix(0, nrow = 5, ncol = 2)
+
+xTrain[, 1] <- c(1, 2, 3, 4, 5)
+xTrain[, 2] <- c(6, 7, 8, 9, 10)
+yTrain <- matrix(c(rep(-3, 2), rep(-2, 3)), nrow = 5, ncol = 1)
+
+xTest[, 1] <- c(5, 4, 3, 2, 1)
+xTest[, 2] <- c(10, 9, 8, 7, 6)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
+
+test_that("Validate structure", {
+  expect_true(is.vector(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(length(dannPreds) == nrow(xTest))
+})
+
+test_that("Shift logic test #1", {
+  expect_true(all(dannPreds == c(-2, -2, -2, -3, -3)))
+})
+
+# Repeat with non sequental classes
+yTrain <- matrix(c(rep(-3, 2), rep(2, 3)), nrow = 5, ncol = 1)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
+test_that("Validate structure", {
+  expect_true(is.vector(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(length(dannPreds) == nrow(xTest))
+})
+
+test_that("Shift logic test #2", {
+  expect_true(all(dannPreds == c(2, 2, 2, -3, -3)))
+})
+
+# Repeat normal use case. 0 and 1.
+yTrain <- matrix(c(rep(0, 2), rep(1, 3)), nrow = 5, ncol = 1)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
+test_that("Validate structure", {
+  expect_true(is.vector(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(length(dannPreds) == nrow(xTest))
+})
+
+test_that("Shift logic test #3", {
+  expect_true(all(dannPreds == c(1, 1, 1, 0, 0)))
+})
+
+######################
+# probabilities
+######################
+
+yTrain <- matrix(c(rep(0, 2), rep(1, 3)), nrow = 5, ncol = 1)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, TRUE)
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(ncol(dannPreds) == 2)
+  expect_true(all(colnames(dannPreds) == c("Class0", "Class1")))
+})
+
+yTrain <- matrix(c(rep(-4, 2), rep(-1, 3)), nrow = 5, ncol = 1)
+dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, TRUE)
+test_that("Validate structure", {
+  expect_true(is.matrix(dannPreds))
+  expect_true(is.numeric(dannPreds))
+  expect_true(nrow(dannPreds) == nrow(xTest))
+  expect_true(ncol(dannPreds) == 2)
+  expect_true(all(colnames(dannPreds) == c("Class-4", "Class-1")))
+})
+
+rm(xTest, xTrain, yTrain, dannPreds)
 
 ###############################################
 # Confirm class probabilities look correct.
@@ -398,10 +451,9 @@ xTest[, 2] <- runif(100, -1, 1)
 ###############################################
 dannPreds <- dann(xTrain, yTrain, xTest, 2, 5, 1, FALSE)
 test_that("Validate structure", {
-  expect_true(is.matrix(dannPreds))
+  expect_true(is.vector(dannPreds))
   expect_true(is.numeric(dannPreds))
-  expect_true(nrow(dannPreds) == nrow(xTest))
-  expect_true(ncol(dannPreds) == 1)
+  expect_true(length(dannPreds) == nrow(xTest))
   expect_true(all(colnames(dannPreds) == "Class"))
 })
 

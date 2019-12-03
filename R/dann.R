@@ -7,7 +7,7 @@
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
-#' @return  A numeric matrix containing class predictions or class probabilities.
+#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @keywords internal
 dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
   ###################################
@@ -136,20 +136,20 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   ###################################
   # Shift classes if needed. Need min(yTrain) > 0
   ###################################
-  if ( min(yTrain) <= 0) {
+  if (min(yTrain) <= 0) {
     shiftedBy <- abs(min(yTrain)) + 1
     yTrain <- yTrain + shiftedBy
     shifted <- TRUE
-  } else
+  } else {
     shifted <- FALSE
+  }
 
   ###################################
   # Calculate predictions
   ###################################
 
   if (!probability) {
-    predictions <- matrix(-1, nrow = nrow(xTest), ncol = 1)
-    colnames(predictions) <- "Class"
+    predictions <- rep(-1, nrow(xTest))
   } else {
     predictions <- matrix(0, nrow = nrow(xTest), ncol = length(unique(yTrain)))
     colnames(predictions) <- stringr::str_c("Class", as.character(sort(unique(yTrain))))
@@ -217,7 +217,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
       distances[kth] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[kth, 1:ncol(xTrain), drop = FALSE ], sigma)
     nearest <- order(distances, length(distances):1)[1:k]
     if (!probability) {
-      predictions[i, ] <- MODE(yTrain[nearest])
+      predictions[i] <- MODE(yTrain[nearest])
     } else {
       predictions[i, ] <- class_proportions(yTrain[nearest], sort(unique(yTrain)))
     }
@@ -228,7 +228,9 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   ###################################
   if (shifted & probability) {
     yTrain <- yTrain - shiftedBy
-    colnames(predictions) <- sort(unique(yTrain))
+    colnames(predictions) <- stringr::str_c("Class", as.character(sort(unique(yTrain))))
+  } else if (shifted & !probability) {
+    predictions <- predictions - shiftedBy
   }
 
   return(predictions)
@@ -245,7 +247,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
-#' @return  A numeric matrix containing class predictions or class probabilities.
+#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @details
 #' This is an implementation of Hastie and Tibshirani's
 #' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
@@ -258,7 +260,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' library(magrittr)
 #' library(dplyr)
 #' library(ggplot2)
-#'
+#' 
 #' ######################
 #' # Circle Data
 #' ######################
@@ -266,40 +268,40 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
-#'
+#' 
 #' ggplot(train, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Train Data")
-#'
+#' 
 #' xTrain <- train %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.matrix()
-#'
+#' 
 #' test <- mlbench.circle(100, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(test) <- c("X1", "X2", "Y")
-#'
+#' 
 #' ggplot(test, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Test Data")
-#'
+#' 
 #' xTest <- test %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTest <- test %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.matrix()
-#'
+#' 
 #' dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 #' mean(dannPreds == yTest) # An accurate model.
-#'
+#' 
 #' rm(train, test)
 #' rm(xTrain, yTrain)
 #' rm(xTest, yTest)

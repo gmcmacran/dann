@@ -10,7 +10,7 @@
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param sphere weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
-#' @return  A numeric matrix containing class predictions or class probabilities.
+#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @keywords internal
 sub_dann_source <- function(xTrain, yTrain, xTest,
                             k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
@@ -199,7 +199,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
-#' @return  A numeric matrix containing class predictions or class probabilities.
+#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @details
 #' This is an implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
 #' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest

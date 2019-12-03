@@ -40,9 +40,9 @@ yTest <- test %>%
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 5, 50, 1, FALSE, FALSE, "mcd", 2)
 
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
+  expect_true(length(subDannPreds) == nrow(xTest))
 })
 
 test_that("Compare predictions to observed #1", {
@@ -87,9 +87,9 @@ yTest <- test %>%
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 1, 50, 1, FALSE, FALSE, "mcd", 3)
 
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
+  expect_true(length(subDannPreds) == nrow(xTest))
 })
 
 test_that("Compare predictions to observed #2", {
@@ -268,10 +268,9 @@ xTest[, 2] <- runif(100, -1, 1)
 ###############################################
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 5, 1, FALSE, FALSE, "mcd", 2)
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
-  expect_true(ncol(subDannPreds) == 1)
+  expect_true(length(subDannPreds) == nrow(xTest))
   expect_true(all(colnames(subDannPreds) == "Class"))
 })
 
@@ -289,19 +288,17 @@ test_that("Validate structure", {
 ###############################################
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 5, 1, FALSE, FALSE, "mcd", 2)
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
-  expect_true(ncol(subDannPreds) == 1)
+  expect_true(length(subDannPreds) == nrow(xTest))
   expect_true(all(colnames(subDannPreds) == "Class"))
 })
 
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 5, 1, FALSE, TRUE, "mcd", 2)
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
-  expect_true(ncol(subDannPreds) == 1)
+  expect_true(length(subDannPreds) == nrow(xTest))
   expect_true(all(colnames(subDannPreds) == "Class"))
 })
 
@@ -310,28 +307,25 @@ test_that("Validate structure", {
 ###############################################
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 50, 1, FALSE, FALSE, "mve", 2)
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
-  expect_true(ncol(subDannPreds) == 1)
+  expect_true(length(subDannPreds) == nrow(xTest))
   expect_true(all(colnames(subDannPreds) == "Class"))
 })
 
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 50, 1, FALSE, FALSE, "mcd", 2)
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
-  expect_true(ncol(subDannPreds) == 1)
+  expect_true(length(subDannPreds) == nrow(xTest))
   expect_true(all(colnames(subDannPreds) == "Class"))
 })
 
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 50, 1, FALSE, FALSE, "classical", 2)
 test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
+  expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
-  expect_true(ncol(subDannPreds) == 1)
+  expect_true(length(subDannPreds) == nrow(xTest))
   expect_true(all(colnames(subDannPreds) == "Class"))
 })
 

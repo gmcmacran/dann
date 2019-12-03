@@ -24,7 +24,7 @@ dann_source(xTrain, yTrain, xTest, k = 5,
 \item{probability}{Should probabilities instead of classes be returned?}
 }
 \value{
-A numeric matrix containing class predictions or class probabilities.
+A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 }
 \description{
 Discriminant Adaptive Nearest Neighbor Classification

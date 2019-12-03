@@ -7,7 +7,7 @@ Maintainer: Greg McMahan <gmcmacran@gmail.com>
 Description: Discriminant Adaptive Nearest Neighbor Classification is a 
     variation of k nearest neighbors where the neighborhood is elongated
     along class boundaries. This package implements dann and sub_dann from
-    Hastie (1995) <https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf>
+    Hastie (1995) <https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

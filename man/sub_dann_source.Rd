@@ -31,7 +31,7 @@ sub_dann_source(xTrain, yTrain, xTest, k = 5,
 \item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
 }
 \value{
-A numeric matrix containing class predictions or class probabilities.
+A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 }
 \description{
 Discriminant Adaptive Nearest Neighbor With Subspace Reduction
