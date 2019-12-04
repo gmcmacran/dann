@@ -12,7 +12,7 @@ dann(xTrain, yTrain, xTest, k = 5,
 \item{xTrain}{Train features. Something easily converted to a numeric matrix.
 Generally columns should have mean zero and standard deviation one beforehand.}
 
-\item{yTrain}{Train classes. Something easily converted to a numeric matrix.}
+\item{yTrain}{Train classes. Something easily converted to a numeric vector.}
 
 \item{xTest}{Test features. Something easily converted to a numeric matrix.
 Generally columns should be centered and scaled according to xTrain beforehand.}
@@ -64,7 +64,7 @@ xTrain <- train \%>\%
 yTrain <- train \%>\%
   pull(Y) \%>\%
   as.numeric() \%>\%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.circle(100, 2) \%>\%
   tibble::as_tibble()
@@ -81,7 +81,7 @@ xTest <- test \%>\%
 yTest <- test \%>\%
   pull(Y) \%>\%
   as.numeric() \%>\%
-  as.matrix()
+  as.vector()
 
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 mean(dannPreds == yTest) # An accurate model.

@@ -11,7 +11,7 @@ graph_eigenvalues(xTrain, yTrain,
 \arguments{
 \item{xTrain}{Train features. Something easily converted to a numeric matrix.}
 
-\item{yTrain}{Train classes. Something easily converted to a numeric matrix.}
+\item{yTrain}{Train classes. Something easily converted to a numeric vector.}
 
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
@@ -61,7 +61,7 @@ xTrain <- train \%>\%
 yTrain <- train \%>\%
   pull(Y) \%>\%
   as.numeric() \%>\%
-  as.matrix()
+  as.vector()
 
 # Data suggests a subspace with 2 dimentions. The correct answer.
 graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")

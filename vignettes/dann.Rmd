@@ -49,7 +49,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.circle(500, 2) %>%
   tibble::as_tibble()
@@ -62,7 +62,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 mean(dannPreds == yTest) #An accurate model.

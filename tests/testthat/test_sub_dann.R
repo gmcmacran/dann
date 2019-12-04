@@ -22,7 +22,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
   tibble::as_tibble()
@@ -35,7 +35,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 5, 50, 1, FALSE, FALSE, "mcd", 2)
 
@@ -69,7 +69,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) %>%
   tibble::as_tibble()
@@ -82,7 +82,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 1, 50, 1, FALSE, FALSE, "mcd", 3)
 
@@ -119,7 +119,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.circle(20, 2) %>%
   tibble::as_tibble()
@@ -132,7 +132,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 ######################
 # K equal 1
@@ -258,7 +258,7 @@ xTrain <- matrix(0, nrow = 100, ncol = 2)
 
 xTrain[, 1] <- runif(100, -10, 1)
 xTrain[, 2] <- runif(100, -1, 1)
-yTrain <- matrix(c(rep(1, 50), rep(2, 50)), nrow = 100, ncol = 1)
+yTrain <- c(rep(1, 50), rep(2, 50))
 
 xTest[, 1] <- runif(100, -1, 1)
 xTest[, 2] <- runif(100, -1, 1)
@@ -344,7 +344,7 @@ test_that("Nonnumeric inputs error", {
 rm(chars)
 
 missingValues <- yTrain
-missingValues[1, 1] <- NA
+missingValues[1] <- NA
 test_that("Missing values in inputs error", {
   expect_error(sub_dann(missingValues, yTrain, xTest), NULL)
   expect_error(sub_dann(xTrain, missingValues, xTest), NULL)
@@ -353,7 +353,7 @@ test_that("Missing values in inputs error", {
 rm(missingValues)
 
 xTrainrowMissing <- xTrain[1:(nrow(xTrain) - 1), ]
-yTrainrowMissing <- yTrain[1:(nrow(yTrain) - 1), ]
+yTrainrowMissing <- yTrain[1:(length(yTrain) - 1)]
 test_that("Differnet number of rows in xTrain and yTrain error.", {
   expect_error(sub_dann(xTrainrowMissing, yTrain, xTest), NULL)
   expect_error(sub_dann(xTrain, yTrainrowMissing, xTest), NULL)
@@ -361,11 +361,11 @@ test_that("Differnet number of rows in xTrain and yTrain error.", {
 rm(xTrainrowMissing, yTrainrowMissing)
 
 noDataxTrain <- xTrain[0, ]
-noDatayTrain <- yTrain[0, ]
+noDatayTrain <- yTrain[0]
 noDataxTest <- xTest[0, ]
 test_that("No rows in inputs error", {
   expect_error(sub_dann(noDataxTrain, noDatayTrain, xTest), NULL)
-  expect_error(sub_dann(xTrain, yTrainrowMissing, noDataxTest), NULL)
+  expect_error(sub_dann(xTrain, yTrain, noDataxTest), NULL)
 })
 rm(noDataxTrain, noDatayTrain, noDataxTest)
 

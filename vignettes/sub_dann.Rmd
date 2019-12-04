@@ -56,7 +56,7 @@ In the below example there are 2 related variables and 5 that are unrelated. Let
  yTrain <- train %>%
    pull(Y) %>%
    as.numeric() %>%
-   as.matrix()
+   as.vector()
 
  test <- mlbench.circle(500, 2) %>%
    tibble::as_tibble()
@@ -79,7 +79,7 @@ In the below example there are 2 related variables and 5 that are unrelated. Let
  yTest <- test %>%
    pull(Y) %>%
    as.numeric() %>%
-   as.matrix()
+   as.vector()
  
  dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
  mean(dannPreds == yTest) # Not a good model

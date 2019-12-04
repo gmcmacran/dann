@@ -15,7 +15,7 @@ xTrain <- matrix(0, nrow = 5, ncol = 2)
 
 xTrain[, 1] <- c(1, 2, 3, 4, 5)
 xTrain[, 2] <- c(6, 7, 8, 9, 10)
-yTrain <- matrix(c(rep(1, 2), rep(2, 3)), nrow = 5, ncol = 1)
+yTrain <- c(rep(1, 2), rep(2, 3))
 
 xTest[, 1] <- c(5, 4, 3, 2, 1)
 xTest[, 2] <- c(10, 9, 8, 7, 6)
@@ -42,7 +42,7 @@ xTrain <- matrix(0, nrow = 10, ncol = 3)
 xTrain[, 1] <- c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
 xTrain[, 2] <- c(6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
 xTrain[, 3] <- c(10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-yTrain <- matrix(c(rep(1, 2), rep(2, 2), rep(3, 2), rep(4, 2), rep(5, 2)), nrow = 10, ncol = 1)
+yTrain <- c(rep(1, 2), rep(2, 2), rep(3, 2), rep(4, 2), rep(5, 2))
 
 xTest[, 1] <- c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
 xTest[, 2] <- c(7, 7, 8, 8, 10, 10, 12, 12, 14, 14)
@@ -79,7 +79,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
   tibble::as_tibble()
@@ -92,7 +92,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1, FALSE)
 
@@ -126,7 +126,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) %>%
   tibble::as_tibble()
@@ -139,7 +139,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 dannPreds <- dann(xTrain, yTrain, xTest, 7, 100, 1, FALSE)
 
@@ -173,7 +173,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.circle(500, 2) %>%
   tibble::as_tibble()
@@ -186,7 +186,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1, FALSE)
 
@@ -216,7 +216,7 @@ xTrain <- matrix(0, nrow = 5, ncol = 2)
 
 xTrain[, 1] <- c(1, 2, 3, 4, 5)
 xTrain[, 2] <- c(6, 7, 8, 9, 10)
-yTrain <- matrix(c(rep(-3, 2), rep(-2, 3)), nrow = 5, ncol = 1)
+yTrain <- c(rep(-3, 2), rep(-2, 3))
 
 xTest[, 1] <- c(5, 4, 3, 2, 1)
 xTest[, 2] <- c(10, 9, 8, 7, 6)
@@ -233,7 +233,7 @@ test_that("Shift logic test #1", {
 })
 
 # Repeat with non sequental classes
-yTrain <- matrix(c(rep(-3, 2), rep(2, 3)), nrow = 5, ncol = 1)
+yTrain <- c(rep(-3, 2), rep(2, 3))
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
 test_that("Validate structure", {
   expect_true(is.vector(dannPreds))
@@ -246,7 +246,7 @@ test_that("Shift logic test #2", {
 })
 
 # Repeat normal use case. 0 and 1.
-yTrain <- matrix(c(rep(0, 2), rep(1, 3)), nrow = 5, ncol = 1)
+yTrain <- c(rep(0, 2), rep(1, 3))
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, FALSE)
 test_that("Validate structure", {
   expect_true(is.vector(dannPreds))
@@ -262,7 +262,7 @@ test_that("Shift logic test #3", {
 # probabilities
 ######################
 
-yTrain <- matrix(c(rep(0, 2), rep(1, 3)), nrow = 5, ncol = 1)
+yTrain <- c(rep(0, 2), rep(1, 3))
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
@@ -272,7 +272,7 @@ test_that("Validate structure", {
   expect_true(all(colnames(dannPreds) == c("Class0", "Class1")))
 })
 
-yTrain <- matrix(c(rep(-4, 2), rep(-1, 3)), nrow = 5, ncol = 1)
+yTrain <- c(rep(-4, 2), rep(-1, 3))
 dannPreds <- dann(xTrain, yTrain, xTest, 3, 5, 1, TRUE)
 test_that("Validate structure", {
   expect_true(is.matrix(dannPreds))
@@ -302,7 +302,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.circle(20, 2) %>%
   tibble::as_tibble()
@@ -315,7 +315,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 ######################
 # K equal 1
@@ -441,7 +441,7 @@ xTrain <- matrix(0, nrow = 100, ncol = 2)
 
 xTrain[, 1] <- runif(100, -10, 1)
 xTrain[, 2] <- runif(100, -1, 1)
-yTrain <- matrix(c(rep(1, 50), rep(2, 50)), nrow = 100, ncol = 1)
+yTrain <- c(rep(1, 50), rep(2, 50))
 
 xTest[, 1] <- runif(100, -1, 1)
 xTest[, 2] <- runif(100, -1, 1)
@@ -481,7 +481,7 @@ test_that("Nonnumeric inputs error", {
 rm(chars)
 
 missingValues <- yTrain
-missingValues[1, 1] <- NA
+missingValues[1] <- NA
 test_that("Missing values in inputs error", {
   expect_error(dann(missingValues, yTrain, xTest), NULL)
   expect_error(dann(xTrain, missingValues, xTest), NULL)
@@ -490,7 +490,7 @@ test_that("Missing values in inputs error", {
 rm(missingValues)
 
 xTrainrowMissing <- xTrain[1:(nrow(xTrain) - 1), ]
-yTrainrowMissing <- yTrain[1:(nrow(yTrain) - 1), ]
+yTrainrowMissing <- yTrain[1:(length(yTrain) - 1)]
 test_that("Differnet number of rows in xTrain and yTrain error.", {
   expect_error(dann(xTrainrowMissing, yTrain, xTest), NULL)
   expect_error(dann(xTrain, yTrainrowMissing, xTest), NULL)
@@ -498,11 +498,11 @@ test_that("Differnet number of rows in xTrain and yTrain error.", {
 rm(xTrainrowMissing, yTrainrowMissing)
 
 noDataxTrain <- xTrain[0, ]
-noDatayTrain <- yTrain[0, ]
+noDatayTrain <- yTrain[0]
 noDataxTest <- xTest[0, ]
 test_that("No rows in inputs error", {
   expect_error(dann(noDataxTrain, noDatayTrain, xTest), NULL)
-  expect_error(dann(xTrain, yTrainrowMissing, noDataxTest), NULL)
+  expect_error(dann(xTrain, noDatayTrain, noDataxTest), NULL)
 })
 rm(noDataxTrain, noDatayTrain, noDataxTest)
 

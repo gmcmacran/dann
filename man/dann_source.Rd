@@ -11,7 +11,7 @@ dann_source(xTrain, yTrain, xTest, k = 5,
 \arguments{
 \item{xTrain}{Train features. Something easily converted to a numeric matrix.}
 
-\item{yTrain}{Train classes. Something easily converted to a numeric matrix.}
+\item{yTrain}{Train classes. Something easily converted to a numeric vector.}
 
 \item{xTest}{Test features. Something easily converted to a numeric matrix.}
 

@@ -29,7 +29,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 # Data suggests a subspace with 2 dimentions. The correct answer.
 graph <- graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")
@@ -82,7 +82,7 @@ test_that("Nonnumeric inputs error", {
 rm(chars)
 
 missingValues <- yTrain
-missingValues[1, 1] <- NA
+missingValues[1] <- NA
 test_that("Nonnumeric inputs error", {
   expect_error(graph_eigenvalues(missingValues, yTrain, 50, FALSE, "mcd"), NULL)
   expect_error(graph_eigenvalues(xTrain, missingValues, 50, FALSE, "mcd"), NULL)
@@ -90,7 +90,7 @@ test_that("Nonnumeric inputs error", {
 rm(missingValues)
 
 xTrainrowMissing <- xTrain[1:(nrow(xTrain) - 1), ]
-yTrainrowMissing <- yTrain[1:(nrow(yTrain) - 1), ]
+yTrainrowMissing <- yTrain[1:(length(yTrain) - 1)]
 test_that("Differnet number of rows in xTrain and yTrain error.", {
   expect_error(graph_eigenvalues(xTrainrowMissing, yTrain), NULL)
   expect_error(graph_eigenvalues(xTrain, yTrainrowMissing), NULL)
@@ -98,7 +98,7 @@ test_that("Differnet number of rows in xTrain and yTrain error.", {
 rm(xTrainrowMissing, yTrainrowMissing)
 
 noDataxTrain <- xTrain[0, ]
-noDatayTrain <- yTrain[0, ]
+noDatayTrain <- yTrain[0]
 test_that("No rows in inputs error", {
   expect_error(graph_eigenvalues(noDataxTrain, noDatayTrain), NULL)
 })

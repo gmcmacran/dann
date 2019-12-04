@@ -84,7 +84,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 #Create test data
 test <- mlbench.circle(500, 2) %>%
@@ -107,7 +107,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 # Train and predict using dann from elements of statistical learning.
 dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1)
@@ -140,7 +140,7 @@ xTrain <- train %>%
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 test <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
   tibble::as_tibble()
@@ -162,7 +162,7 @@ xTest <- test %>%
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
-  as.matrix()
+  as.vector()
 
 # Train and predict using dann from elements of statistical learning.
 dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1)

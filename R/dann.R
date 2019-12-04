@@ -1,7 +1,7 @@
 #' Discriminant Adaptive Nearest Neighbor Classification
 #'
 #' @param xTrain Train features. Something easily converted to a numeric matrix.
-#' @param yTrain Train classes. Something easily converted to a numeric matrix.
+#' @param yTrain Train classes. Something easily converted to a numeric vector.
 #' @param xTest Test features. Something easily converted to a numeric matrix.
 #' @param k The number of data points used for final classification.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
@@ -17,19 +17,19 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   if (!is.matrix(xTrain)) {
     xTrain <- as.matrix(xTrain)
   }
-  if (!is.matrix(yTrain)) {
-    yTrain <- as.matrix(yTrain)
+  if (!is.vector(yTrain)) {
+    yTrain <- as.vector(yTrain)
   }
   if (!is.matrix(xTest)) {
-    yTrain <- as.matrix(yTrain)
+    xTest <- as.matrix(xTest)
   }
 
   # Confirm converstion worked
   if (!is.matrix(xTrain)) {
     stop("Was not able to convert argment xTrain to a matrix.")
   }
-  if (!is.matrix(yTrain)) {
-    stop("Was not able to convert argment yTrain to a matrix.")
+  if (!is.vector(yTrain)) {
+    stop("Was not able to convert argment yTrain to a vector.")
   }
   if (!is.matrix(xTest)) {
     stop("Was not able to convert argment xTest to a matrix.")
@@ -61,14 +61,11 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   if (ncol(xTrain) != ncol(xTest)) {
     stop("Argument xTrain and xTest should have the same number of columns.")
   }
-  if (nrow(xTrain) != nrow(yTrain)) {
-    stop("Argument xTrain and yTrain should have the same number of rows.")
+  if (nrow(xTrain) != length(yTrain)) {
+    stop("nrow(xTrain) should match length(yTrain).")
   }
   if (ncol(xTrain) < 1) {
     stop("Argument xTrain should have at least one column.")
-  }
-  if (ncol(yTrain) != 1) {
-    stop("Argument yTrain should only have one column.")
   }
   if (ncol(xTest) < 1) {
     stop("Argument xTest should have at least one column.")
@@ -76,8 +73,8 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   if (nrow(xTrain) < 1) {
     stop("Argument xTrain should have at least one row.")
   }
-  if (nrow(yTrain) < 1) {
-    stop("Argument yTrain should have at least one row.")
+  if (length(yTrain) < 1) {
+    stop("Argument yTrain should have positive length.")
   }
   if (nrow(xTest) < 1) {
     stop("Argument xTest should have at least one row.")
@@ -122,7 +119,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     stop("Argument epsilon should be numeric.")
   }
   if (epsilon < 0) {
-    stop("Argument epsilon should be at 0.")
+    stop("Argument epsilon should be at least 0.")
   }
 
   # probability is valid
@@ -169,7 +166,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     nearest_neighbors <- order(distances)[1:neighborhood_size]
     neighborhood_xTrain <- xTrain[nearest_neighbors, 1:ncol(xTrain), drop = FALSE]
     neighborhood_X_mean <- colMeans(neighborhood_xTrain)
-    neighborhood_y <- yTrain[nearest_neighbors, 1, drop = FALSE]
+    neighborhood_y <- yTrain[nearest_neighbors]
     neighborhood_classes <- unique(neighborhood_y)
 
     ###########
@@ -240,7 +237,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #'
 #' @param xTrain Train features. Something easily converted to a numeric matrix.
 #'               Generally columns should have mean zero and standard deviation one beforehand.
-#' @param yTrain Train classes. Something easily converted to a numeric matrix.
+#' @param yTrain Train classes. Something easily converted to a numeric vector.
 #' @param xTest Test features. Something easily converted to a numeric matrix.
 #'              Generally columns should be centered and scaled according to xTrain beforehand.
 #' @param k The number of data points used for final classification.
@@ -280,7 +277,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
-#'   as.matrix()
+#'   as.vector()
 #' 
 #' test <- mlbench.circle(100, 2) %>%
 #'   tibble::as_tibble()
@@ -297,7 +294,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' yTest <- test %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
-#'   as.matrix()
+#'   as.vector()
 #' 
 #' dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
 #' mean(dannPreds == yTest) # An accurate model.

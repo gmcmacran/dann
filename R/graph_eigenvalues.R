@@ -1,7 +1,7 @@
 #' A helper for sub_dann
 #'
 #' @param xTrain Train features. Something easily converted to a numeric matrix.
-#' @param yTrain Train classes. Something easily converted to a numeric matrix.
+#' @param yTrain Train classes. Something easily converted to a numeric vector.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
@@ -41,7 +41,7 @@
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
-#'   as.matrix()
+#'   as.vector()
 #' 
 #' # Data suggests a subspace with 2 dimentions. The correct answer.
 #' graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")
@@ -60,16 +60,16 @@ graph_eigenvalues <- function(xTrain, yTrain,
   if (!is.matrix(xTrain)) {
     xTrain <- as.matrix(xTrain)
   }
-  if (!is.matrix(yTrain)) {
-    yTrain <- as.matrix(yTrain)
+  if (!is.vector(yTrain)) {
+    yTrain <- as.vector(yTrain)
   }
 
   # Confirm converstion worked
   if (!is.matrix(xTrain)) {
     stop("Was not able to convert argment xTrain to a matrix.")
   }
-  if (!is.matrix(yTrain)) {
-    stop("Was not able to convert argment yTrain to a matrix.")
+  if (!is.vector(yTrain)) {
+    stop("Was not able to convert argment yTrain to a vector.")
   }
 
   # Confirm numeric
@@ -89,20 +89,17 @@ graph_eigenvalues <- function(xTrain, yTrain,
   }
 
   # Confirm structure looks right
-  if (nrow(xTrain) != nrow(yTrain)) {
-    stop("Argument xTrain and yTrain should have the same number of rows.")
+  if (nrow(xTrain) != length(yTrain)) {
+    stop("nrow(xTrain) should match length(yTrain).")
   }
   if (ncol(xTrain) < 1) {
     stop("Argument xTrain should have at least one column.")
   }
-  if (ncol(yTrain) != 1) {
-    stop("Argument yTrain should only have one column.")
-  }
   if (nrow(xTrain) < 1) {
     stop("Argument xTrain should have at least one row.")
   }
-  if (nrow(yTrain) < 1) {
-    stop("Argument yTrain should have at least one row.")
+  if (length(yTrain) < 1) {
+    stop("Argument yTrain should have positive length.")
   }
 
   # neighborhood_size is valid
