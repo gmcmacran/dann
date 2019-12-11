@@ -22,7 +22,7 @@ You can install the released version of dann from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-#install.packages("dann")
+install.packages("dann")
 ```
 
 And the development version from [GitHub](https://github.com/) with:
