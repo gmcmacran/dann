@@ -3,4 +3,6 @@
 export(dann)
 export(graph_eigenvalues)
 export(sub_dann)
+importFrom(Rcpp,sourceCpp)
 importFrom(rlang,.data)
+useDynLib(dann, .registration = TRUE)

@@ -44,7 +44,10 @@
 #'   as.vector()
 #' 
 #' # Data suggests a subspace with 2 dimentions. The correct answer.
-#' graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")
+#' graph_eigenvalues(
+#'   xTrain = xTrain, yTrain = yTrain,
+#'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
+#' )
 #' 
 #' 
 #' rm(train)

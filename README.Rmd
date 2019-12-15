@@ -43,7 +43,7 @@ DANN is a variation of k nearest neighbors where the shape of the neighborhood t
 ## Example 1: Circle Problem
 ```{r Circle}
 library(dann)
-library(dplyr)
+library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 library(mlbench)
 
@@ -56,7 +56,7 @@ colnames(train) <- c("X1", "X2", "Y")
 
 ggplot(train, aes(x = X1, y = X2, colour = Y)) + 
   geom_point() + 
-  labs(title = "Training Data")
+  labs(title = "Train Data")
 
 xTrain <- train %>%
   select(X1, X2) %>%
@@ -86,7 +86,8 @@ yTest <- test %>%
   as.vector()
 
 # Train and predict using dann from elements of statistical learning.
-dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1)
+dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 
+                  k = 7, neighborhood_size = 50, epsilon = 1)
 mean(dannPreds == yTest)
 
 
@@ -102,7 +103,7 @@ colnames(train) <- c("X1", "X2", "Y")
 
 ggplot(train, aes(x = X1, y = X2, colour = Y)) + 
   geom_point() + 
-  labs(title = "Training Data")
+  labs(title = "Train Data")
 
 xTrain <- train %>%
   select(X1, X2) %>%
@@ -131,7 +132,9 @@ yTest <- test %>%
   as.vector()
 
 # Train and predict using dann from elements of statistical learning.
-dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1)
+dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest,
+                  k = 5, neighborhood_size = 50, epsilon = 1)
+
 mean(dannPreds == yTest)
 
 

@@ -157,11 +157,12 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     ###########
     # Find neighborhood for x[i,]
     ###########
-    distances <- vector(mode = "numeric", length = nrow(xTrain))
-    for (j in seq_along(1:nrow(xTrain))) {
-      # distances[j] <- sum( (xTest[i, ]-xTrain[j,])^2) ^ .5
-      distances[j] <- sum((xTrain[j, ] - xTest[i, ])^2)^.5
-    }
+    # distances <- vector(mode = "numeric", length = nrow(xTrain))
+    # for (j in seq_along(1:nrow(xTrain))) {
+    #   # distances[j] <- sum( (xTest[i, ]-xTrain[j,])^2) ^ .5
+    #   distances[j] <- sum((xTrain[j, ] - xTest[i, ])^2)^.5
+    # }
+    distances <- calc_distance_C(xTrain, xTest[i, ])
 
     nearest_neighbors <- order(distances)[1:neighborhood_size]
     neighborhood_xTrain <- xTrain[nearest_neighbors, 1:ncol(xTrain), drop = FALSE]
@@ -296,7 +297,11 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #'   as.numeric() %>%
 #'   as.vector()
 #' 
-#' dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
+#' dannPreds <- dann(
+#'   xTrain = xTrain, yTrain = yTrain, xTest = xTest,
+#'   k = 3, neighborhood_size = 50, epsilon = 1,
+#'   probability = FALSE
+#' )
 #' mean(dannPreds == yTest) # An accurate model.
 #' 
 #' rm(train, test)

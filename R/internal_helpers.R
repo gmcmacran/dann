@@ -37,3 +37,8 @@ class_proportions <- function(x, possibleValues) {
   out <- counts / sum(counts)
   return(out)
 }
+
+#' @keywords internal
+.onUnload <- function(libpath) {
+  library.dynam.unload("dann", libpath)
+}

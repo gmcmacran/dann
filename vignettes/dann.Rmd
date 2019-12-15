@@ -64,7 +64,8 @@ yTest <- test %>%
   as.numeric() %>%
   as.vector()
 
-dannPreds <- dann(xTrain, yTrain, xTest, 3, 50, 1, FALSE)
+dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 
+                  k = 3, neighborhood_size = 50, epsilon = 1, probability = FALSE)
 mean(dannPreds == yTest) #An accurate model.
 
 rm(train, test)

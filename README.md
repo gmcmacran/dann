@@ -48,15 +48,7 @@ python [implementation.](https://github.com/christopherjenness/ML-lib)
 
 ``` r
 library(dann)
-library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
+library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 library(mlbench)
 
@@ -69,7 +61,7 @@ colnames(train) <- c("X1", "X2", "Y")
 
 ggplot(train, aes(x = X1, y = X2, colour = Y)) + 
   geom_point() + 
-  labs(title = "Training Data")
+  labs(title = "Train Data")
 ```
 
 <img src="man/figures/README-Circle-1.png" width="100%" />
@@ -109,7 +101,8 @@ yTest <- test %>%
   as.vector()
 
 # Train and predict using dann from elements of statistical learning.
-dannPreds <- dann(xTrain, yTrain, xTest, 7, 50, 1)
+dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 
+                  k = 7, neighborhood_size = 50, epsilon = 1)
 mean(dannPreds == yTest)
 #> [1] 0.964
 ```
@@ -125,7 +118,7 @@ colnames(train) <- c("X1", "X2", "Y")
 
 ggplot(train, aes(x = X1, y = X2, colour = Y)) + 
   geom_point() + 
-  labs(title = "Training Data")
+  labs(title = "Train Data")
 ```
 
 <img src="man/figures/README-Cluster-1.png" width="100%" />
@@ -164,7 +157,9 @@ yTest <- test %>%
   as.vector()
 
 # Train and predict using dann from elements of statistical learning.
-dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1)
+dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest,
+                  k = 5, neighborhood_size = 50, epsilon = 1)
+
 mean(dannPreds == yTest)
 #> [1] 1
 ```
