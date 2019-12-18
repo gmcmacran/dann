@@ -152,22 +152,17 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     colnames(predictions) <- stringr::str_c("Class", as.character(sort(unique(yTrain))))
   }
 
-  C <- ncol(xTrain)
+  NCOLX <- ncol(xTrain)
 
   for (i in seq_along(1:nrow(xTest))) {
 
     ###########
     # Find neighborhood for x[i,]
     ###########
-    # distances <- vector(mode = "numeric", length = nrow(xTrain))
-    # for (j in seq_along(1:nrow(xTrain))) {
-    #   # distances[j] <- sum( (xTest[i, ]-xTrain[j,])^2) ^ .5
-    #   distances[j] <- sum((xTrain[j, ] - xTest[i, ])^2)^.5
-    # }
     distances <- calc_distance_C(xTrain, xTest[i, ])
 
     nearest_neighbors <- order(distances)[1:neighborhood_size]
-    neighborhood_xTrain <- xTrain[nearest_neighbors, 1:C, drop = FALSE]
+    neighborhood_xTrain <- xTrain[nearest_neighbors, 1:NCOLX, drop = FALSE]
     neighborhood_X_mean <- colMeans(neighborhood_xTrain)
     neighborhood_y <- yTrain[nearest_neighbors]
     neighborhood_classes <- unique(neighborhood_y)
@@ -176,8 +171,8 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     # Between and within matrices
     ###########
     class_frequencies <- vector(mode = "numeric", length = length(neighborhood_classes))
-    within_class_cov <- matrix(0, nrow = C, ncol = C)
-    between_class_cov <- matrix(0, nrow = C, ncol = C)
+    within_class_cov <- matrix(0, nrow = NCOLX, ncol = NCOLX)
+    between_class_cov <- matrix(0, nrow = NCOLX, ncol = NCOLX)
 
     for (kth in seq_along(1:length(neighborhood_classes))) {
       target_class <- neighborhood_classes[kth]
@@ -205,7 +200,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     }
     W_star <- MASS::ginv(W_star)
     B_star <- W_star %*% between_class_cov %*% W_star
-    I <- diag(C)
+    I <- diag(NCOLX)
 
     sigma <- W_star %*% (B_star + epsilon * I) %*% W_star
 
@@ -214,7 +209,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     ###########
     distances <- vector(mode = "numeric", length = nrow(xTrain))
     for (kth in seq_along(1:length(distances)))
-      distances[kth] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[kth, 1:C, drop = FALSE ], sigma)
+      distances[kth] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
     nearest <- order(distances, length(distances):1)[1:k]
     if (!probability) {
       predictions[i] <- MODE(yTrain[nearest])
@@ -260,7 +255,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' library(magrittr)
 #' library(dplyr)
 #' library(ggplot2)
-#'
+#' 
 #' ######################
 #' # Circle Data
 #' ######################
@@ -268,44 +263,44 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
-#'
+#' 
 #' ggplot(train, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Train Data")
-#'
+#' 
 #' xTrain <- train %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.vector()
-#'
+#' 
 #' test <- mlbench.circle(100, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(test) <- c("X1", "X2", "Y")
-#'
+#' 
 #' ggplot(test, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Test Data")
-#'
+#' 
 #' xTest <- test %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTest <- test %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.vector()
-#'
+#' 
 #' dannPreds <- dann(
 #'   xTrain = xTrain, yTrain = yTrain, xTest = xTest,
 #'   k = 3, neighborhood_size = 50, epsilon = 1,
 #'   probability = FALSE
 #' )
 #' mean(dannPreds == yTest) # An accurate model.
-#'
+#' 
 #' rm(train, test)
 #' rm(xTrain, yTrain)
 #' rm(xTest, yTest)
