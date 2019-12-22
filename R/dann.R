@@ -209,7 +209,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     ###########
     distances <- vector(mode = "numeric", length = nrow(xTrain))
     for (kth in seq_along(1:length(distances)))
-      distances[kth] <- DANN_distance(xTest[i, 1:ncol(xTest), drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
+      distances[kth] <- DANN_distance(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
     nearest <- order(distances, length(distances):1)[1:k]
     if (!probability) {
       predictions[i] <- MODE(yTrain[nearest])
