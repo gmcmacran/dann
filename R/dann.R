@@ -208,8 +208,11 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     # DANN distance using sigma
     ###########
     distances <- vector(mode = "numeric", length = nrow(xTrain))
+    # for (kth in seq_along(1:length(distances))) {
+    #   distances[kth] <- DANN_distance(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
+    # }
     for (kth in seq_along(1:length(distances))) {
-      distances[kth] <- DANN_distance(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
+      distances[kth] <- DANN_distance_C(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
     }
     nearest <- order(distances, length(distances):1)[1:k]
     if (!probability) {
@@ -256,7 +259,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' library(magrittr)
 #' library(dplyr)
 #' library(ggplot2)
-#'
+#' 
 #' ######################
 #' # Circle Data
 #' ######################
@@ -264,44 +267,44 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
-#'
+#' 
 #' ggplot(train, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Train Data")
-#'
+#' 
 #' xTrain <- train %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.vector()
-#'
+#' 
 #' test <- mlbench.circle(100, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(test) <- c("X1", "X2", "Y")
-#'
+#' 
 #' ggplot(test, aes(x = X1, y = X2, colour = Y)) +
 #'   geom_point() +
 #'   labs(title = "Test Data")
-#'
+#' 
 #' xTest <- test %>%
 #'   select(X1, X2) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTest <- test %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.vector()
-#'
+#' 
 #' dannPreds <- dann(
 #'   xTrain = xTrain, yTrain = yTrain, xTest = xTest,
 #'   k = 3, neighborhood_size = 50, epsilon = 1,
 #'   probability = FALSE
 #' )
 #' mean(dannPreds == yTest) # An accurate model.
-#'
+#' 
 #' rm(train, test)
 #' rm(xTrain, yTrain)
 #' rm(xTest, yTest)
