@@ -208,9 +208,6 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     # DANN distance using sigma
     ###########
     distances <- vector(mode = "numeric", length = nrow(xTrain))
-    # for (kth in seq_along(1:length(distances))) {
-    #   distances[kth] <- DANN_distance(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
-    # }
     for (kth in seq_along(1:length(distances))) {
       distances[kth] <- DANN_distance_C(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
     }
