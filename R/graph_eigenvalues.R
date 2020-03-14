@@ -15,7 +15,7 @@
 #' library(mlbench)
 #' library(magrittr)
 #' library(dplyr)
-#'
+#' 
 #' ######################
 #' # Circle data with 2 related variables and 5 unrelated variables
 #' ######################
@@ -23,7 +23,7 @@
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train)[1:3] <- c("X1", "X2", "Y")
-#'
+#' 
 #' # Add 5 unrelated variables
 #' train <- train %>%
 #'   mutate(
@@ -33,23 +33,23 @@
 #'     U4 = runif(300, -1, 1),
 #'     U5 = runif(300, -1, 1)
 #'   )
-#'
+#' 
 #' xTrain <- train %>%
 #'   select(X1, X2, U1, U2, U3, U4, U5) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.vector()
-#'
+#' 
 #' # Data suggests a subspace with 2 dimentions. The correct answer.
 #' graph_eigenvalues(
 #'   xTrain = xTrain, yTrain = yTrain,
 #'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
 #' )
-#'
-#'
+#' 
+#' 
 #' rm(train)
 #' rm(xTrain, yTrain)
 #' @export

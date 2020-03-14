@@ -212,7 +212,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' library(magrittr)
 #' library(dplyr)
 #' library(ggplot2)
-#'
+#' 
 #' ######################
 #' # Circle data with unrelated variables
 #' ######################
@@ -220,7 +220,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train)[1:3] <- c("X1", "X2", "Y")
-#'
+#' 
 #' # Add 5 unrelated variables
 #' train <- train %>%
 #'   mutate(
@@ -230,20 +230,20 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #'     U4 = runif(300, -1, 1),
 #'     U5 = runif(300, -1, 1)
 #'   )
-#'
+#' 
 #' xTrain <- train %>%
 #'   select(X1, X2, U1, U2, U3, U4, U5) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTrain <- train %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.vector()
-#'
+#' 
 #' test <- mlbench.circle(100, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(test)[1:3] <- c("X1", "X2", "Y")
-#'
+#' 
 #' # Add 5 unrelated variables
 #' test <- test %>%
 #'   mutate(
@@ -253,29 +253,29 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #'     U4 = runif(100, -1, 1),
 #'     U5 = runif(100, -1, 1)
 #'   )
-#'
+#' 
 #' xTest <- test %>%
 #'   select(X1, X2, U1, U2, U3, U4, U5) %>%
 #'   as.matrix()
-#'
+#' 
 #' yTest <- test %>%
 #'   pull(Y) %>%
 #'   as.numeric() %>%
 #'   as.vector()
-#'
+#' 
 #' dannPreds <- dann(
 #'   xTrain = xTrain, yTrain = yTrain, xTest = xTest,
 #'   k = 3, neighborhood_size = 50, epsilon = 1,
 #'   probability = FALSE
 #' )
 #' mean(dannPreds == yTest) # Not a good model
-#'
+#' 
 #' # Data suggests a subspace with 2 dimentions. The correct answer.
 #' graph_eigenvalues(
 #'   xTrain = xTrain, yTrain = yTrain, neighborhood_size = 50,
 #'   weighted = FALSE, sphere = "mcd"
 #' )
-#'
+#' 
 #' subDannPreds <- sub_dann(
 #'   xTrain = xTrain, yTrain = yTrain, xTest = xTest,
 #'   k = 3, neighborhood_size = 50, epsilon = 1,
@@ -284,7 +284,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' )
 #' # sub_dan does much better when unrelated variables are present.
 #' mean(subDannPreds == yTest)
-#'
+#' 
 #' rm(train, test)
 #' rm(xTrain, yTrain)
 #' rm(xTest, yTest)

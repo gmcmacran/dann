@@ -20,7 +20,8 @@ Imports:
     purrr (>= 0.3.2),
     rlang (>= 0.3.4),
     fpc (>= 2.1-11.1),
-    Rcpp (>= 1.0.1)
+    Rcpp (>= 1.0.1),
+    RcppArmadillo (>= 0.9.300.2.0)
 RoxygenNote: 6.1.1
 Suggests: 
     testthat (>= 2.0.1),
@@ -32,4 +33,5 @@ Suggests:
     magrittr (>= 1.5),
 VignetteBuilder: knitr
 LinkingTo: 
-    Rcpp
+    Rcpp,
+    RcppArmadillo
