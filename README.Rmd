@@ -38,9 +38,11 @@ devtools::install_github("gmcmacran/dann")
 ```
 
 # Package Introduction
-DANN is a variation of k nearest neighbors where the shape of the neighborhood takes into account training data's class. The neighborhood is elongated along class boundaries and shrunk in the orthogonal direction to class boundaries. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf)  by Hastie and Tibshirani. This package implements DANN and sub-DANN in section 4.1 of the publication and is based on Christopher Jenness's python [implementation.](https://github.com/christopherjenness/ML-lib)
+In k nearest neighbors, the shape of the neighborhood is always circular. Discriminant Adaptive Nearest Neighbor (dann) is a variation of k nearest neighbors where the shape of the neighborhood is data driven. The neighborhood is elongated along class boundaries and shrunk in the orthogonal direction to class boundaries. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf)  by Hastie and Tibshirani. This package implements DANN and sub-DANN in section 4.1 of the publication and is based on Christopher Jenness's python [implementation.](https://github.com/christopherjenness/ML-lib)
 
-## Example 1: Circle Problem
+## Example: Circle Problem
+In this example, simulated data is made. The overall trend is a circle inside a square.
+
 ```{r Circle}
 library(dann)
 library(dplyr, warn.conflicts = FALSE)
@@ -58,15 +60,6 @@ ggplot(train, aes(x = X1, y = X2, colour = Y)) +
   geom_point() + 
   labs(title = "Train Data")
 
-xTrain <- train %>%
-  select(X1, X2) %>%
-  as.matrix()
-
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
-  as.vector()
-
 #Create test data
 test <- mlbench.circle(500, 2) %>%
   tibble::as_tibble()
@@ -76,35 +69,11 @@ ggplot(test, aes(x = X1, y = X2, colour = Y)) +
   geom_point() + 
   labs(title = "Test Data")
 
-xTest <- test %>%
-  select(X1, X2) %>%
-  as.matrix()
-
-yTest <- test %>%
-  pull(Y) %>%
-  as.numeric() %>%
-  as.vector()
-
-# Train and predict using dann from elements of statistical learning.
-dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 
-                  k = 7, neighborhood_size = 50, epsilon = 1)
-mean(dannPreds == yTest)
-
-
 ```
 
-## Example 2: Clustered Data
-```{r Cluster}
 
-set.seed(1)
-train <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
-  tibble::as_tibble()
-colnames(train) <- c("X1", "X2", "Y")
-
-ggplot(train, aes(x = X1, y = X2, colour = Y)) + 
-  geom_point() + 
-  labs(title = "Train Data")
-
+Next, a bit of data shaping is needed. dann is more matrix driven as opposed to dataframe driven. The predictor variables need to be one matrix. The observed labels need to be in another.
+```{r dataShaping}
 xTrain <- train %>%
   select(X1, X2) %>%
   as.matrix()
@@ -114,14 +83,6 @@ yTrain <- train %>%
   as.numeric() %>%
   as.vector()
 
-test <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
-  tibble::as_tibble()
-colnames(test) <- c("X1", "X2", "Y")
-
-ggplot(test, aes(x = X1, y = X2, colour = Y)) + 
-  geom_point() + 
-  labs(title = "Test Data")
-
 xTest <- test %>%
   select(X1, X2) %>%
   as.matrix()
@@ -130,12 +91,12 @@ yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
   as.vector()
+```
 
-# Train and predict using dann from elements of statistical learning.
-dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest,
-                  k = 5, neighborhood_size = 50, epsilon = 1)
+To train a model, the matrices and a few parameters are passed into dann. The argument neighborhood_size is the number of data points used to estimate a good shape of the neighborhood. The argument k is the number of data points used in the final classification. Overall, dann has highly accurate model for this data set.
 
+```{r model}
+dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 
+                  k = 7, neighborhood_size = 50)
 mean(dannPreds == yTest)
-
-
 ```
