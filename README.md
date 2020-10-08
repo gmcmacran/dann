@@ -52,12 +52,11 @@ inside a square.
 
 ``` r
 library(dann)
-library(class)
 library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 library(mlbench)
 
-set.seed(1)
+set.seed(1) 
 
 #Create training data
 train <- mlbench.circle(500, 2) %>%
