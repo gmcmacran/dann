@@ -32,7 +32,7 @@ And the development version from [GitHub](https://github.com/) with:
 devtools::install_github("gmcmacran/dann")
 ```
 
-# Package Introduction
+## Package Introduction
 
 In k nearest neighbors, the shape of the neighborhood is always
 circular. Discriminant Adaptive Nearest Neighbor (dann) is a variation
@@ -111,8 +111,8 @@ yTest <- test %>%
 To train a model, the matrices and a few parameters are passed into
 dann. The argument neighborhood\_size is the number of data points used
 to estimate a good shape of the neighborhood. The argument k is the
-number of data points used in the final classification. Overall, dann
-has highly accurate model for this data set.
+number of data points used in the final classification. Overall, dann is
+a highly accurate model for this data set.
 
 ``` r
 dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 

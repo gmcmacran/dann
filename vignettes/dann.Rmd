@@ -19,11 +19,11 @@ DANN is a variation of k nearest neighbors where the shape of the neighborhood t
 
 # Arguments
 * k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors.
-* neighborhood_size - The number of data points used to estimate class boundaries.
+* neighborhood_size - The number of data points used to estimate a good shape for the neighborhood.
 * epsilon - Softening parameter. Usually has the least affect on performance.
 
 
-## Example: Clustered Data
+# Example: Clustered Data
 In this example, a simulated data set is made. There is some overlap between classes.
 
 ```{r simData}
