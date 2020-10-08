@@ -19,57 +19,60 @@ DANN is a variation of k nearest neighbors where the shape of the neighborhood t
 
 # Arguments
 * k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors.
-* neighborhood_size - The number of data points used to estimate class boundaries.
+* neighborhood_size - The number of data points used to estimate a good shape for the neighborhood.
 * epsilon - Softening parameter. Usually has the least affect on performance.
 
-# Example: Circle Data
-In what follows a train and test set are created. Class 1 is inside a circle and class 2 surrounds class 1. dann is an accurate model for these data.
-```{r setup}
+
+# Example: Clustered Data
+In this example, a simulated data set is made. There is some overlap between classes.
+
+```{r simData}
 library(dann)
-library(mlbench)
-library(magrittr)
 library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
+library(mlbench)
 
-######################
-# Circle Data
-######################
 set.seed(1)
-train <- mlbench.circle(500, 2) %>%
+train <- mlbench.2dnormals(600, cl = 6, r = sqrt(2), sd = .5) %>%
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 
-ggplot(train, aes(x = X1, y = X2, colour = Y)) +
-  geom_point()
+ggplot(train, aes(x = X1, y = X2, colour = Y)) + 
+  geom_point() + 
+  labs(title = "Train Data")
 
+
+test <- mlbench.2dnormals(600, cl = 6, r = sqrt(2), sd = .5) %>%
+  tibble::as_tibble()
+colnames(test) <- c("X1", "X2", "Y")
+ggplot(test, aes(x = X1, y = X2, colour = Y)) + 
+  geom_point() + 
+  labs(title = "Test Data")
+```
+
+To work with the dann package, data needs to be in matrices instead of dataframes.
+```{r Cluster}
 xTrain <- train %>%
   select(X1, X2) %>%
   as.matrix()
-
 yTrain <- train %>%
   pull(Y) %>%
   as.numeric() %>%
   as.vector()
 
-test <- mlbench.circle(500, 2) %>%
-  tibble::as_tibble()
-colnames(test) <- c("X1", "X2", "Y")
-
 xTest <- test %>%
   select(X1, X2) %>%
   as.matrix()
-
 yTest <- test %>%
   pull(Y) %>%
   as.numeric() %>%
   as.vector()
+```
 
-dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 
-                  k = 3, neighborhood_size = 50, epsilon = 1, probability = FALSE)
-mean(dannPreds == yTest) #An accurate model.
+To train a model, the matrices and a few parameters are passed into dann. The argument neighborhood_size is the number of data points used to estimate a good shape of the neighborhood. The argument k is the number of data points used in the final classification. Considering there is overlap between all classes and there are only about 100 data points per class, dann performs well for this data set.
 
-rm(train, test)
-rm(xTrain, yTrain)
-rm(xTest, yTest)
-rm(dannPreds)
+```{r model}
+dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest,
+                  k = 7, neighborhood_size = 150, epsilon = 1)
+round(mean(dannPreds == yTest), 2)
 ```

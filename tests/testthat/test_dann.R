@@ -205,6 +205,26 @@ rm(xTrain, yTrain)
 rm(xTest, yTest)
 rm(dannPreds)
 
+######################
+# Ties are broken by most common class
+######################
+xTrain <- matrix(c(0, 0, 1), nrow = 3, ncol = 1)
+
+yTrain <- matrix(c(0, 0, 1), nrow = 3, ncol = 1)
+
+# Splits 0 and 1 evenly.
+xTest <- matrix(.5, nrow = 1, ncol = 1)
+
+test_that("Run multiple times to confirm results are consitant", {
+  expect_true(dann(xTrain, yTrain, xTest, 1, 3, 1, FALSE) == 0)
+  expect_true(dann(xTrain, yTrain, xTest, 1, 3, 1, FALSE) == 0)
+  expect_true(dann(xTrain, yTrain, xTest, 1, 3, 1, FALSE) == 0)
+  expect_true(dann(xTrain, yTrain, xTest, 1, 3, 1, FALSE) == 0)
+  expect_true(dann(xTrain, yTrain, xTest, 1, 3, 1, FALSE) == 0)
+})
+
+rm(xTrain, yTrain, xTest)
+
 ###############################################
 # Confirm class numeric value shifting works as expected
 ###############################################

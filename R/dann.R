@@ -154,6 +154,23 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 
   NCOLX <- ncol(xTrain)
 
+  ###################################
+  # Count number of rows per class
+  ###################################
+  # Used in dann distance sorting
+  # If there is a tie in distance, break tie with most common class.
+  Y_counts <- vector(mode = "numeric", length = length(unique(yTrain)))
+  names(Y_counts) <- sort(unique(yTrain))
+  for (i in seq_along(1:length(Y_counts))) {
+    Y_counts[i] <- length(yTrain[which(yTrain == names(Y_counts)[i])])
+  }
+  Y_counts <- sort(Y_counts, decreasing = TRUE)
+
+  Y_class_presidence <- vector(mode = "numeric", length = length(yTrain))
+  for (i in seq_along(1:length(Y_counts))) {
+    Y_class_presidence[which(yTrain == names(Y_counts)[i])] <- i
+  }
+
   for (i in seq_along(1:nrow(xTest))) {
 
     ###########
@@ -161,7 +178,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     ###########
     distances <- calc_distance_C(xTrain, xTest[i, ])
 
-    nearest_neighbors <- order(distances)[1:neighborhood_size]
+    nearest_neighbors <- order(distances, Y_class_presidence)[1:neighborhood_size]
     neighborhood_xTrain <- xTrain[nearest_neighbors, 1:NCOLX, drop = FALSE]
     neighborhood_X_mean <- colMeans(neighborhood_xTrain)
     neighborhood_y <- yTrain[nearest_neighbors]
@@ -211,7 +228,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     for (kth in seq_along(1:length(distances))) {
       distances[kth] <- DANN_distance_C(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE ], sigma)
     }
-    nearest <- order(distances, length(distances):1)[1:k]
+    nearest <- order(distances, Y_class_presidence)[1:k]
     if (!probability) {
       predictions[i] <- MODE(yTrain[nearest])
     } else {
