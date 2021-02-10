@@ -4,9 +4,13 @@
 \alias{graph_eigenvalues}
 \title{A helper for sub_dann}
 \usage{
-graph_eigenvalues(xTrain, yTrain,
-  neighborhood_size = max(floor(nrow(xTrain)/5), 50), weighted = FALSE,
-  sphere = "mcd")
+graph_eigenvalues(
+  xTrain,
+  yTrain,
+  neighborhood_size = max(floor(nrow(xTrain)/5), 50),
+  weighted = FALSE,
+  sphere = "mcd"
+)
 }
 \arguments{
 \item{xTrain}{Train features. Something easily converted to a numeric matrix.}

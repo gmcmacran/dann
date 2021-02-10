@@ -4,9 +4,15 @@
 \alias{dann_source}
 \title{Discriminant Adaptive Nearest Neighbor Classification}
 \usage{
-dann_source(xTrain, yTrain, xTest, k = 5,
-  neighborhood_size = max(floor(nrow(xTrain)/5), 50), epsilon = 1,
-  probability = FALSE)
+dann_source(
+  xTrain,
+  yTrain,
+  xTest,
+  k = 5,
+  neighborhood_size = max(floor(nrow(xTrain)/5), 50),
+  epsilon = 1,
+  probability = FALSE
+)
 }
 \arguments{
 \item{xTrain}{Train features. Something easily converted to a numeric matrix.}
