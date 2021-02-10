@@ -178,7 +178,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     ###########
     distances <- calc_distance_C(xTrain, xTest[i, ])
 
-    nearest_neighbors <- order(distances, Y_class_presidence, Y)[1:neighborhood_size]
+    nearest_neighbors <- order(distances, Y_class_presidence, yTrain)[1:neighborhood_size]
     neighborhood_xTrain <- xTrain[nearest_neighbors, 1:NCOLX, drop = FALSE]
     neighborhood_X_mean <- colMeans(neighborhood_xTrain)
     neighborhood_y <- yTrain[nearest_neighbors]
@@ -228,7 +228,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     for (kth in seq_along(1:length(distances))) {
       distances[kth] <- DANN_distance_C(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE], sigma)
     }
-    nearest <- order(distances, Y_class_presidence, Y)[1:k]
+    nearest <- order(distances, Y_class_presidence, yTrain)[1:k]
     if (!probability) {
       predictions[i] <- MODE(yTrain[nearest])
     } else {
