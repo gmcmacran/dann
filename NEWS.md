@@ -1,3 +1,8 @@
+# dann v 0.2.2 (02-10-2021)
+	If the most common class fails to break distance ties, 
+	sort by Y so that predictions are consistant.
+	Moving from travisCI to github actions.
+	
 # dann v 0.2.1 (10-08-2020)
 	Ties in distance are broken by most common class.
 	Updating vignettes.
