@@ -5,8 +5,8 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/gmcmacran/dann.svg?branch=master)](https://travis-ci.org/gmcmacran/dann)
+[![R build
+status](https://github.com/gmcmacran/dann/workflows/R-CMD-check/badge.svg)](https://github.com/gmcmacran/dann/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/gmcmacran/dann/branch/master/graph/badge.svg)](https://codecov.io/gh/gmcmacran/dann?branch=master)
 [![CRAN
