@@ -4,10 +4,18 @@
 \alias{sub_dann_source}
 \title{Discriminant Adaptive Nearest Neighbor With Subspace Reduction}
 \usage{
-sub_dann_source(xTrain, yTrain, xTest, k = 5,
-  neighborhood_size = max(floor(nrow(xTrain)/5), 50), epsilon = 1,
-  probability = FALSE, weighted = FALSE, sphere = "mcd",
-  numDim = ncol(xTrain)/2)
+sub_dann_source(
+  xTrain,
+  yTrain,
+  xTest,
+  k = 5,
+  neighborhood_size = max(floor(nrow(xTrain)/5), 50),
+  epsilon = 1,
+  probability = FALSE,
+  weighted = FALSE,
+  sphere = "mcd",
+  numDim = ncol(xTrain)/2
+)
 }
 \arguments{
 \item{xTrain}{Train features. Something easily converted to a numeric matrix.}
