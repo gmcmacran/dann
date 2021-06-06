@@ -1,3 +1,6 @@
+# dann v 0.2.3 (06-06-2021)
+	Fixing code coverage to work with github actions.
+
 # dann v 0.2.2 (02-10-2021)
 	If the most common class fails to break ties in 
 	distance, sort by Y so that predictions are consistant
