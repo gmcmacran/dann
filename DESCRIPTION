@@ -1,7 +1,7 @@
 Package: dann
 Type: Package
 Title: Discriminant Adaptive Nearest Neighbor Classification
-Version: 0.2.3
+Version: 0.2.4
 Author: Greg McMahan
 Maintainer: Greg McMahan <gmcmacran@gmail.com>
 Description: Discriminant Adaptive Nearest Neighbor Classification is a 
@@ -23,7 +23,7 @@ Imports:
     Rcpp (>= 1.0.1)
 RoxygenNote: 7.1.1
 Suggests: 
-    testthat (>= 2.0.1),
+    testthat (>= 3.0.0),
     knitr (>= 1.22),
     rmarkdown (>= 1.18),
     covr (>= 3.2.1),
@@ -34,3 +34,4 @@ VignetteBuilder: knitr
 LinkingTo: 
     Rcpp,
     RcppArmadillo
+Config/testthat/edition: 3

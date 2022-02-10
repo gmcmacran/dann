@@ -1,11 +1,9 @@
-context("testing dann")
-library(dann)
-library(mlbench)
-library(magrittr)
-library(dplyr)
+library(mlbench, warn.conflicts = FALSE)
+library(magrittr, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
 
 ###############################################
-# Same Resutls as python version?
+# Same results as python version?
 ###############################################
 ######################
 # Problem 1

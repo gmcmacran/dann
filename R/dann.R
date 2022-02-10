@@ -24,7 +24,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     xTest <- as.matrix(xTest)
   }
 
-  # Confirm converstion worked
+  # Confirm conversion worked
   if (!is.matrix(xTrain)) {
     stop("Was not able to convert argment xTrain to a matrix.")
   }
@@ -163,7 +163,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   Y_counts <- vector(mode = "numeric", length = length(unique(yTrain)))
   names(Y_counts) <- sort(unique(yTrain))
   for (i in seq_along(1:length(Y_counts))) {
-    Y_counts[i] <- length(yTrain[which(yTrain == names(Y_counts)[i])])
+    Y_counts[i] <- sum(yTrain == names(Y_counts)[i])
   }
   Y_counts <- sort(Y_counts, decreasing = TRUE)
 
@@ -212,10 +212,8 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     # W* = W^-.5
     # B* = W*BW*
     W_star <- within_class_cov^.5
-    # Deal with NA case
-    for (kth in seq_along(1:ncol(W_star))) {
-      W_star[which(is.na(W_star[, kth])), kth] <- 0
-    }
+    W_star[which(is.na(W_star))] <- 0
+
     W_star <- MASS::ginv(W_star)
     B_star <- W_star %*% between_class_cov %*% W_star
     I <- diag(NCOLX)

@@ -1,8 +1,6 @@
-context("testing graph_eigenvalues")
-library(dann)
-library(mlbench)
-library(magrittr)
-library(dplyr)
+library(mlbench, warn.conflicts = FALSE)
+library(magrittr, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
 
 ######################
 # Circle data with 2 related variables and 5 unrelated variables
