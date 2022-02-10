@@ -25,13 +25,6 @@ You can install the released version of dann from
 install.packages("dann")
 ```
 
-And the development version from [GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("gmcmacran/dann")
-```
-
 ## Package Introduction
 
 In k nearest neighbors, the shape of the neighborhood is always
@@ -62,61 +55,39 @@ set.seed(1)
 train <- mlbench.circle(500, 2) %>%
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
+train <- train %>%
+  mutate(Y = as.numeric(Y))
 
-ggplot(train, aes(x = X1, y = X2, colour = Y)) + 
+ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) + 
   geom_point() + 
-  labs(title = "Train Data")
+  labs(title = "Train Data", colour = "Y")
 ```
 
 <img src="man/figures/README-Circle-1.png" width="100%" />
 
 ``` r
-
 #Create test data
 test <- mlbench.circle(500, 2) %>%
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "Y")
+test <- test %>%
+  mutate(Y = as.numeric(Y))
 
-ggplot(test, aes(x = X1, y = X2, colour = Y)) + 
+ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) + 
   geom_point() + 
-  labs(title = "Test Data")
+  labs(title = "Test Data", colour = "Y")
 ```
 
 <img src="man/figures/README-Circle-2.png" width="100%" />
 
-Next, a bit of data shaping is needed. dann is more matrix driven as
-opposed to dataframe driven. The predictor variables need to be one
-matrix. The observed labels need to be in another.
+To train a model, the data and a few parameters are passed into dann.
+Neighborhood_size is the number of data points used to estimate a good
+shape of the neighborhood. K is the number of data points used in the
+final classification. Overall, dann is a highly accurate model for this
+data set.
 
 ``` r
-xTrain <- train %>%
-  select(X1, X2) %>%
-  as.matrix()
-
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
-  as.vector()
-
-xTest <- test %>%
-  select(X1, X2) %>%
-  as.matrix()
-
-yTest <- test %>%
-  pull(Y) %>%
-  as.numeric() %>%
-  as.vector()
-```
-
-To train a model, the matrices and a few parameters are passed into
-dann. The argument neighborhood\_size is the number of data points used
-to estimate a good shape of the neighborhood. The argument k is the
-number of data points used in the final classification. Overall, dann is
-a highly accurate model for this data set.
-
-``` r
-dannPreds <- dann(xTrain = xTrain, yTrain = yTrain, xTest = xTest, 
-                  k = 7, neighborhood_size = 50)
-mean(dannPreds == yTest)
+dannPreds <- dann_df(formula = Y ~ X1 + X2, train = train, test = test, k = 7, neighborhood_size = 50)
+mean(dannPreds == test$Y)
 #> [1] 0.964
 ```
