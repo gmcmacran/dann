@@ -29,8 +29,8 @@ yTrain <- train %>%
   as.numeric() %>%
   as.vector()
 
-# Data suggests a subspace with 2 dimentions. The correct answer.
-graph <- graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")
+# Data suggests a subspace with 2 dimensions. The correct answer.
+graph <- graph_eigenvalues(xTrain, yTrain, 50)
 
 test_that("Validate structure", {
   expect_true(all(class(graph) == c("gg", "ggplot")))

@@ -92,7 +92,7 @@ yTest <- test %>%
   as.numeric() %>%
   as.vector()
 
-dannPreds <- dann(xTrain, yTrain, xTest, 5, 50, 1, FALSE)
+dannPreds <- dann(xTrain, yTrain, xTest)
 
 test_that("Validate structure", {
   expect_true(is.vector(dannPreds))
