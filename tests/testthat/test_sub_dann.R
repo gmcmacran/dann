@@ -1,8 +1,6 @@
-context("testing sub_dann")
-library(dann)
-library(mlbench)
-library(magrittr)
-library(dplyr)
+library(mlbench, warn.conflicts = FALSE)
+library(magrittr, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
 
 ###############################################
 # Easy problems
