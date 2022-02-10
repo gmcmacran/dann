@@ -1,9 +1,14 @@
+# dann v 0.2.4 (02-10-2022)
+	Minor optimizations.
+	  One small loop removed for vectorized R code.
+	  Summing a logical vector instead of sub setting and calculating length.
+	
 # dann v 0.2.3 (06-06-2021)
 	Fixing code coverage to work with github actions.
 
 # dann v 0.2.2 (02-10-2021)
 	If the most common class fails to break ties in 
-	distance, sort by Y so that predictions are consistant
+	distance, sort by Y so that predictions are consistent
 	in all cases.
 	
 	Moving from travisCI to github actions.
