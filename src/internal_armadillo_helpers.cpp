@@ -9,5 +9,5 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 arma::vec DANN_distance_C(const arma::rowvec & x0, const arma::rowvec & x1, const arma::mat &  sigma) {
   arma::vec distance = (x0- x1) * sigma * (x0 - x1).t();
-  return(distance);
+  return distance;
 }
