@@ -14,7 +14,7 @@ sub_dann(
   probability = FALSE,
   weighted = FALSE,
   sphere = "mcd",
-  numDim = ncol(xTrain)/2
+  numDim = ceiling(ncol(xTrain)/2)
 )
 }
 \arguments{
