@@ -48,6 +48,19 @@ test_that("Validate structure", {
 
 rm(subDannPreds)
 
+######################
+# default values match
+######################
+test_that("Defalut values match?", {
+  expect_true(formals(sub_dann_df)$k == formals(sub_dann)$k)
+  expect_true(formals(sub_dann_df)$neighborhood_size == formals(sub_dann)$neighborhood_size)
+  expect_true(formals(sub_dann_df)$epsilon == formals(sub_dann)$epsilon)
+  expect_true(formals(sub_dann_df)$probability == formals(sub_dann)$probability)
+  expect_true(formals(sub_dann_df)$weighted == formals(sub_dann)$weighted)
+  expect_true(formals(sub_dann_df)$sphere == formals(sub_dann)$sphere)
+  expect_true(formals(sub_dann_df)$numDim == formals(sub_dann)$numDim)
+})
+
 ###############################################
 # Input checking
 ###############################################

@@ -67,6 +67,15 @@ test_that("Validate structure", {
 })
 
 ###############################################
+# default values match
+###############################################
+test_that("Defalut values match?", {
+  expect_true(formals(graph_eigenvalues)$neighborhood_size == formals(sub_dann)$neighborhood_size)
+  expect_true(formals(graph_eigenvalues)$weighted == formals(sub_dann)$weighted)
+  expect_true(formals(graph_eigenvalues)$sphere == formals(sub_dann)$sphere)
+})
+
+###############################################
 # Input checking
 ###############################################
 #######

@@ -328,6 +328,16 @@ test_that("Validate structure", {
 })
 
 ###############################################
+# default values match
+###############################################
+test_that("Defalut values match?", {
+  expect_true(formals(dann)$k == formals(sub_dann)$k)
+  expect_true(formals(dann)$neighborhood_size == formals(sub_dann)$neighborhood_size)
+  expect_true(formals(dann)$epsilon == formals(sub_dann)$epsilon)
+  expect_true(formals(dann)$probability == formals(sub_dann)$probability)
+})
+
+###############################################
 # Input checking
 ###############################################
 #######
