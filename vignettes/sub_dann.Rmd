@@ -15,11 +15,12 @@ knitr::opts_chunk$set(echo = TRUE)
 In general, dann will struggle as unrelated variables are intermingled with informative variables. To deal with this, sub_dann projects the data onto a unique subspace and then calls dann. sub_dann is able to mitigate the use of noise variables. See section 3 of [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) for details. Section 4 compares dann and sub_dann to a number of other approaches.
 
 # Arguments
-* k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors. Same as dann function.
-* neighborhood_size - The number of data points used to estimate a good shape for the neighborhood. Same as dann function.
-* epsilon - Softening parameter. Usually has the least affect on performance. Same as dann function.
+* k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors.
+* neighborhood_size - The number of data points used to estimate a good shape for the neighborhood.
+* epsilon - Softening parameter. Usually has the least affect on performance.
 * weighted - Should the individual between class covariance matrices be weighted? FALSE corresponds to original publication.
 * sphere - Type of covariance matrix to calculate.
+* numDim - The number of dimensions to project the predictor variables on to.
 
 # Example: Circle Data With Random Variables
 In the below example there are 2 related variables and 5 that are unrelated. Lets see how dann, sub_dann, and dann with only the correct features perform. First, lets make a data set to work with.
@@ -103,7 +104,7 @@ As an upper bound on performance for this A.I. approach, lets try dann using onl
                                train = train, test = test,
                                k = 3, neighborhood_size = 50, epsilon = 1, probability = FALSE)
  
- mean(variableSelectionDann == test$Y) # Best model found when only true predictors are used.
+ mean(variableSelectionDann == test$Y)
 ```
 
 Using only the related variables produced the best model. Many times, the related variables are unknown. sub_dann was able to produce a model nearly as performant.
