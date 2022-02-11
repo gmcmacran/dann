@@ -170,7 +170,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
   subspace <- fpc::ncoord(
     xd = xTrain, clvecd = yTrain,
     nn = neighborhood_size, weighted = weighted,
-    sphere = "mcd", countmode = 999999999999999
+    sphere = sphere, countmode = 999999999999999
   )
 
   xTrain2 <- subspace$proj[, 1:numDim, drop = FALSE]
