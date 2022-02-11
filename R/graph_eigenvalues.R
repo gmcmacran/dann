@@ -142,7 +142,7 @@ graph_eigenvalues <- function(xTrain, yTrain,
   subspace <- fpc::ncoord(
     xd = xTrain, clvecd = yTrain,
     nn = neighborhood_size, weighted = weighted,
-    sphere = "mcd", countmode = 999999999999999
+    sphere = sphere, countmode = 999999999999999
   )
 
   eigen <- tibble::enframe(subspace$ev, value = "eigenValues", name = "order")
