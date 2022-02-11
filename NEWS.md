@@ -1,3 +1,7 @@
+# dann v 0.2.5 (02-10-2022)
+  Adding formula functions (_df) and associated tests.
+  Vignettes use df functions, not matrix functions.
+
 # dann v 0.2.4 (02-10-2022)
 	Minor optimizations.
 	  One small loop removed for vectorized R code.

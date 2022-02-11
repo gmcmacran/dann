@@ -15,7 +15,7 @@
 sub_dann_source <- function(xTrain, yTrain, xTest,
                             k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
                             epsilon = 1, probability = FALSE,
-                            weighted = FALSE, sphere = "mcd", numDim = ncol(xTrain) / 2) {
+                            weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(xTrain) / 2)) {
   ###################################
   # Input checking
   ###################################
@@ -198,14 +198,12 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @details
-#' This is an implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
+#' An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
 #' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-#' Neighbor Classification publication.}. It uses package fpc's ncoord to find the subspace. Then calls
-#' dann.
+#' Neighbor Classification publication.}.
 #'
 #' dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
-#' will generally be more performant in this scenario. However there is no replacement for good feature
-#' selection.
+#' will generally be more performant in this scenario.
 #' @examples
 #' library(dann)
 #' library(mlbench)
@@ -270,7 +268,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' )
 #' mean(dannPreds == yTest) # Not a good model
 #'
-#' # Data suggests a subspace with 2 dimentions. The correct answer.
+#' # Graph suggests a subspace with 2 dimensions. The correct answer.
 #' graph_eigenvalues(
 #'   xTrain = xTrain, yTrain = yTrain, neighborhood_size = 50,
 #'   weighted = FALSE, sphere = "mcd"
@@ -291,3 +289,128 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' rm(dannPreds, subDannPreds)
 #' @export
 sub_dann <- compiler::cmpfun(f = sub_dann_source, options = list(optimize = 3))
+
+#' Discriminant Adaptive Nearest Neighbor With Subspace Reduction
+#'
+#' @param formula An object of class formula. (Y ~ X1 + X2)
+#' @param train A data frame or tibble containing training data.
+#' @param test A data frame or tibble containing test data.
+#' @param k The number of data points used for final classification.
+#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
+#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
+#' @param probability Should probabilities instead of classes be returned?
+#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
+#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
+#' @details
+#' An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
+#' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
+#' Neighbor Classification publication.}.
+#'
+#' dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
+#' will generally be more performant in this scenario.
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#' library(ggplot2)
+#'
+#' ######################
+#' # Circle data with unrelated variables
+#' ######################
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train)[1:3] <- c("X1", "X2", "Y")
+#' train <- train %>%
+#'   mutate(Y = as.numeric(Y))
+#'
+#' # Add 5 unrelated variables
+#' train <- train %>%
+#'   mutate(
+#'     U1 = runif(300, -1, 1),
+#'     U2 = runif(300, -1, 1),
+#'     U3 = runif(300, -1, 1),
+#'     U4 = runif(300, -1, 1),
+#'     U5 = runif(300, -1, 1)
+#'   )
+#'
+#' test <- mlbench.circle(100, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(test)[1:3] <- c("X1", "X2", "Y")
+#' test <- test %>%
+#'   mutate(Y = as.numeric(Y))
+#'
+#' # Add 5 unrelated variables
+#' test <- test %>%
+#'   mutate(
+#'     U1 = runif(100, -1, 1),
+#'     U2 = runif(100, -1, 1),
+#'     U3 = runif(100, -1, 1),
+#'     U4 = runif(100, -1, 1),
+#'     U5 = runif(100, -1, 1)
+#'   )
+#'
+#' dannPreds <- dann_df(
+#'   formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5,
+#'   train = train, test = test,
+#'   k = 3, neighborhood_size = 50, epsilon = 1,
+#'   probability = FALSE
+#' )
+#' mean(dannPreds == test$Y) # Not a good model
+#'
+#' # Graph suggests a subspace with 2 dimensions. (The correct answer.)
+#' graph_eigenvalues_df(
+#'   formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train = train,
+#'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
+#' )
+#'
+#' subDannPreds <- sub_dann_df(
+#'   formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5,
+#'   train = train, test = test,
+#'   k = 3, neighborhood_size = 50, epsilon = 1,
+#'   probability = FALSE,
+#'   weighted = FALSE, sphere = "classical", numDim = 2
+#' )
+#' # sub_dan does much better when unrelated variables are present.
+#' mean(subDannPreds == test$Y)
+#'
+#' rm(train, test)
+#' rm(dannPreds, subDannPreds)
+#' @export
+sub_dann_df <- function(formula, train, test,
+                        k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
+                        epsilon = 1, probability = FALSE,
+                        weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(xTrain) / 2)) {
+  if (!rlang::is_formula(formula)) {
+    stop("Argument formula is not a formula.")
+  }
+
+  if (!is.data.frame(train)) {
+    stop("Argument train is not dataframe.")
+  }
+  if (nrow(train) < 1) {
+    stop("Argument train does not contain data.")
+  }
+
+  if (!is.data.frame(test)) {
+    stop("Argument test is not dataframe.")
+  }
+  if (nrow(test) < 1) {
+    stop("Argument test does not contain data.")
+  }
+
+  xTrain <- as.matrix(train[all.vars(formula)[2:length(all.vars(formula))]])
+  yTrain <- as.matrix(train[all.vars(formula)[1]])
+  xTest <- as.matrix(test[all.vars(formula)[2:length(all.vars(formula))]])
+
+  subDannPreds <- sub_dann(
+    xTrain, yTrain, xTest,
+    k, neighborhood_size, epsilon, probability,
+    weighted, sphere, numDim
+  )
+
+  return(subDannPreds)
+}

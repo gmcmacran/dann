@@ -5,7 +5,7 @@
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
 #' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @return  A ggplot graph.
+#' @return  A ggplot2 graph.
 #' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
 #' should make a judgement call on how many eigenvalues are large and set sub_dann's
 #' numDim to that number.
@@ -43,7 +43,7 @@
 #'   as.numeric() %>%
 #'   as.vector()
 #'
-#' # Data suggests a subspace with 2 dimentions. The correct answer.
+#' # Graph suggests a subspace with 2 dimensions. The correct answer.
 #' graph_eigenvalues(
 #'   xTrain = xTrain, yTrain = yTrain,
 #'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
@@ -151,6 +151,77 @@ graph_eigenvalues <- function(xTrain, yTrain,
     ggplot2::geom_point() +
     ggplot2::scale_x_continuous(breaks = 1:nrow(eigen)) +
     ggplot2::labs(x = "Rank Order", y = "Eigenvalues")
+
+  return(graph)
+}
+
+#' A helper for sub_dann_df
+#'
+#' @param formula An object of class formula. (Y ~ X1 + X2)
+#' @param train A data frame or tibble containing training data.
+#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
+#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @return  A ggplot2 graph.
+#' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
+#' should make a judgement call on how many eigenvalues are large and set sub_dann_df's
+#' numDim to that number.
+#' @importFrom rlang .data
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#'
+#' ######################
+#' # Circle data with 2 related variables and 5 unrelated variables
+#' ######################
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train)[1:3] <- c("X1", "X2", "Y")
+#' train <- train %>%
+#'   mutate(Y = as.numeric(Y))
+#'
+#' # Add 5 unrelated variables
+#' train <- train %>%
+#'   mutate(
+#'     U1 = runif(300, -1, 1),
+#'     U2 = runif(300, -1, 1),
+#'     U3 = runif(300, -1, 1),
+#'     U4 = runif(300, -1, 1),
+#'     U5 = runif(300, -1, 1)
+#'   )
+#'
+#' # Graph suggests a subspace with 2 dimensions. The correct answer.
+#' graph_eigenvalues_df(
+#'   formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train = train,
+#'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
+#' )
+#'
+#' rm(train)
+#' @export
+graph_eigenvalues_df <- function(formula, train,
+                                 neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
+                                 weighted = FALSE, sphere = "mcd") {
+  if (!rlang::is_formula(formula)) {
+    stop("Argument formula is not a formula.")
+  }
+
+  if (!is.data.frame(train)) {
+    stop("Argument train is not dataframe.")
+  }
+  if (nrow(train) < 1) {
+    stop("Argument train does not contain data.")
+  }
+
+  xTrain <- as.matrix(train[all.vars(formula)[2:length(all.vars(formula))]])
+  yTrain <- as.matrix(train[all.vars(formula)[1]])
+
+  graph <- graph_eigenvalues(
+    xTrain, yTrain, neighborhood_size,
+    weighted, sphere
+  )
 
   return(graph)
 }

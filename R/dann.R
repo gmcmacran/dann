@@ -324,3 +324,92 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
 #' rm(dannPreds)
 #' @export
 dann <- compiler::cmpfun(f = dann_source, options = list(optimize = 3))
+
+#' Discriminant Adaptive Nearest Neighbor Classification
+#'
+#' @param formula An object of class formula. (Y ~ X1 + X2)
+#' @param train A data frame or tibble containing training data.
+#' @param test A data frame or tibble containing test data.
+#' @param k The number of data points used for final classification.
+#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
+#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
+#' @param probability Should probabilities instead of classes be returned?
+#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
+#' @details
+#' This is an implementation of Hastie and Tibshirani's
+#' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
+#' Neighbor Classification publication.}.
+#' The code is a port of Christopher Jenness's
+#' python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#' library(ggplot2)
+#'
+#' ######################
+#' # Circle Data
+#' ######################
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#' train <- train %>%
+#'   mutate(Y = as.numeric(Y))
+#'
+#' ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) +
+#'   geom_point() +
+#'   labs(title = "Train Data", color = "Y")
+#'
+#' test <- mlbench.circle(100, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(test) <- c("X1", "X2", "Y")
+#' test <- test %>%
+#'   mutate(Y = as.numeric(Y))
+#'
+#' ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) +
+#'   geom_point() +
+#'   labs(title = "Test Data", color = "Y")
+#'
+#' dannPreds <- dann_df(
+#'   formula = Y ~ X1 + X2,
+#'   train = train, test = test,
+#'   k = 3, neighborhood_size = 50, epsilon = 1,
+#'   probability = FALSE
+#' )
+#' mean(dannPreds == test$Y) # An accurate model.
+#'
+#' rm(train, test)
+#' rm(dannPreds)
+#' @export
+dann_df <- function(formula, train, test, k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
+  if (!rlang::is_formula(formula)) {
+    stop("Argument formula is not a formula.")
+  }
+
+  if (!is.data.frame(train)) {
+    stop("Argument train is not dataframe.")
+  }
+  if (nrow(train) < 1) {
+    stop("Argument train does not contain data.")
+  }
+
+  if (!is.data.frame(test)) {
+    stop("Argument test is not dataframe.")
+  }
+  if (nrow(test) < 1) {
+    stop("Argument test does not contain data.")
+  }
+
+  xTrain <- as.matrix(train[all.vars(formula)[2:length(all.vars(formula))]])
+  yTrain <- as.matrix(train[all.vars(formula)[1]])
+  xTest <- as.matrix(test[all.vars(formula)[2:length(all.vars(formula))]])
+
+  dannPreds <- dann(
+    xTrain, yTrain, xTest,
+    k, neighborhood_size, epsilon, probability
+  )
+
+  return(dannPreds)
+}

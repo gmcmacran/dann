@@ -82,7 +82,7 @@ yTest <- test %>%
   as.numeric() %>%
   as.vector()
 
-subDannPreds <- sub_dann(xTrain, yTrain, xTest, 1, 50, 1, FALSE, FALSE, "mcd", 3)
+subDannPreds <- sub_dann(xTrain, yTrain, xTest, 5, 60, 1, FALSE, FALSE, "mcd", 3)
 
 test_that("Validate structure", {
   expect_true(is.vector(subDannPreds))
@@ -325,6 +325,16 @@ test_that("Validate structure", {
   expect_true(is.numeric(subDannPreds))
   expect_true(length(subDannPreds) == nrow(xTest))
   expect_true(all(colnames(subDannPreds) == "Class"))
+})
+
+###############################################
+# default values match
+###############################################
+test_that("Defalut values match?", {
+  expect_true(formals(dann)$k == formals(sub_dann)$k)
+  expect_true(formals(dann)$neighborhood_size == formals(sub_dann)$neighborhood_size)
+  expect_true(formals(dann)$epsilon == formals(sub_dann)$epsilon)
+  expect_true(formals(dann)$probability == formals(sub_dann)$probability)
 })
 
 ###############################################
