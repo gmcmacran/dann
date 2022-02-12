@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/dann)](https://cran.r-project.org/package=dann)
 <!-- badges: end -->
 
-An Implementation of Hastie and Tibshirani's Discriminant Adaptive Nearest Neighbor Classification in R.
+An implementation of Hastie and Tibshirani's Discriminant Adaptive Nearest Neighbor Classification in R.
 
 ## Installation
 

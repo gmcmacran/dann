@@ -13,7 +13,7 @@ coverage](https://codecov.io/gh/gmcmacran/dann/branch/master/graph/badge.svg)](h
 status](https://www.r-pkg.org/badges/version/dann)](https://cran.r-project.org/package=dann)
 <!-- badges: end -->
 
-An Implementation of Hastie and Tibshirani’s Discriminant Adaptive
+An implementation of Hastie and Tibshirani’s Discriminant Adaptive
 Nearest Neighbor Classification in R.
 
 ## Installation
