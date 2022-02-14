@@ -381,9 +381,9 @@ sub_dann <- compiler::cmpfun(f = sub_dann_source, options = list(optimize = 3))
 #' rm(dannPreds, subDannPreds)
 #' @export
 sub_dann_df <- function(formula, train, test,
-                        k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
+                        k = 5, neighborhood_size = max(floor(nrow(train) / 5), 50),
                         epsilon = 1, probability = FALSE,
-                        weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(xTrain) / 2)) {
+                        weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(train) / 2)) {
   if (!rlang::is_formula(formula)) {
     stop("Argument formula is not a formula.")
   }

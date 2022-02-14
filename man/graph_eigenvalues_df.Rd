@@ -7,7 +7,7 @@
 graph_eigenvalues_df(
   formula,
   train,
-  neighborhood_size = max(floor(nrow(xTrain)/5), 50),
+  neighborhood_size = max(floor(nrow(train)/5), 50),
   weighted = FALSE,
   sphere = "mcd"
 )

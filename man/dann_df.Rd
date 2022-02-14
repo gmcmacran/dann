@@ -9,7 +9,7 @@ dann_df(
   train,
   test,
   k = 5,
-  neighborhood_size = max(floor(nrow(xTrain)/5), 50),
+  neighborhood_size = max(floor(nrow(train)/5), 50),
   epsilon = 1,
   probability = FALSE
 )

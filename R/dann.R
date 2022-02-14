@@ -383,7 +383,7 @@ dann <- compiler::cmpfun(f = dann_source, options = list(optimize = 3))
 #' rm(train, test)
 #' rm(dannPreds)
 #' @export
-dann_df <- function(formula, train, test, k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
+dann_df <- function(formula, train, test, k = 5, neighborhood_size = max(floor(nrow(train) / 5), 50), epsilon = 1, probability = FALSE) {
   if (!rlang::is_formula(formula)) {
     stop("Argument formula is not a formula.")
   }

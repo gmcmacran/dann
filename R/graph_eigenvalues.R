@@ -202,7 +202,7 @@ graph_eigenvalues <- function(xTrain, yTrain,
 #' rm(train)
 #' @export
 graph_eigenvalues_df <- function(formula, train,
-                                 neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
+                                 neighborhood_size = max(floor(nrow(train) / 5), 50),
                                  weighted = FALSE, sphere = "mcd") {
   if (!rlang::is_formula(formula)) {
     stop("Argument formula is not a formula.")
