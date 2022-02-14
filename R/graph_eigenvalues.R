@@ -4,7 +4,7 @@
 #' @param yTrain Train classes. Something easily converted to a numeric vector.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
 #' @return  A ggplot2 graph.
 #' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
 #' should make a judgement call on how many eigenvalues are large and set sub_dann's
@@ -134,8 +134,8 @@ graph_eigenvalues <- function(xTrain, yTrain,
   if (!is.character(sphere)) {
     stop("Argument sphere should be a character vector.")
   }
-  if (!(sphere %in% c("mve", "mcd", "classical"))) {
-    stop("Argument sphere should be a one mve, mcd, or classical.")
+  if (!(sphere %in% c("mve", "mcd", "classical", "none"))) {
+    stop("Argument sphere should be a one mve, mcd, classical or none.")
   }
 
   # Find subspace
@@ -161,7 +161,7 @@ graph_eigenvalues <- function(xTrain, yTrain,
 #' @param train A data frame or tibble containing training data.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
 #' @return  A ggplot2 graph.
 #' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
 #' should make a judgement call on how many eigenvalues are large and set sub_dann_df's

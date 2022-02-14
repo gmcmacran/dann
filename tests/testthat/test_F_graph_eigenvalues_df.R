@@ -61,6 +61,10 @@ test_that("Validate structure", {
   expect_true(all(class(graph_eigenvalues_df(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train, 50, TRUE, "classical")) == c("gg", "ggplot")))
 })
 
+test_that("Validate structure", {
+  expect_true(all(class(graph_eigenvalues_df(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train, 50, TRUE, "none")) == c("gg", "ggplot")))
+})
+
 ###############################################
 # default values match
 ###############################################
