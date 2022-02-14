@@ -286,7 +286,6 @@ test_that("Validate structure", {
   expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
   expect_true(length(subDannPreds) == nrow(xTest))
-  expect_true(all(colnames(subDannPreds) == "Class"))
 })
 
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 50, 1, FALSE, FALSE, "mcd", 2)
@@ -294,7 +293,6 @@ test_that("Validate structure", {
   expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
   expect_true(length(subDannPreds) == nrow(xTest))
-  expect_true(all(colnames(subDannPreds) == "Class"))
 })
 
 subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 50, 1, FALSE, FALSE, "classical", 2)
@@ -302,7 +300,13 @@ test_that("Validate structure", {
   expect_true(is.vector(subDannPreds))
   expect_true(is.numeric(subDannPreds))
   expect_true(length(subDannPreds) == nrow(xTest))
-  expect_true(all(colnames(subDannPreds) == "Class"))
+})
+
+subDannPreds <- sub_dann(xTrain, yTrain, xTest, 2, 50, 1, FALSE, FALSE, "none", 2)
+test_that("Validate structure", {
+  expect_true(is.vector(subDannPreds))
+  expect_true(is.numeric(subDannPreds))
+  expect_true(length(subDannPreds) == nrow(xTest))
 })
 
 ###############################################

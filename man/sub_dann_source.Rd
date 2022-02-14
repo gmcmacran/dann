@@ -34,7 +34,7 @@ sub_dann_source(
 
 \item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{sphere}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
+\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.}
 
 \item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
 }

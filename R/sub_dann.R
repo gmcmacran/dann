@@ -8,7 +8,7 @@
 #' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
 #' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @keywords internal
@@ -151,8 +151,8 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
   if (!is.character(sphere)) {
     stop("Argument sphere should be a character vector.")
   }
-  if (!(sphere %in% c("mve", "mcd", "classical"))) {
-    stop("Argument sphere should be a one mve, mcd, or classical.")
+  if (!(sphere %in% c("mve", "mcd", "classical", "none"))) {
+    stop("Argument sphere should be a one mve, mcd, classical or none.")
   }
 
   # numDim is valid
@@ -194,7 +194,7 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
 #' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
 #' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @details
@@ -300,7 +300,7 @@ sub_dann <- compiler::cmpfun(f = sub_dann_source, options = list(optimize = 3))
 #' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
 #' @param probability Should probabilities instead of classes be returned?
 #' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
+#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
 #' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
 #' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
 #' @details
