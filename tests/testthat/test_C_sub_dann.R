@@ -177,28 +177,6 @@ test_that("Confirm class probabilities are divisible by k", {
 })
 
 ######################
-# K equal 3
-######################
-K <- 3
-subDannPreds <- sub_dann(xTrain, yTrain, xTest, K, 15, 1, TRUE, FALSE, "mcd", 2)
-test_that("Validate structure", {
-  expect_true(is.matrix(subDannPreds))
-  expect_true(is.numeric(subDannPreds))
-  expect_true(nrow(subDannPreds) == nrow(xTest))
-  expect_true(ncol(subDannPreds) == 2)
-  expect_true(all(colnames(subDannPreds) == c("Class1", "Class2")))
-})
-
-test_that("Confirm class probabilities sum to 1", {
-  expect_true(all(rowSums(subDannPreds) == 1))
-})
-
-possibleProb <- 0:K / K
-test_that("Confirm class probabilities are divisible by k", {
-  expect_true(all(subDannPreds %in% possibleProb))
-})
-
-######################
 # K equal 5
 ######################
 K <- 5

@@ -53,7 +53,6 @@ rm(dannPreds)
 ######################
 test_that("Defalut values match?", {
   expect_true(formals(dann_df)$k == formals(dann)$k)
-  expect_true(formals(dann_df)$neighborhood_size == formals(dann)$neighborhood_size)
   expect_true(formals(dann_df)$epsilon == formals(dann)$epsilon)
   expect_true(formals(dann_df)$probability == formals(dann)$probability)
 })
