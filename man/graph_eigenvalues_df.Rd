@@ -21,7 +21,7 @@ graph_eigenvalues_df(
 
 \item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
 
-\item{sphere}{sphere argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
+\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.}
 }
 \value{
 A ggplot2 graph.
