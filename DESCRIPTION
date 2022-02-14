@@ -10,7 +10,6 @@ Description: Discriminant Adaptive Nearest Neighbor Classification is a
     Hastie (1995) <https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf>.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Imports: 
     MASS (>= 7.3),
     stats (>= 3.5.3),
