@@ -53,13 +53,13 @@ sub_dann_source <- function(xTrain, yTrain, xTest,
   }
 
   # Missing values.
-  if (any(is.na(xTrain))) {
+  if (anyNA(xTrain)) {
     stop("Argument xTrain should not have any NA values.")
   }
-  if (any(is.na(yTrain))) {
+  if (anyNA(yTrain)) {
     stop("Argument yTrain should not have any NA values.")
   }
-  if (any(is.na(xTest))) {
+  if (anyNA(xTest)) {
     stop("Argument xTest should not have any NA values.")
   }
 

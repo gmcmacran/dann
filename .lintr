@@ -1,0 +1,22 @@
+linters: linters_with_defaults(
+ brace_linter = brace_linter(allow_single_line = TRUE),
+ cyclocomp_linter = NULL,
+ line_length_linter = NULL,
+ object_name_linter = NULL,
+ seq_linter = NULL,
+ duplicate_argument_linter = duplicate_argument_linter(),
+ equals_na_linter = equals_na_linter(),
+ namespace_linter = namespace_linter(),
+ package_hooks_linter = package_hooks_linter(),
+ sprintf_linter = sprintf_linter(),
+ any_duplicated_linter = any_duplicated_linter(),
+ any_is_na_linter = any_is_na_linter(),
+ fixed_regex_linter = fixed_regex_linter(),
+ ifelse_censor_linter = ifelse_censor_linter(),
+ inner_combine_linter = inner_combine_linter(),
+ literal_coercion_linter = literal_coercion_linter(),
+ regex_subset_linter = regex_subset_linter(),
+ string_boundary_linter = string_boundary_linter(),
+ vector_logic_linter = vector_logic_linter()
+ ) # see vignette("lintr")
+encoding: "UTF-8"

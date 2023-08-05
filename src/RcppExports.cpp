@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // DANN_distance_C
 arma::vec DANN_distance_C(const arma::rowvec& x0, const arma::rowvec& x1, const arma::mat& sigma);
 RcppExport SEXP _dann_DANN_distance_C(SEXP x0SEXP, SEXP x1SEXP, SEXP sigmaSEXP) {

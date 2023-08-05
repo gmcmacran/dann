@@ -84,10 +84,10 @@ graph_eigenvalues <- function(xTrain, yTrain,
   }
 
   # Missing values.
-  if (any(is.na(xTrain))) {
+  if (anyNA(xTrain)) {
     stop("Argument xTrain should not have any NA values.")
   }
-  if (any(is.na(yTrain))) {
+  if (anyNA(yTrain)) {
     stop("Argument yTrain should not have any NA values.")
   }
 

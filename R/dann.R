@@ -47,13 +47,13 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   }
 
   # Missing values.
-  if (any(is.na(xTrain))) {
+  if (anyNA(xTrain)) {
     stop("Argument xTrain should not have any NA values.")
   }
-  if (any(is.na(yTrain))) {
+  if (anyNA(yTrain)) {
     stop("Argument yTrain should not have any NA values.")
   }
-  if (any(is.na(xTest))) {
+  if (anyNA(xTest)) {
     stop("Argument xTest should not have any NA values.")
   }
 
@@ -162,18 +162,17 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   # If there is a tie in distance, break tie with most common class.
   Y_counts <- vector(mode = "numeric", length = length(unique(yTrain)))
   names(Y_counts) <- sort(unique(yTrain))
-  for (i in seq_along(1:length(Y_counts))) {
+  for (i in seq_len(length(Y_counts))) {
     Y_counts[i] <- sum(yTrain == names(Y_counts)[i])
   }
   Y_counts <- sort(Y_counts, decreasing = TRUE)
 
   Y_class_presidence <- vector(mode = "numeric", length = length(yTrain))
-  for (i in seq_along(1:length(Y_counts))) {
+  for (i in seq_len(length(Y_counts))) {
     Y_class_presidence[which(yTrain == names(Y_counts)[i])] <- i
   }
 
-  for (i in seq_along(1:nrow(xTest))) {
-
+  for (i in seq_len(nrow(xTest))) {
     ###########
     # Find neighborhood for x[i,]
     ###########
@@ -192,7 +191,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     within_class_cov <- matrix(0, nrow = NCOLX, ncol = NCOLX)
     between_class_cov <- matrix(0, nrow = NCOLX, ncol = NCOLX)
 
-    for (kth in seq_along(1:length(neighborhood_classes))) {
+    for (kth in seq_len(length(neighborhood_classes))) {
       target_class <- neighborhood_classes[kth]
       class_indices <- which(neighborhood_y == target_class)
       class_frequencies[target_class] <- sum(neighborhood_y == target_class) / neighborhood_size
@@ -224,7 +223,7 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
     # DANN distance using sigma
     ###########
     distances <- vector(mode = "numeric", length = nrow(xTrain))
-    for (kth in seq_along(1:length(distances))) {
+    for (kth in seq_len(length(distances))) {
       distances[kth] <- DANN_distance_C(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE], sigma)
     }
     nearest <- order(distances, Y_class_presidence, yTrain)[1:k]
@@ -238,10 +237,10 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   ###################################
   # Shift classes back if needed.
   ###################################
-  if (shifted & probability) {
+  if (shifted && probability) {
     yTrain <- yTrain - shiftedBy
     colnames(predictions) <- stringr::str_c("Class", as.character(sort(unique(yTrain))))
-  } else if (shifted & !probability) {
+  } else if (shifted && !probability) {
     predictions <- predictions - shiftedBy
   }
 
