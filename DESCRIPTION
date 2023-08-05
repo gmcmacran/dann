@@ -1,7 +1,7 @@
 Package: dann
 Type: Package
 Title: Discriminant Adaptive Nearest Neighbor Classification
-Version: 0.2.6
+Version: 0.2.6.9999
 Author: Greg McMahan
 Maintainer: Greg McMahan <gmcmacran@gmail.com>
 Description: Discriminant Adaptive Nearest Neighbor Classification is a 
@@ -20,7 +20,7 @@ Imports:
     rlang (>= 0.3.4),
     fpc (>= 2.1-11.1),
     Rcpp (>= 1.0.1)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0),
     knitr (>= 1.22),
