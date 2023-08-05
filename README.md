@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/gmcmacran/dann/workflows/R-CMD-check/badge.svg)](https://github.com/gmcmacran/dann/actions)
+[![R-CMD-check](https://github.com/gmcmacran/dann/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gmcmacran/dann/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/gmcmacran/dann/branch/master/graph/badge.svg)](https://app.codecov.io/gh/gmcmacran/dann?branch=master)
 [![CRAN
@@ -48,32 +47,33 @@ library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 library(mlbench)
 
-set.seed(1) 
+set.seed(1)
 
-#Create training data
+# Create training data
 train <- mlbench.circle(500, 2) %>%
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 train <- train %>%
   mutate(Y = as.numeric(Y))
 
-ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) + 
-  geom_point() + 
+ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) +
+  geom_point() +
   labs(title = "Train Data", colour = "Y")
 ```
 
 <img src="man/figures/README-Circle-1.png" width="100%" />
 
 ``` r
-#Create test data
+
+# Create test data
 test <- mlbench.circle(500, 2) %>%
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "Y")
 test <- test %>%
   mutate(Y = as.numeric(Y))
 
-ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) + 
-  geom_point() + 
+ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) +
+  geom_point() +
   labs(title = "Test Data", colour = "Y")
 ```
 

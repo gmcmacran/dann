@@ -39,8 +39,8 @@ colnames(train) <- c("X1", "X2", "Y")
 train <- train %>%
   mutate(Y = as.numeric(Y))
 
-ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) + 
-  geom_point() + 
+ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) +
+  geom_point() +
   labs(title = "Train Data", colour = "Y")
 
 
@@ -50,8 +50,8 @@ colnames(test) <- c("X1", "X2", "Y")
 test <- test %>%
   mutate(Y = as.numeric(Y))
 
-ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) + 
-  geom_point() + 
+ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) +
+  geom_point() +
   labs(title = "Test Data", colour = "Y")
 ```
 
@@ -59,7 +59,9 @@ ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) +
 To train a model, the data and a few parameters are passed into dann. Neighborhood_size is the number of data points used to estimate a good shape of the neighborhood. K is the number of data points used in the final classification. Considering there is overlap between all classes and there are only about 100 data points per class, dann performs well for this data set.
 
 ```{r model}
-dannPreds <- dann_df(formula = Y ~ X1 + X2, train = train, test = test,
-                  k = 7, neighborhood_size = 150, epsilon = 1)
+dannPreds <- dann_df(
+  formula = Y ~ X1 + X2, train = train, test = test,
+  k = 7, neighborhood_size = 150, epsilon = 1
+)
 round(mean(dannPreds == test$Y), 2)
 ```
