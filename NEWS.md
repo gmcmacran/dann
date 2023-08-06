@@ -1,3 +1,7 @@
+# dann v 1.0.0
+  Adding linter
+  Moving to tidymodels integration.
+  
 # dann v 0.2.6 (02-11-2022)
   Fixing hard coded sphere argument in sub_dann and graph_eigenvalues.
   Fixing default values of df methods. xTrain to train.
