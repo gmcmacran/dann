@@ -25,8 +25,7 @@ Discriminant Adaptive Nearest Neighbor Classification
 }
 \details{
 This is an implementation of Hastie and Tibshirani's
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
 }
 \examples{
 library(dann)
@@ -41,5 +40,5 @@ colnames(train) <- c("X1", "X2", "Y")
 y <- train$Y
 x <- cbind(train$X1, train$X2)
 
-dann(x,y)
+dann(x, y)
 }

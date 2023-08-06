@@ -22,11 +22,11 @@ sub_dann(
 
 \item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
 
-\item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
+\item{weighted}{weighted argument to ncoord. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
 
-\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.}
+\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
 
-\item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.}
+\item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
 }
 \value{
 An S3 class of type sub_dann
@@ -36,8 +36,7 @@ Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 }
 \details{
 An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
 
 dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
 will generally be more performant in this scenario.

@@ -19,9 +19,9 @@ graph_eigenvalues_df(
 
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
-\item{weighted}{weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.}
+\item{weighted}{weighted argument to ncoord. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
 
-\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.}
+\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
 }
 \value{
 A ggplot2 graph.
@@ -30,7 +30,7 @@ A ggplot2 graph.
 A helper for sub_dann_df
 }
 \details{
-This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
+This function plots the eigenvalues found by \code{\link[fpc:ncoord]{fpc::ncoord()}}. The user
 should make a judgement call on how many eigenvalues are large and set sub_dann_df's
 numDim to that number.
 }

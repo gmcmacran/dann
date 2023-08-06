@@ -2,7 +2,7 @@
 # constructor
 #################
 #' @keywords internal
-new_sub_dann <- function(X, Y, k, neighborhood_size, epsilon, weighted, sphere, numDim , levels, subspace, blueprint) {
+new_sub_dann <- function(X, Y, k, neighborhood_size, epsilon, weighted, sphere, numDim, levels, subspace, blueprint) {
   # X is valid.
   if (!is.numeric(X)) {
     stop("`X` should be a numeric matrix.", call. = FALSE)
@@ -111,32 +111,32 @@ new_sub_dann <- function(X, Y, k, neighborhood_size, epsilon, weighted, sphere, 
 
   # weighted is valid
   if (length(weighted) != 1) {
-    stop("'weighted' should be a length 1 vector.")
+    stop("'weighted' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.logical(weighted)) {
-    stop("'weighted' should be logical.")
+    stop("'weighted' should be logical.", call. = FALSE)
   }
 
   # sphere is valid
   if (length(sphere) != 1) {
-    stop("'sphere' should be a length 1 vector.")
+    stop("'sphere' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.character(sphere)) {
-    stop("'sphere' should be a character vector.")
+    stop("'sphere' should be a character vector.", call. = FALSE)
   }
   if (!(sphere %in% c("mve", "mcd", "classical", "none"))) {
-    stop("'sphere' should be a one mve, mcd, classical or none.")
+    stop("'sphere' should be a one mve, mcd, classical or none.", call. = FALSE)
   }
 
   # numDim is valid
   if (length(numDim) != 1) {
-    stop("'numDim' should be a length 1 vector.")
+    stop("'numDim' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(numDim)) {
-    stop("'numDim' should be numeric.")
+    stop("'numDim' should be numeric.", call. = FALSE)
   }
   if (numDim < 1) {
-    stop("'numDim' should be at least 1.")
+    stop("'numDim' should be at least 1.", call. = FALSE)
   }
 
   hardhat::new_model(
@@ -185,18 +185,18 @@ sub_dann_impl <- function(predictors, outcomes, k, neighborhood_size, epsilon, w
 # bridge
 #################
 #' @keywords internal
-sub_dann_bridge <- function(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim ) {
-  # Add checks here.
-  hardhat::validate_outcomes_are_univariate(processed$outcomes)
+sub_dann_bridge <- function(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim) {
+  predictors <- processed$predictors
+  predictors <- as.matrix(predictors)
+  hardhat::validate_predictors_are_numeric(predictors)
 
-  predictors <- as.matrix(processed$predictors)
   outcomes <- processed$outcomes[[1]]
+  hardhat::validate_outcomes_are_univariate(outcomes)
   if (!is.factor(outcomes)) {
     outcomes <- factor(outcomes)
   }
   levels <- levels(outcomes)
-  outcomes <- as.numeric(as.vector(outcomes))
-
+  outcomes <- as.vector(as.numeric(outcomes))
 
   fit <- sub_dann_impl(predictors, outcomes, k, neighborhood_size, epsilon, weighted, sphere, numDim, levels)
 
@@ -220,14 +220,14 @@ sub_dann_bridge <- function(processed, k, neighborhood_size, epsilon, weighted, 
 #################
 #' @title Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 #' @inheritParams dann
-#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
-#' @param numDim Dimension of subspace used by dann. See \code{\link[fpc]{ncoord}} for details.
+#' @param weighted weighted argument to ncoord. See [fpc::ncoord()] for details.
+#' @param sphere One of "mcd", "mve", "classical", or "none" See [fpc::ncoord()] for details.
+#' @param numDim Dimension of subspace used by dann. See [fpc::ncoord()] for details.
 #' @return  An S3 class of type sub_dann
 #' @details
 #' An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
-#' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-#' Neighbor Classification publication.}.
+#' [Discriminant Adaptive Nearest
+#' Neighbor Classification publication.](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
 #'
 #' dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
 #' will generally be more performant in this scenario.
@@ -269,9 +269,9 @@ sub_dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
 #' y <- train$Y
-#' x <- train[,1:2]
+#' x <- train[, 1:2]
 #'
-#' sub_dann(x,y)
+#' sub_dann(x, y)
 #' @export
 sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2)) {
   processed <- hardhat::mold(x, y)
@@ -298,7 +298,7 @@ sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(
 #' y <- train$Y
 #' x <- cbind(train$X1, train$X2)
 #'
-#' sub_dann(x,y)
+#' sub_dann(x, y)
 #' @export
 sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2)) {
   processed <- hardhat::mold(x, y)
@@ -326,6 +326,7 @@ sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #' sub_dann(Y ~ X1 + X2, train)
 #' @export
 sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(data) / 2)) {
+  hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
 }
@@ -363,13 +364,10 @@ sub_dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(d
 #################
 #' @keywords internal
 sub_dann_predict_base <- function(object, predictors, probability) {
-  xTrain <- object$X
   yTrain <- object$Y
   k <- object$k
   neighborhood_size <- object$neighborhood_size
   epsilon <- object$epsilon
-  weighted <- object$weighted
-  sphere <- object$sphere
   numDim <- object$numDim
   subspace <- object$subspace
 
@@ -379,9 +377,9 @@ sub_dann_predict_base <- function(object, predictors, probability) {
   xTest2 <- xTest %*% subspace$units[, 1:numDim, drop = FALSE]
 
   # Get predictions
-  dannModel <- dann.matrix(x = xTrain2, y=yTrain, k=k, neighborhood_size = neighborhood_size, epsilon=epsilon)
+  dannModel <- dann.matrix(x = xTrain2, y = yTrain, k = k, neighborhood_size = neighborhood_size, epsilon = epsilon)
 
-  predictions <- dann_predict_base(object = dannModel, predictors =xTest2, probability = probability)
+  predictions <- dann_predict_base(object = dannModel, predictors = xTest2, probability = probability)
 
   return(predictions)
 }
@@ -408,10 +406,11 @@ predict_sub_dann_bridge <- function(type, object, predictors) {
   type <- rlang::arg_match(type, c("class", "prop"))
 
   predictors <- as.matrix(predictors)
+  hardhat::validate_predictors_are_numeric(predictors)
 
   switch(type,
-         class = sub_dann_predict_class(object, predictors),
-         prop = sub_dann_predict_prop(object, predictors)
+    class = sub_dann_predict_class(object, predictors),
+    prop = sub_dann_predict_prop(object, predictors)
   )
 }
 
@@ -442,7 +441,6 @@ predict_sub_dann_bridge <- function(type, object, predictors) {
 #' predict(model, test, "prop")
 #' @export
 predict.sub_dann <- function(object, new_data, type = "class") {
-  # Enforces column order, type, column names, etc
   processed <- hardhat::forge(new_data, object$blueprint)
 
   out <- predict_sub_dann_bridge(type, object, processed$predictors)

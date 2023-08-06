@@ -141,11 +141,12 @@ dann_impl <- function(predictors, outcomes, k, neighborhood_size, epsilon, level
 #################
 #' @keywords internal
 dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
-  # Add checks here.
-  hardhat::validate_outcomes_are_univariate(processed$outcomes)
+  predictors <- processed$predictors
+  predictors <- as.matrix(predictors)
+  hardhat::validate_predictors_are_numeric(predictors)
 
-  predictors <- as.matrix(processed$predictors)
   outcomes <- processed$outcomes[[1]]
+  hardhat::validate_outcomes_are_univariate(outcomes)
   if (!is.factor(outcomes)) {
     outcomes <- factor(outcomes)
   }
@@ -176,8 +177,8 @@ dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
 #' @return  An S3 class of type dann.
 #' @details
 #' This is an implementation of Hastie and Tibshirani's
-#' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-#' Neighbor Classification publication.}.
+#' [Discriminant Adaptive Nearest
+#' Neighbor Classification publication.](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
 #' @export
 dann <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
   UseMethod("dann")
@@ -216,9 +217,9 @@ dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 5
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
 #' y <- train$Y
-#' x <- train[,1:2]
+#' x <- train[, 1:2]
 #'
-#' dann(x,y)
+#' dann(x, y)
 #' @export
 dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
   processed <- hardhat::mold(x, y)
@@ -245,7 +246,7 @@ dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #' y <- train$Y
 #' x <- cbind(train$X1, train$X2)
 #'
-#' dann(x,y)
+#' dann(x, y)
 #' @export
 dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
   processed <- hardhat::mold(x, y)
@@ -273,6 +274,7 @@ dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5),
 #' dann(Y ~ X1 + X2, train)
 #' @export
 dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1) {
+  hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   dann_bridge(processed, k, neighborhood_size, epsilon)
 }
@@ -457,6 +459,7 @@ predict_dann_bridge <- function(type, object, predictors) {
   type <- rlang::arg_match(type, c("class", "prop"))
 
   predictors <- as.matrix(predictors)
+  hardhat::validate_predictors_are_numeric(predictors)
 
   switch(type,
     class = dann_predict_class(object, predictors),
@@ -491,7 +494,6 @@ predict_dann_bridge <- function(type, object, predictors) {
 #' predict(model, test, "prop")
 #' @export
 predict.dann <- function(object, new_data, type = "class") {
-  # Enforces column order, type, column names, etc
   processed <- hardhat::forge(new_data, object$blueprint)
 
   out <- predict_dann_bridge(type, object, processed$predictors)

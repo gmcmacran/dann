@@ -21,6 +21,5 @@ Discriminant Adaptive Nearest Neighbor Classification
 }
 \details{
 This is an implementation of Hastie and Tibshirani's
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
 }

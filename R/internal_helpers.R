@@ -14,7 +14,7 @@ DANN_distance <- function(x0, x1, sigma) {
 }
 
 #' Computes mode.
-#' Code found at \href{https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode}{Stack Overflow}
+#' Code found at [Stack Overflow](https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode)
 #'
 #' @param x A numeric vector.
 #' @keywords internal
