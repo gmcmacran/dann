@@ -115,8 +115,8 @@ new_dann <- function(X, Y, k, neighborhood_size, epsilon, levels, blueprint) {
     k = k,
     neighborhood_size = neighborhood_size,
     epsilon = epsilon,
-    blueprint = blueprint,
     levels = levels,
+    blueprint = blueprint,
     class = "dann"
   )
 }
