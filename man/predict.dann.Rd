@@ -41,5 +41,5 @@ colnames(test) <- c("X1", "X2", "Y")
 model <- dann(Y ~ X1 + X2, train)
 predict(model, test, "class")
 
-predict(model, test, "prop")
+predict(model, test, "prob")
 }

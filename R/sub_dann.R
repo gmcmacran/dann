@@ -295,7 +295,7 @@ sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
-#' y <- train$Y
+#' y <- as.numeric(train$Y)
 #' x <- cbind(train$X1, train$X2)
 #'
 #' sub_dann(x, y)
@@ -308,7 +308,7 @@ sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 # Formula method
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
-#' @param formula A formula. Y ~ X1 + X1
+#' @param formula A formula. Y ~ X1 + X2
 #' @param data A data frame.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
@@ -394,7 +394,7 @@ sub_dann_predict_class <- function(object, predictors) {
 }
 
 #' @keywords internal
-sub_dann_predict_prop <- function(object, predictors) {
+sub_dann_predict_prob <- function(object, predictors) {
   obsLevels <- object$levels
   out <- sub_dann_predict_base(object = object, predictors = predictors, probability = TRUE)
   out <- hardhat::spruce_prob(obsLevels, out)
@@ -403,23 +403,30 @@ sub_dann_predict_prop <- function(object, predictors) {
 
 #' @keywords internal
 predict_sub_dann_bridge <- function(type, object, predictors) {
-  type <- rlang::arg_match(type, c("class", "prop"))
+  if (length(type) != 1) {
+    stop("'type' should have length one.", call. = FALSE)
+  }
+
+  type <- rlang::arg_match(type, c("class", "prob"))
 
   predictors <- as.matrix(predictors)
+  if (anyNA(predictors)) {
+    stop("'new_data' must not contain missing values.")
+  }
   hardhat::validate_predictors_are_numeric(predictors)
 
   switch(type,
     class = sub_dann_predict_class(object, predictors),
-    prop = sub_dann_predict_prop(object, predictors)
+    prob = sub_dann_predict_prob(object, predictors)
   )
 }
 
-#' @inherit dann title
-#' @param object of class inheriting from "dann"
+#' @inherit sub_dann title
+#' @param object of class inheriting from "sub_dann"
 #' @param new_data A data frame.
 #' @param type Type of prediction. (class, prob)
 #' @return  A data frame containing either class or class probabilities. Adheres to tidy models standards.
-#' @inherit dann details
+#' @inherit sub_dann details
 #' @examples
 #' library(dann)
 #' library(mlbench)
@@ -438,7 +445,7 @@ predict_sub_dann_bridge <- function(type, object, predictors) {
 #' model <- sub_dann(Y ~ X1 + X2, train)
 #' predict(model, test, "class")
 #'
-#' predict(model, test, "prop")
+#' predict(model, test, "prob")
 #' @export
 predict.sub_dann <- function(object, new_data, type = "class") {
   processed <- hardhat::forge(new_data, object$blueprint)

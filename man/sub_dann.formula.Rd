@@ -16,7 +16,7 @@
 )
 }
 \arguments{
-\item{formula}{A formula. Y ~ X1 + X1}
+\item{formula}{A formula. Y ~ X1 + X2}
 
 \item{data}{A data frame.}
 

@@ -243,7 +243,7 @@ dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
-#' y <- train$Y
+#' y <- as.numeric(train$Y)
 #' x <- cbind(train$X1, train$X2)
 #'
 #' dann(x, y)
@@ -256,7 +256,7 @@ dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5),
 # Formula method
 #' @inherit dann title
 #' @inheritParams dann
-#' @param formula A formula. Y ~ X1 + X1
+#' @param formula A formula. Y ~ X1 + X2
 #' @param data A data frame.
 #' @inherit dann return
 #' @inherit dann details
@@ -447,7 +447,7 @@ dann_predict_class <- function(object, predictors) {
 }
 
 #' @keywords internal
-dann_predict_prop <- function(object, predictors) {
+dann_predict_prob <- function(object, predictors) {
   obsLevels <- object$levels
   out <- dann_predict_base(object = object, predictors = predictors, probability = TRUE)
   out <- hardhat::spruce_prob(obsLevels, out)
@@ -456,14 +456,21 @@ dann_predict_prop <- function(object, predictors) {
 
 #' @keywords internal
 predict_dann_bridge <- function(type, object, predictors) {
-  type <- rlang::arg_match(type, c("class", "prop"))
+  if (length(type) != 1) {
+    stop("'type' should have length one.", call. = FALSE)
+  }
+
+  type <- rlang::arg_match(type, c("class", "prob"))
 
   predictors <- as.matrix(predictors)
+  if (anyNA(predictors)) {
+    stop("'new_data' must not contain missing values.")
+  }
   hardhat::validate_predictors_are_numeric(predictors)
 
   switch(type,
     class = dann_predict_class(object, predictors),
-    prop = dann_predict_prop(object, predictors)
+    prob = dann_predict_prob(object, predictors)
   )
 }
 
@@ -491,7 +498,7 @@ predict_dann_bridge <- function(type, object, predictors) {
 #' model <- dann(Y ~ X1 + X2, train)
 #' predict(model, test, "class")
 #'
-#' predict(model, test, "prop")
+#' predict(model, test, "prob")
 #' @export
 predict.dann <- function(object, new_data, type = "class") {
   processed <- hardhat::forge(new_data, object$blueprint)

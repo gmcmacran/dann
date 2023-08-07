@@ -7,7 +7,6 @@
 \method{graph_eigenvalues}{matrix}(
   x,
   y,
-  k = 5,
   neighborhood_size = max(floor(nrow(x)/5), 50),
   weighted = FALSE,
   sphere = "mcd"
@@ -56,7 +55,7 @@ train <- train \%>\%
     U5 = runif(300, -1, 1)
   )
 
-y <- train$Y
+y <- as.numeric(train$Y)
 x <- cbind(train$X1, train$X2, train$U1, train$U2, train$U3, train$U4, train$U5)
 
 graph_eigenvalues(x, y)

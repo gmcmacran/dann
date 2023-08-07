@@ -8,30 +8,6 @@ graph_eigenvalues_base <- function(xTrain, yTrain,
   ###################################
   # Input checking
   ###################################
-  # Convert to matrices
-  if (!is.matrix(xTrain)) {
-    xTrain <- as.matrix(xTrain)
-  }
-  if (!is.vector(yTrain)) {
-    yTrain <- as.vector(yTrain)
-  }
-
-  # Confirm converstion worked
-  if (!is.matrix(xTrain)) {
-    stop("Was not able to convert argment xTrain to a matrix.")
-  }
-  if (!is.vector(yTrain)) {
-    stop("Was not able to convert argment yTrain to a vector.")
-  }
-
-  # Confirm numeric
-  if (!is.numeric(xTrain)) {
-    stop("Argument xTrain should be numeric.")
-  }
-  if (!is.numeric(yTrain)) {
-    stop("Argument yTrain should be numeric.")
-  }
-
   # Missing values.
   if (anyNA(xTrain)) {
     stop("Argument xTrain should not have any NA values.")
@@ -126,7 +102,7 @@ graph_eigenvalues_bridge <- function(processed, neighborhood_size, weighted, sph
     yTrain = outcomes,
     neighborhood_size = neighborhood_size,
     weighted = weighted,
-    sphere = "mcd"
+    sphere = sphere
   )
 }
 
@@ -134,9 +110,7 @@ graph_eigenvalues_bridge <- function(processed, neighborhood_size, weighted, sph
 # User interface
 #################
 #' @title A helper for sub_dann
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param weighted weighted argument to ncoord. See [fpc::ncoord()] for details.
-#' @param sphere One of "mcd", "mve", "classical", or "none" See [fpc::ncoord()] for details.
+#' @inheritParams sub_dann
 #' @return  A ggplot2 graph.
 #' @details This function plots the eigenvalues found by [fpc::ncoord()]. The user
 #' should make a judgement call on how many eigenvalues are large and set sub_dann's
@@ -228,12 +202,12 @@ graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nro
 #'     U5 = runif(300, -1, 1)
 #'   )
 #'
-#' y <- train$Y
+#' y <- as.numeric(train$Y)
 #' x <- cbind(train$X1, train$X2, train$U1, train$U2, train$U3, train$U4, train$U5)
 #'
 #' graph_eigenvalues(x, y)
 #' @export
-graph_eigenvalues.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
+graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
   processed <- hardhat::mold(x, y)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }
@@ -311,52 +285,3 @@ graph_eigenvalues.recipe <- function(x, data, neighborhood_size = max(floor(nrow
   processed <- hardhat::mold(x, data)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }
-
-
-
-#' A helper for sub_dann_df
-#'
-#' @param formula An object of class formula. (Y ~ X1 + X2)
-#' @param train A data frame or tibble containing training data.
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param weighted weighted argument to ncoord. See [fpc::ncoord()] for details.
-#' @param sphere One of "mcd", "mve", "classical", or "none" See [fpc::ncoord()] for details.
-#' @return  A ggplot2 graph.
-#' @details This function plots the eigenvalues found by [fpc::ncoord()]. The user
-#' should make a judgement call on how many eigenvalues are large and set sub_dann_df's
-#' numDim to that number.
-#' @importFrom rlang .data
-#' @examples
-#' library(dann)
-#' library(mlbench)
-#' library(magrittr)
-#' library(dplyr)
-#'
-#' ######################
-#' # Circle data with 2 related variables and 5 unrelated variables
-#' ######################
-#' set.seed(1)
-#' train <- mlbench.circle(300, 2) %>%
-#'   tibble::as_tibble()
-#' colnames(train)[1:3] <- c("X1", "X2", "Y")
-#' train <- train %>%
-#'   mutate(Y = as.numeric(Y))
-#'
-#' # Add 5 unrelated variables
-#' train <- train %>%
-#'   mutate(
-#'     U1 = runif(300, -1, 1),
-#'     U2 = runif(300, -1, 1),
-#'     U3 = runif(300, -1, 1),
-#'     U4 = runif(300, -1, 1),
-#'     U5 = runif(300, -1, 1)
-#'   )
-#'
-#' # Graph suggests a subspace with 2 dimensions. The correct answer.
-#' graph_eigenvalues_df(
-#'   formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train = train,
-#'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
-#' )
-#'
-#' rm(train)
-#' @export

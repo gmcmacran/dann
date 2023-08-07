@@ -2,12 +2,12 @@
 % Please edit documentation in R/sub_dann.R
 \name{predict.sub_dann}
 \alias{predict.sub_dann}
-\title{Discriminant Adaptive Nearest Neighbor Classification}
+\title{Discriminant Adaptive Nearest Neighbor With Subspace Reduction}
 \usage{
 \method{predict}{sub_dann}(object, new_data, type = "class")
 }
 \arguments{
-\item{object}{of class inheriting from "dann"}
+\item{object}{of class inheriting from "sub_dann"}
 
 \item{new_data}{A data frame.}
 
@@ -17,11 +17,14 @@
 A data frame containing either class or class probabilities. Adheres to tidy models standards.
 }
 \description{
-Discriminant Adaptive Nearest Neighbor Classification
+Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 }
 \details{
-This is an implementation of Hastie and Tibshirani's
+An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
 \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
+
+dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
+will generally be more performant in this scenario.
 }
 \examples{
 library(dann)
@@ -41,5 +44,5 @@ colnames(test) <- c("X1", "X2", "Y")
 model <- sub_dann(Y ~ X1 + X2, train)
 predict(model, test, "class")
 
-predict(model, test, "prop")
+predict(model, test, "prob")
 }

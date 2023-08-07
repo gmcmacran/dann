@@ -83,6 +83,9 @@ yTrain <- c(rep(1, 50), rep(2, 50))
 xTest[, 1] <- runif(100, -1, 1)
 xTest[, 2] <- runif(100, -1, 1)
 
+colnames(xTrain) <- c("X1", "X2")
+colnames(xTest) <- c("X1", "X2")
+
 ###############################################
 # Input checking
 ###############################################
@@ -90,16 +93,21 @@ xTest[, 2] <- runif(100, -1, 1)
 # Data checks
 #######
 chars <- matrix("A", nrow = 5, ncol = 2)
+colnames(chars) <- c("X1", "X2")
 test_that("Nonnumeric inputs error", {
   expect_error(dann(chars, yTrain, 3, 10, 1), NULL)
   expect_error(dann(xTrain, chars, 3, 10, 1), NULL)
 })
 rm(chars)
 
+missingValues <- xTrain
+missingValues[1, 1] <- NA
+test_that("Missing values in inputs error", {
+  expect_error(dann(missingValues, yTrain), NULL)
+})
 missingValues <- yTrain
 missingValues[1] <- NA
 test_that("Missing values in inputs error", {
-  expect_error(dann(missingValues, yTrain), NULL)
   expect_error(dann(xTrain, missingValues), NULL)
 })
 rm(missingValues)
@@ -119,12 +127,6 @@ test_that("No rows in inputs error", {
   expect_error(dann(xTrain, noDatayTrain), NULL)
 })
 rm(noDataxTrain, noDatayTrain)
-
-TooManyyTrain <- cbind(yTrain, yTrain)
-test_that("Too many columns in yTrain error.", {
-  expect_error(dann(xTrain, TooManyyTrain), NULL)
-})
-rm(TooManyyTrain)
 
 #######
 # non data checks
@@ -148,9 +150,4 @@ test_that("epsilon checks works", {
   expect_error(dann(xTrain, yTrain, 2, 2, c(2, 3)), NULL)
   expect_error(dann(xTrain, yTrain, 2, 2, "1"), NULL)
   expect_error(dann(xTrain, yTrain, 2, 2, -1), NULL)
-})
-
-test_that("probability checks works", {
-  expect_error(dann(xTrain, yTrain, 2, 2, 1, c(TRUE, FALSE)), NULL)
-  expect_error(dann(xTrain, yTrain, 2, 2, 1, "TRUE"), NULL)
 })

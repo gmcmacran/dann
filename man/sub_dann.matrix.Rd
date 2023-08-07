@@ -55,7 +55,7 @@ set.seed(1)
 train <- mlbench.circle(300, 2) \%>\%
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
-y <- train$Y
+y <- as.numeric(train$Y)
 x <- cbind(train$X1, train$X2)
 
 sub_dann(x, y)
