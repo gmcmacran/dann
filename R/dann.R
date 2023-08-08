@@ -171,6 +171,8 @@ dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
 # User interface
 #################
 #' @title Discriminant Adaptive Nearest Neighbor Classification
+#' @param x A matrix or a dataframe.
+#' @param ... Additional parameters passed to methods.
 #' @param k The number of data points used for final classification.
 #' @param neighborhood_size The number of data points used to calculate between and within class covariance.
 #' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
@@ -180,7 +182,7 @@ dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
 #' [Discriminant Adaptive Nearest
 #' Neighbor Classification publication.](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
 #' @export
-dann <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
+dann <- function(x, ..., k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
   UseMethod("dann")
 }
 
@@ -188,11 +190,10 @@ dann <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsi
 #' @inherit dann title
 #' @inheritParams dann
 #' @param x A data frame.
-#' @param y A vector.
 #' @inherit dann return
 #' @inherit dann details
 #' @export
-dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
+dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
   stop(
     "`dann()` is not defined for a '", class(x)[1], "'.",
     call. = FALSE
@@ -221,7 +222,7 @@ dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 5
 #'
 #' dann(x, y)
 #' @export
-dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
+dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
   processed <- hardhat::mold(x, y)
   dann_bridge(processed, k, neighborhood_size, epsilon)
 }
@@ -248,7 +249,7 @@ dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #'
 #' dann(x, y)
 #' @export
-dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
+dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
   processed <- hardhat::mold(x, y)
   dann_bridge(processed, k, neighborhood_size, epsilon)
 }
@@ -273,7 +274,7 @@ dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5),
 #'
 #' dann(Y ~ X1 + X2, train)
 #' @export
-dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1) {
+dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, ...) {
   hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   dann_bridge(processed, k, neighborhood_size, epsilon)
@@ -302,7 +303,7 @@ dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nro
 #'
 #' dann(rec_obj, train)
 #' @export
-dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1) {
+dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, ...) {
   processed <- hardhat::mold(x, data)
   dann_bridge(processed, k, neighborhood_size, epsilon)
 }

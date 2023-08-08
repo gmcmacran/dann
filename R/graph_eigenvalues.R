@@ -117,7 +117,7 @@ graph_eigenvalues_bridge <- function(processed, neighborhood_size, weighted, sph
 #' numDim to that number.
 #' @importFrom rlang .data
 #' @export
-graph_eigenvalues <- function(x, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
+graph_eigenvalues <- function(x, ..., neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
   UseMethod("graph_eigenvalues")
 }
 
@@ -125,11 +125,10 @@ graph_eigenvalues <- function(x, neighborhood_size = max(floor(nrow(x) / 5), 50)
 #' @inherit graph_eigenvalues title
 #' @inheritParams graph_eigenvalues
 #' @param x A data frame.
-#' @param y A vector.
 #' @inherit graph_eigenvalues return
 #' @inherit graph_eigenvalues details
 #' @export
-graph_eigenvalues.default <- function(x, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
+graph_eigenvalues.default <- function(x, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
   stop(
     "`graph_eigenvalues()` is not defined for a '", class(x)[1], "'.",
     call. = FALSE
@@ -169,7 +168,7 @@ graph_eigenvalues.default <- function(x, neighborhood_size = max(floor(nrow(x) /
 #'
 #' graph_eigenvalues(x, y)
 #' @export
-graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
+graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
   processed <- hardhat::mold(x, y)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }
@@ -207,7 +206,7 @@ graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nro
 #'
 #' graph_eigenvalues(x, y)
 #' @export
-graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
+graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
   processed <- hardhat::mold(x, y)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }
@@ -242,7 +241,7 @@ graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x)
 #'
 #' graph_eigenvalues(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train)
 #' @export
-graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd") {
+graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
   hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
@@ -281,7 +280,7 @@ graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(flo
 #'
 #' graph_eigenvalues(rec_obj, train)
 #' @export
-graph_eigenvalues.recipe <- function(x, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd") {
+graph_eigenvalues.recipe <- function(x, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
   processed <- hardhat::mold(x, data)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }

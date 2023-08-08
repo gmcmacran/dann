@@ -10,6 +10,7 @@
 coverage](https://codecov.io/gh/gmcmacran/dann/branch/master/graph/badge.svg)](https://app.codecov.io/gh/gmcmacran/dann?branch=master)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/dann)](https://cran.r-project.org/package=dann)
+
 <!-- badges: end -->
 
 An implementation of Hastie and Tibshirani’s Discriminant Adaptive
@@ -73,7 +74,7 @@ ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) +
 To train a model, call dann.
 
 ``` r
-model <- dann(formula = Y~X1 + X2, data = train, k = 5, neighborhood_size = 50, epsilon = 1)
+model <- dann(formula = Y ~ X1 + X2, data = train, k = 5, neighborhood_size = 50, epsilon = 1)
 ```
 
 To get class predictions, call predict with type equal to “class”
@@ -86,7 +87,7 @@ colnames(test) <- c("X1", "X2", "Y")
 test <- test %>%
   mutate(Y = as.numeric(Y))
 
-yhat <- predict(model, test, "class")
+yhat <- predict(object = model, new_data = test, type = "class")
 yhat
 #> # A tibble: 500 × 1
 #>    .pred_class
@@ -107,7 +108,7 @@ yhat
 To get probabilities, call predict with type equal to “prob”
 
 ``` r
-yhat <- predict(model, test, "prob")
+yhat <- predict(object = model, new_data = test, type = "prob")
 yhat
 #> # A tibble: 500 × 2
 #>    .pred_1 .pred_2
@@ -188,10 +189,10 @@ answer).
 
 ``` r
 graph_eigenvalues(
-  formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, 
+  formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5,
   data = train,
-  neighborhood_size = 50, 
-  weighted = FALSE, 
+  neighborhood_size = 50,
+  weighted = FALSE,
   sphere = "mcd"
 )
 ```
@@ -200,22 +201,22 @@ graph_eigenvalues(
 
 ``` r
 dann_model <- dann(
-  formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, 
+  formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5,
   data = train,
-  k = 3, 
-  neighborhood_size = 50, 
+  k = 3,
+  neighborhood_size = 50,
   epsilon = 1
 )
 # numDim based on large eigenvalues
 # weighted, sphere, and neighborhood_size kept consistent between sub_dann and graph_eigenvalues
 sub_dann_model <- sub_dann(
-  formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, 
+  formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5,
   data = train,
-  k = 3, 
-  neighborhood_size = 50, 
+  k = 3,
+  neighborhood_size = 50,
   epsilon = 1,
-  weighted = FALSE, 
-  sphere = "mcd", 
+  weighted = FALSE,
+  sphere = "mcd",
   numDim = 2
 )
 ```
@@ -225,7 +226,7 @@ well.
 
 ``` r
 library(yardstick)
-dann_yhat <- predict(dann_model, test, "prob")
+dann_yhat <- predict(object = dann_model, new_data = test, type = "prob")
 dann_yhat <- test %>%
   select(Y) %>%
   bind_cols(dann_yhat)
@@ -239,7 +240,7 @@ roc_auc(data = dann_yhat, truth = Y, event_level = "first", .pred_1)
 sub_dann provides a major improvement.
 
 ``` r
-sub_dann_yhat <- predict(sub_dann_model, test, "prob")
+sub_dann_yhat <- predict(object = sub_dann_model, new_data = test, type = "prob")
 sub_dann_yhat <- test %>%
   select(Y) %>%
   bind_cols(sub_dann_yhat)

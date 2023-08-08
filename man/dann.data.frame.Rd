@@ -4,7 +4,14 @@
 \alias{dann.data.frame}
 \title{Discriminant Adaptive Nearest Neighbor Classification}
 \usage{
-\method{dann}{data.frame}(x, y, k = 5, neighborhood_size = max(floor(nrow(x)/5), 50), epsilon = 1)
+\method{dann}{data.frame}(
+  x,
+  y,
+  k = 5,
+  neighborhood_size = max(floor(nrow(x)/5), 50),
+  epsilon = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{A data frame.}
@@ -16,6 +23,8 @@
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
 \item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
+
+\item{...}{Additional parameters passed to methods.}
 }
 \value{
 An S3 class of type dann.

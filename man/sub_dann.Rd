@@ -6,16 +6,20 @@
 \usage{
 sub_dann(
   x,
+  ...,
   k = 5,
   neighborhood_size = max(floor(nrow(x)/5), 50),
   epsilon = 1,
   weighted = FALSE,
   sphere = "mcd",
-  numDim = ceiling(ncol(x)/2),
-  ...
+  numDim = ceiling(ncol(x)/2)
 )
 }
 \arguments{
+\item{x}{A matrix or a dataframe.}
+
+\item{...}{Additional parameters passed to methods.}
+
 \item{k}{The number of data points used for final classification.}
 
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}

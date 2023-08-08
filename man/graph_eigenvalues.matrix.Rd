@@ -9,7 +9,8 @@
   y,
   neighborhood_size = max(floor(nrow(x)/5), 50),
   weighted = FALSE,
-  sphere = "mcd"
+  sphere = "mcd",
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@
 \item{weighted}{weighted argument to ncoord. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
 
 \item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
+
+\item{...}{Additional parameters passed to methods.}
 }
 \value{
 A ggplot2 graph.

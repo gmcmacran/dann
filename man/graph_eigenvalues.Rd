@@ -6,13 +6,17 @@
 \usage{
 graph_eigenvalues(
   x,
+  ...,
   neighborhood_size = max(floor(nrow(x)/5), 50),
   weighted = FALSE,
-  sphere = "mcd",
-  ...
+  sphere = "mcd"
 )
 }
 \arguments{
+\item{x}{A matrix or a dataframe.}
+
+\item{...}{Additional parameters passed to methods.}
+
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
 \item{weighted}{weighted argument to ncoord. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}

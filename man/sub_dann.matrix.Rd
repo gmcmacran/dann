@@ -12,7 +12,8 @@
   epsilon = 1,
   weighted = FALSE,
   sphere = "mcd",
-  numDim = ceiling(ncol(x)/2)
+  numDim = ceiling(ncol(x)/2),
+  ...
 )
 }
 \arguments{
@@ -31,6 +32,8 @@
 \item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
 
 \item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
+
+\item{...}{Additional parameters passed to methods.}
 }
 \value{
 An S3 class of type sub_dann

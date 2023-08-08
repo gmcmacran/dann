@@ -232,7 +232,7 @@ sub_dann_bridge <- function(processed, k, neighborhood_size, epsilon, weighted, 
 #' dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
 #' will generally be more performant in this scenario.
 #' @export
-sub_dann <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2), ...) {
+sub_dann <- function(x, ..., k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2)) {
   UseMethod("sub_dann")
 }
 
@@ -240,11 +240,10 @@ sub_dann <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), 
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
 #' @param x A data frame.
-#' @param y A vector.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
 #' @export
-sub_dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2)) {
+sub_dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2), ...) {
   stop(
     "`sub_dann()` is not defined for a '", class(x)[1], "'.",
     call. = FALSE
@@ -273,7 +272,7 @@ sub_dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5
 #'
 #' sub_dann(x, y)
 #' @export
-sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2)) {
+sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2), ...) {
   processed <- hardhat::mold(x, y)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
 }
@@ -300,7 +299,7 @@ sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(
 #'
 #' sub_dann(x, y)
 #' @export
-sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2)) {
+sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2), ...) {
   processed <- hardhat::mold(x, y)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
 }
@@ -325,7 +324,7 @@ sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #'
 #' sub_dann(Y ~ X1 + X2, train)
 #' @export
-sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(data) / 2)) {
+sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(data) / 2), ...) {
   hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
@@ -354,7 +353,7 @@ sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor
 #'
 #' sub_dann(rec_obj, train)
 #' @export
-sub_dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(data) / 2)) {
+sub_dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(data) / 2), ...) {
   processed <- hardhat::mold(x, data)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
 }

@@ -4,7 +4,7 @@
 \alias{dann.default}
 \title{Discriminant Adaptive Nearest Neighbor Classification}
 \usage{
-\method{dann}{default}(x, k = 5, neighborhood_size = max(floor(nrow(x)/5), 50), epsilon = 1)
+\method{dann}{default}(x, k = 5, neighborhood_size = max(floor(nrow(x)/5), 50), epsilon = 1, ...)
 }
 \arguments{
 \item{x}{A data frame.}
@@ -15,7 +15,7 @@
 
 \item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
 
-\item{y}{A vector.}
+\item{...}{Additional parameters passed to methods.}
 }
 \value{
 An S3 class of type dann.

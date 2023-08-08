@@ -9,7 +9,8 @@
   data,
   k = 5,
   neighborhood_size = max(floor(nrow(data)/5), 50),
-  epsilon = 1
+  epsilon = 1,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@
 \item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
 
 \item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
+
+\item{...}{Additional parameters passed to methods.}
 }
 \value{
 An S3 class of type dann.
