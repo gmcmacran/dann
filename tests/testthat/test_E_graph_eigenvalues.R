@@ -150,5 +150,26 @@ test_that("sphere checks works", {
   expect_error(graph_eigenvalues(xTrain, yTrain, 3, FALSE, "foo"), NULL)
 })
 
+set.seed(1)
+xTrain <- matrix(0, nrow = 100, ncol = 2)
+
+xTrain[, 1] <- runif(100, -10, 1)
+xTrain[, 2] <- runif(100, -1, 1)
+yTrain <- c(rep(1, 50), rep(2, 50))
+
+colnames(xTrain) <- c("X1", "X2")
+
+xTrainDF <- tibble::tibble(X1 = xTrain[, 1], X2 = xTrain[, 2])
+colnames(xTrainDF) <- c("X1", "X2")
+dat <- dplyr::mutate(xTrainDF, Y = yTrain)
+rec_obj <- recipe(formula = Y ~ X1 + X2, data = dat)
+
+test_that("... checks works", {
+  expect_error(graph_eigenvalues(x = xTrainDF, y = yTrain, neighborhood_sizee = 2), NULL)
+  expect_error(graph_eigenvalues(formula = Y ~ X1 + X2, data = dat, neighborhood_sizee = 2), NULL)
+  expect_error(graph_eigenvalues(x = xTrain, y = yTrain, neighborhood_sizee = 2), NULL)
+  expect_error(graph_eigenvalues(x = rec_obj, data = dat, neighborhood_sizee = 2), NULL)
+})
+
 rm(train)
 rm(xTrain, yTrain)

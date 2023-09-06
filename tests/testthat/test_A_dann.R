@@ -86,6 +86,11 @@ xTest[, 2] <- runif(100, -1, 1)
 colnames(xTrain) <- c("X1", "X2")
 colnames(xTest) <- c("X1", "X2")
 
+xTrainDF <- tibble::tibble(X1 = xTrain[, 1], X2 = xTrain[, 2])
+colnames(xTrainDF) <- c("X1", "X2")
+dat <- dplyr::mutate(xTrainDF, Y = yTrain)
+rec_obj <- recipe(formula = Y ~ X1 + X2, data = dat)
+
 ###############################################
 # Input checking
 ###############################################
@@ -150,4 +155,11 @@ test_that("epsilon checks works", {
   expect_error(dann(xTrain, yTrain, 2, 2, c(2, 3)), NULL)
   expect_error(dann(xTrain, yTrain, 2, 2, "1"), NULL)
   expect_error(dann(xTrain, yTrain, 2, 2, -1), NULL)
+})
+
+test_that("... checks works", {
+  expect_error(dann(x = xTrainDF, y = yTrain, k = 2, neighborhood_size = 2, epsilonn = 1), NULL)
+  expect_error(dann(formula = Y ~ X1 + X2, data = dat, k = 2, neighborhood_size = 2, epsilonn = 1), NULL)
+  expect_error(dann(x = xTrain, y = yTrain, k = 2, neighborhood_size = 2, epsilonn = 1), NULL)
+  expect_error(dann(x = rec_obj, data = dat, k = 2, neighborhood_size = 2, epsilonn = 1), NULL)
 })

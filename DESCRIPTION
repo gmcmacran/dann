@@ -20,7 +20,8 @@ Imports:
     rlang (>= 0.3.4),
     fpc (>= 2.1-11.1),
     Rcpp (>= 1.0.1),
-    hardhat
+    hardhat,
+    ellipsis
 RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0),
