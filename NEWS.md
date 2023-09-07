@@ -1,6 +1,8 @@
 # dann v 1.0.0
-  Adding linter
+  Adding linter.
+  Adding ... checks.
   Moving to tidymodels integration.
+  Add print method.
   
 # dann v 0.2.6 (02-11-2022)
   Fixing hard coded sphere argument in sub_dann and graph_eigenvalues.
