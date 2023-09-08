@@ -151,8 +151,14 @@ dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
     outcomes <- factor(outcomes)
   }
   levels <- levels(outcomes)
-  outcomes <- as.numeric(as.vector(outcomes))
 
+  # Safely convert factor to  numeric
+  temp <- rep(NA_real_, length(outcomes))
+  for (i in seq(levels(outcomes))) {
+    temp[outcomes == levels(outcomes)[i]] <- i
+  }
+  temp <- temp - 1
+  outcomes <- temp
 
   fit <- dann_impl(predictors, outcomes, k, neighborhood_size, epsilon, levels)
 
@@ -446,7 +452,11 @@ dann_predict_base <- function(object, predictors, probability) {
 dann_predict_class <- function(object, predictors) {
   obsLevels <- object$levels
   out <- dann_predict_base(object = object, predictors = predictors, probability = FALSE)
-  out <- factor(x = out, levels = obsLevels)
+  temp <- rep(NA_character_, length(out))
+  for (i in seq(obsLevels)) {
+    temp[out == (i - 1)] <- obsLevels[i]
+  }
+  out <- factor(x = temp, levels = obsLevels)
   out <- hardhat::spruce_class(out)
   return(out)
 }
