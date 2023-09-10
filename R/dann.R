@@ -151,9 +151,9 @@ fix_dann_params <- function(k, neighborhood_size, epsilon, data) {
     msg <- paste("k cannot be greater than nrow(data). Changing to ", k, ".", sep = "")
     message(msg)
   }
-  if (k > neighborhood_size) {
-    neighborhood_size <- k
-    msg <- paste("neighborhood_size cannot be less than k. Changing to ", neighborhood_size, ".", sep = "")
+  if (k > neighborhood_size || neighborhood_size < 2) {
+    neighborhood_size <- pmax(k, 2)
+    msg <- paste("Changing neighborhood_size to ", neighborhood_size, ".", sep = "")
     message(msg)
   }
   if (neighborhood_size > nrow(data)) {
