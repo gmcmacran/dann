@@ -100,16 +100,17 @@ rec_obj <- recipe(formula = Y ~ X1 + X2, data = dat)
 chars <- matrix("A", nrow = 5, ncol = 2)
 colnames(chars) <- c("X1", "X2")
 test_that("Nonnumeric inputs error", {
-  expect_error(dann(chars, yTrain, 3, 10, 1), NULL)
-  expect_error(dann(xTrain, chars, 3, 10, 1), NULL)
+  expect_error(dann(chars, yTrain, 3, 3, 1), NULL)
+  expect_error(dann(xTrain, chars, 3, 3, 1), NULL)
 })
 rm(chars)
 
 missingValues <- xTrain
 missingValues[1, 1] <- NA
 test_that("Missing values in inputs error", {
-  expect_error(dann(missingValues, yTrain), NULL)
+  expect_error(dann(missingValues, yTrain, k = 1, neighborhood_size = 2), NULL)
 })
+
 missingValues <- yTrain
 missingValues[1] <- NA
 test_that("Missing values in inputs error", {
@@ -128,8 +129,8 @@ rm(xTrainrowMissing, yTrainrowMissing)
 noDataxTrain <- xTrain[0, ]
 noDatayTrain <- yTrain[0]
 test_that("No rows in inputs error", {
-  expect_error(dann(noDataxTrain, noDatayTrain), NULL)
-  expect_error(dann(xTrain, noDatayTrain), NULL)
+  expect_error(suppressMessages(dann(noDataxTrain, noDatayTrain)), NULL)
+  expect_error(suppressMessages(dann(xTrain, noDatayTrain)), NULL)
 })
 rm(noDataxTrain, noDatayTrain)
 
@@ -138,23 +139,22 @@ rm(noDataxTrain, noDatayTrain)
 #######
 test_that("k checks works", {
   expect_error(dann(xTrain, yTrain, c(3, 2), 3, 1), NULL)
-  expect_error(dann(xTrain, yTrain, "3", 3, 1), NULL)
-  expect_error(dann(xTrain, yTrain, 100000, 3, 1), NULL)
-  expect_error(dann(xTrain, yTrain, 0, 3, 1), NULL)
+  expect_message(dann(xTrain, yTrain, "3", 100, 1), NULL)
+  expect_message(dann(xTrain, yTrain, 100000, 100, 1), NULL)
+  expect_message(dann(xTrain, yTrain, 0, 3, 1), NULL)
 })
 
 test_that("neighborhood_size checks works", {
   expect_error(dann(xTrain, yTrain, 2, c(2, 3), 1), NULL)
-  expect_error(dann(xTrain, yTrain, 2, "3", 1), NULL)
-  expect_error(dann(xTrain, yTrain, 2, 100000, 1), NULL)
-  expect_error(dann(xTrain, yTrain, 2, 0, 1), NULL)
-  expect_error(dann(xTrain, yTrain, 4, 3, 1), NULL)
+  expect_message(dann(xTrain, yTrain, 2, "3", 1), NULL)
+  expect_message(dann(xTrain, yTrain, 2, 100000, 1), NULL)
+  expect_message(dann(xTrain, yTrain, 2, 0, 1), NULL)
 })
 
 test_that("epsilon checks works", {
   expect_error(dann(xTrain, yTrain, 2, 2, c(2, 3)), NULL)
   expect_error(dann(xTrain, yTrain, 2, 2, "1"), NULL)
-  expect_error(dann(xTrain, yTrain, 2, 2, -1), NULL)
+  expect_message(dann(xTrain, yTrain, 2, 2, -1), NULL)
 })
 
 test_that("... checks works", {

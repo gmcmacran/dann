@@ -185,6 +185,31 @@ sub_dann_impl <- function(predictors, outcomes, k, neighborhood_size, epsilon, w
 # bridge
 #################
 #' @keywords internal
+fix_sub_dann_params <- function(k, neighborhood_size, epsilon, numDim, data) {
+  betterParams <- fix_dann_params(k, neighborhood_size, epsilon, data)
+  k <- betterParams$k
+  neighborhood_size <- betterParams$neighborhood_size
+  epsilon <- betterParams$epsilon
+  rm(betterParams)
+
+  if (numDim < 1) {
+    numDim <- 1
+    msg <- paste("numDim cannot be less than one. Changing to ", numDim, ".", sep = "")
+    message(msg)
+  }
+
+  # be sure data does not contain Y
+  if (numDim > ncol(data)) {
+    numDim <- ncol(data)
+    msg <- paste("numDim cannot be greater than the number of predictors. Changing to ", numDim, ".", sep = "")
+    message(msg)
+  }
+
+  betterParams <- list(k = k, neighborhood_size = neighborhood_size, epsilon = epsilon, numDim = numDim)
+  return(betterParams)
+}
+
+#' @keywords internal
 sub_dann_bridge <- function(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim) {
   predictors <- processed$predictors
   predictors <- as.matrix(predictors)
@@ -204,6 +229,13 @@ sub_dann_bridge <- function(processed, k, neighborhood_size, epsilon, weighted, 
   }
   temp <- temp - 1
   outcomes <- temp
+
+  betterParams <- fix_sub_dann_params(k, neighborhood_size, epsilon, numDim, predictors)
+  k <- betterParams$k
+  neighborhood_size <- betterParams$neighborhood_size
+  epsilon <- betterParams$epsilon
+  numDim <- betterParams$numDim
+  rm(betterParams)
 
   fit <- sub_dann_impl(predictors, outcomes, k, neighborhood_size, epsilon, weighted, sphere, numDim, levels)
 

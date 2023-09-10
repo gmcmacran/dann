@@ -140,6 +140,37 @@ dann_impl <- function(predictors, outcomes, k, neighborhood_size, epsilon, level
 # bridge
 #################
 #' @keywords internal
+fix_dann_params <- function(k, neighborhood_size, epsilon, data) {
+  if (k < 1) {
+    k <- 1
+    msg <- paste("k cannot be less than 1. Changing to ", k, ".", sep = "")
+    message(msg)
+  }
+  if (k > nrow(data)) {
+    k <- nrow(data)
+    msg <- paste("k cannot be greater than nrow(data). Changing to ", k, ".", sep = "")
+    message(msg)
+  }
+  if (k > neighborhood_size) {
+    neighborhood_size <- k
+    msg <- paste("neighborhood_size cannot be less than k. Changing to ", neighborhood_size, ".", sep = "")
+    message(msg)
+  }
+  if (neighborhood_size > nrow(data)) {
+    neighborhood_size <- nrow(data)
+    msg <- paste("neighborhood_size cannot be greater than nrow(data). Changing to ", neighborhood_size, ".", sep = "")
+    message(msg)
+  }
+  if (epsilon < 0) {
+    epsilon <- 0
+    msg <- paste("epsilon cannot be less than zero. Changing to ", epsilon, ".", sep = "")
+    message(msg)
+  }
+  betterParams <- list(k = k, neighborhood_size = neighborhood_size, epsilon = epsilon)
+  return(betterParams)
+}
+
+#' @keywords internal
 dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
   predictors <- processed$predictors
   predictors <- as.matrix(predictors)
@@ -159,6 +190,12 @@ dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
   }
   temp <- temp - 1
   outcomes <- temp
+
+  betterParams <- fix_dann_params(k, neighborhood_size, epsilon, predictors)
+  k <- betterParams$k
+  neighborhood_size <- betterParams$neighborhood_size
+  epsilon <- betterParams$epsilon
+  rm(betterParams)
 
   fit <- dann_impl(predictors, outcomes, k, neighborhood_size, epsilon, levels)
 

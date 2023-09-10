@@ -176,22 +176,22 @@ rm(noDataxTrain, noDatayTrain)
 #######
 test_that("k checks works", {
   expect_error(sub_dann(xTrain, yTrain, c(3, 2), 3, 1, FALSE, "mcd", 2), NULL)
-  expect_error(sub_dann(xTrain, yTrain, "3", 3, 1, FALSE, "mcd", 2), NULL)
-  expect_error(sub_dann(xTrain, yTrain, 100000, 3, 1, FALSE, "mcd", 2), NULL)
-  expect_error(sub_dann(xTrain, yTrain, 0, 3, 1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, "3", 100, 1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 100000, 100, 1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 0, 3, 1, FALSE, "mcd", 2), NULL)
 })
 
 test_that("neighborhood_size checks works", {
-  expect_error(sub_dann(xTrain, yTrain, 2, "3", 1, FALSE, "mcd", 2), NULL)
-  expect_error(sub_dann(xTrain, yTrain, 2, 100000, 1, FALSE, "mcd", 2), NULL)
-  expect_error(sub_dann(xTrain, yTrain, 2, 0, 1, FALSE, "mcd", 2), NULL)
-  expect_error(sub_dann(xTrain, yTrain, 4, 3, 1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 2, "3", 1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 2, 100000, 1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 2, 0, 1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 4, 3, 1, FALSE, "mcd", 2), NULL)
 })
 
 test_that("epsilon checks works", {
   expect_error(sub_dann(xTrain, yTrain, 2, 2, c(2, 3), FALSE, "mcd", 2), NULL)
   expect_error(sub_dann(xTrain, yTrain, 2, 2, "1", FALSE, "mcd", 2), NULL)
-  expect_error(sub_dann(xTrain, yTrain, 2, 2, -1, FALSE, "mcd", 2), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 2, 2, -1, FALSE, "mcd", 2), NULL)
 })
 
 test_that("weighted checks works", {
@@ -208,7 +208,7 @@ test_that("sphere checks works", {
 test_that("numDim checks works", {
   expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "mcd", c(1, 2)), NULL)
   expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "mcd", "2"), NULL)
-  expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "mcd", 0), NULL)
+  expect_message(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "mcd", 0), NULL)
 })
 
 test_that("... checks works", {
