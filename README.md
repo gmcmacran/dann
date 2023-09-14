@@ -7,7 +7,7 @@
 
 [![R-CMD-check](https://github.com/gmcmacran/dann/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gmcmacran/dann/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/gmcmacran/dann/branch/master/graph/badge.svg)](https://app.codecov.io/gh/gmcmacran/dann?branch=master)
+coverage](https://codecov.io/gh/gmcmacran/dann/branch/main/graph/badge.svg)](https://app.codecov.io/gh/gmcmacran/dann?branch=main)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/dann)](https://cran.r-project.org/package=dann)
 
