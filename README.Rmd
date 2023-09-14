@@ -25,7 +25,7 @@ An implementation of Hastie and Tibshirani's Discriminant Adaptive Nearest Neigh
 
 ## Package Introduction
 
-In k nearest neighbors, the shape of the neighborhood is always circular. Discriminant Adaptive Nearest Neighbor (dann) is a variation of k nearest neighbors where the shape of the neighborhood is data driven. The neighborhood is elongated along class boundaries and shrunk in the orthogonal direction. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) by Hastie and Tibshirani.
+In k nearest neighbors, the shape of the neighborhood is usually circular. Discriminant Adaptive Nearest Neighbor (dann) is a variation of k nearest neighbors where the shape of the neighborhood is data driven. The neighborhood is elongated along class boundaries and shrunk in the orthogonal direction. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) by Hastie and Tibshirani.
 
 Models:
 

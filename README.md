@@ -18,7 +18,7 @@ Nearest Neighbor Classification in R.
 
 ## Package Introduction
 
-In k nearest neighbors, the shape of the neighborhood is always
+In k nearest neighbors, the shape of the neighborhood is usually
 circular. Discriminant Adaptive Nearest Neighbor (dann) is a variation
 of k nearest neighbors where the shape of the neighborhood is data
 driven. The neighborhood is elongated along class boundaries and shrunk
