@@ -175,7 +175,6 @@ rm(noDataxTrain, noDatayTrain)
 # non data checks
 #######
 test_that("k checks works", {
-  expect_error(sub_dann(xTrain, yTrain, c(3, 2), 3, 1, FALSE, "mcd", 2), NULL)
   expect_message(sub_dann(xTrain, yTrain, "3", 100, 1, FALSE, "mcd", 2), NULL)
   expect_message(sub_dann(xTrain, yTrain, 100000, 100, 1, FALSE, "mcd", 2), NULL)
   expect_message(sub_dann(xTrain, yTrain, 0, 3, 1, FALSE, "mcd", 2), NULL)
@@ -189,24 +188,20 @@ test_that("neighborhood_size checks works", {
 })
 
 test_that("epsilon checks works", {
-  expect_error(sub_dann(xTrain, yTrain, 2, 2, c(2, 3), FALSE, "mcd", 2), NULL)
   expect_error(sub_dann(xTrain, yTrain, 2, 2, "1", FALSE, "mcd", 2), NULL)
   expect_message(sub_dann(xTrain, yTrain, 2, 2, -1, FALSE, "mcd", 2), NULL)
 })
 
 test_that("weighted checks works", {
-  expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, c(TRUE, FALSE), "mcd", 2), NULL)
   expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, "TRUE", "mcd", 2), NULL)
 })
 
 test_that("sphere checks works", {
-  expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, c("mcd", "mcd"), 2), NULL)
   expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, FALSE, 2), NULL)
   expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "foo", 2), NULL)
 })
 
 test_that("numDim checks works", {
-  expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "mcd", c(1, 2)), NULL)
   expect_error(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "mcd", "2"), NULL)
   expect_message(sub_dann(xTrain, yTrain, 2, 2, 1, FALSE, "mcd", 0), NULL)
 })

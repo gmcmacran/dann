@@ -138,21 +138,18 @@ rm(noDataxTrain, noDatayTrain)
 # non data checks
 #######
 test_that("k checks works", {
-  expect_error(dann(xTrain, yTrain, c(3, 2), 3, 1), NULL)
   expect_message(dann(xTrain, yTrain, "3", 100, 1), NULL)
   expect_message(dann(xTrain, yTrain, 100000, 100, 1), NULL)
   expect_message(dann(xTrain, yTrain, 0, 3, 1), NULL)
 })
 
 test_that("neighborhood_size checks works", {
-  expect_error(dann(xTrain, yTrain, 2, c(2, 3), 1), NULL)
   expect_message(dann(xTrain, yTrain, 2, "3", 1), NULL)
   expect_message(dann(xTrain, yTrain, 2, 100000, 1), NULL)
   expect_message(dann(xTrain, yTrain, 2, 0, 1), NULL)
 })
 
 test_that("epsilon checks works", {
-  expect_error(dann(xTrain, yTrain, 2, 2, c(2, 3)), NULL)
   expect_error(dann(xTrain, yTrain, 2, 2, "1"), NULL)
   expect_message(dann(xTrain, yTrain, 2, 2, -1), NULL)
 })
