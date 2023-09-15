@@ -7,11 +7,11 @@
 DANN_distance(x0, x1, sigma)
 }
 \arguments{
+\item{x0}{A numeric matrix with training predictors as columns.}
+
 \item{x1}{A numeric matrix with training predictors as columns.}
 
 \item{sigma}{A numeric matrix defined in Hastie's DANN publication.}
-
-\item{x2}{A numeric matrix with training predictors as columns.}
 }
 \description{
 Computes the distance between x0 and x1 using the DANN metric
