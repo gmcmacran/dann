@@ -1,88 +1,13 @@
-#' A helper for sub_dann
-#'
-#' @param xTrain Train features. Something easily converted to a numeric matrix.
-#' @param yTrain Train classes. Something easily converted to a numeric vector.
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
-#' @return  A ggplot2 graph.
-#' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
-#' should make a judgement call on how many eigenvalues are large and set sub_dann's
-#' numDim to that number.
-#' @importFrom rlang .data
-#' @examples
-#' library(dann)
-#' library(mlbench)
-#' library(magrittr)
-#' library(dplyr)
-#'
-#' ######################
-#' # Circle data with 2 related variables and 5 unrelated variables
-#' ######################
-#' set.seed(1)
-#' train <- mlbench.circle(300, 2) %>%
-#'   tibble::as_tibble()
-#' colnames(train)[1:3] <- c("X1", "X2", "Y")
-#'
-#' # Add 5 unrelated variables
-#' train <- train %>%
-#'   mutate(
-#'     U1 = runif(300, -1, 1),
-#'     U2 = runif(300, -1, 1),
-#'     U3 = runif(300, -1, 1),
-#'     U4 = runif(300, -1, 1),
-#'     U5 = runif(300, -1, 1)
-#'   )
-#'
-#' xTrain <- train %>%
-#'   select(X1, X2, U1, U2, U3, U4, U5) %>%
-#'   as.matrix()
-#'
-#' yTrain <- train %>%
-#'   pull(Y) %>%
-#'   as.numeric() %>%
-#'   as.vector()
-#'
-#' # Graph suggests a subspace with 2 dimensions. The correct answer.
-#' graph_eigenvalues(
-#'   xTrain = xTrain, yTrain = yTrain,
-#'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
-#' )
-#'
-#'
-#' rm(train)
-#' rm(xTrain, yTrain)
-#' @export
-graph_eigenvalues <- function(xTrain, yTrain,
-                              neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
-                              weighted = FALSE, sphere = "mcd") {
+#################
+# base
+#################
+#' @keywords internal
+graph_eigenvalues_base <- function(xTrain, yTrain,
+                                   neighborhood_size = max(floor(nrow(xTrain) / 5), 50),
+                                   weighted = FALSE, sphere = "mcd") {
   ###################################
   # Input checking
   ###################################
-  # Convert to matrices
-  if (!is.matrix(xTrain)) {
-    xTrain <- as.matrix(xTrain)
-  }
-  if (!is.vector(yTrain)) {
-    yTrain <- as.vector(yTrain)
-  }
-
-  # Confirm converstion worked
-  if (!is.matrix(xTrain)) {
-    stop("Was not able to convert argment xTrain to a matrix.")
-  }
-  if (!is.vector(yTrain)) {
-    stop("Was not able to convert argment yTrain to a vector.")
-  }
-
-  # Confirm numeric
-  if (!is.numeric(xTrain)) {
-    stop("Argument xTrain should be numeric.")
-  }
-  if (!is.numeric(yTrain)) {
-    stop("Argument yTrain should be numeric.")
-  }
-
   # Missing values.
   if (anyNA(xTrain)) {
     stop("Argument xTrain should not have any NA values.")
@@ -155,33 +80,117 @@ graph_eigenvalues <- function(xTrain, yTrain,
   return(graph)
 }
 
-#' A helper for sub_dann_df
-#'
-#' @param formula An object of class formula. (Y ~ X1 + X2)
-#' @param train A data frame or tibble containing training data.
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param weighted weighted argument to ncoord. See \code{\link[fpc]{ncoord}} for details.
-#' @param sphere One of "mcd", "mve", "classical", or "none" See \code{\link[fpc]{ncoord}} for details.
+
+#################
+# bridge
+#################
+graph_eigenvalues_bridge <- function(processed, neighborhood_size, weighted, sphere) {
+  predictors <- processed$predictors
+  predictors <- as.matrix(predictors)
+  hardhat::validate_predictors_are_numeric(predictors)
+
+  outcomes <- processed$outcomes[[1]]
+  hardhat::validate_outcomes_are_univariate(outcomes)
+  if (!is.factor(outcomes)) {
+    outcomes <- factor(outcomes)
+  }
+  levels <- levels(outcomes)
+  outcomes <- as.vector(as.numeric(outcomes))
+
+  graph_eigenvalues_base(
+    xTrain = predictors,
+    yTrain = outcomes,
+    neighborhood_size = neighborhood_size,
+    weighted = weighted,
+    sphere = sphere
+  )
+}
+
+#################
+# User interface
+#################
+#' @title A helper for sub_dann
+#' @inheritParams sub_dann
 #' @return  A ggplot2 graph.
-#' @details This function plots the eigenvalues found by \code{\link[fpc]{ncoord}}. The user
-#' should make a judgement call on how many eigenvalues are large and set sub_dann_df's
+#' @details This function plots the eigenvalues found by [fpc::ncoord()]. The user
+#' should make a judgement call on how many eigenvalues are large and set sub_dann's
 #' numDim to that number.
 #' @importFrom rlang .data
+#' @export
+graph_eigenvalues <- function(x, ..., neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
+  UseMethod("graph_eigenvalues")
+}
+
+# Default
+#' @inherit graph_eigenvalues title
+#' @inheritParams graph_eigenvalues
+#' @param x A data frame.
+#' @inherit graph_eigenvalues return
+#' @inherit graph_eigenvalues details
+#' @export
+graph_eigenvalues.default <- function(x, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
+  stop(
+    "`graph_eigenvalues()` is not defined for a '", class(x)[1], "'.",
+    call. = FALSE
+  )
+}
+
+# XY method - data frame
+#' @inherit graph_eigenvalues title
+#' @inheritParams graph_eigenvalues
+#' @param x A data frame.
+#' @param y A vector.
+#' @inherit graph_eigenvalues return
+#' @inherit graph_eigenvalues details
 #' @examples
 #' library(dann)
 #' library(mlbench)
 #' library(magrittr)
 #' library(dplyr)
 #'
-#' ######################
-#' # Circle data with 2 related variables and 5 unrelated variables
-#' ######################
 #' set.seed(1)
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
-#' colnames(train)[1:3] <- c("X1", "X2", "Y")
+#' colnames(train) <- c("X1", "X2", "Y")
+#'
+#' #' # Add 5 unrelated variables
 #' train <- train %>%
-#'   mutate(Y = as.numeric(Y))
+#'   mutate(
+#'     U1 = runif(300, -1, 1),
+#'     U2 = runif(300, -1, 1),
+#'     U3 = runif(300, -1, 1),
+#'     U4 = runif(300, -1, 1),
+#'     U5 = runif(300, -1, 1)
+#'   )
+#'
+#' y <- train$Y
+#' x <- cbind(train[, 1:2], train[, 4:8])
+#'
+#' graph_eigenvalues(x, y)
+#' @export
+graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
+  ellipsis::check_dots_empty()
+  processed <- hardhat::mold(x, y)
+  graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
+}
+
+# XY method - matrix
+#' @inherit graph_eigenvalues title
+#' @inheritParams graph_eigenvalues
+#' @param x A matrix.
+#' @param y A vector.
+#' @inherit graph_eigenvalues return
+#' @inherit graph_eigenvalues details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
 #'
 #' # Add 5 unrelated variables
 #' train <- train %>%
@@ -193,35 +202,89 @@ graph_eigenvalues <- function(xTrain, yTrain,
 #'     U5 = runif(300, -1, 1)
 #'   )
 #'
-#' # Graph suggests a subspace with 2 dimensions. The correct answer.
-#' graph_eigenvalues_df(
-#'   formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train = train,
-#'   neighborhood_size = 50, weighted = FALSE, sphere = "mcd"
-#' )
+#' y <- as.numeric(train$Y)
+#' x <- cbind(train$X1, train$X2, train$U1, train$U2, train$U3, train$U4, train$U5)
 #'
-#' rm(train)
+#' graph_eigenvalues(x, y)
 #' @export
-graph_eigenvalues_df <- function(formula, train,
-                                 neighborhood_size = max(floor(nrow(train) / 5), 50),
-                                 weighted = FALSE, sphere = "mcd") {
-  if (!rlang::is_formula(formula)) {
-    stop("Argument formula is not a formula.")
-  }
+graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
+  ellipsis::check_dots_empty()
+  processed <- hardhat::mold(x, y)
+  graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
+}
 
-  if (!is.data.frame(train)) {
-    stop("Argument train is not dataframe.")
-  }
-  if (nrow(train) < 1) {
-    stop("Argument train does not contain data.")
-  }
+# Formula method
+#' @inherit graph_eigenvalues title
+#' @inheritParams graph_eigenvalues
+#' @param formula A formula. Y ~ X1 + X1
+#' @param data A data frame.
+#' @inherit graph_eigenvalues return
+#' @inherit graph_eigenvalues details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#'
+#' # Add 5 unrelated variables
+#' train <- train %>%
+#'   mutate(
+#'     U1 = runif(300, -1, 1),
+#'     U2 = runif(300, -1, 1),
+#'     U3 = runif(300, -1, 1),
+#'     U4 = runif(300, -1, 1),
+#'     U5 = runif(300, -1, 1)
+#'   )
+#'
+#' graph_eigenvalues(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train)
+#' @export
+graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
+  ellipsis::check_dots_empty()
+  hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
+  processed <- hardhat::mold(formula, data)
+  graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
+}
 
-  xTrain <- as.matrix(train[all.vars(formula)[2:length(all.vars(formula))]])
-  yTrain <- as.matrix(train[all.vars(formula)[1]])
-
-  graph <- graph_eigenvalues(
-    xTrain, yTrain, neighborhood_size,
-    weighted, sphere
-  )
-
-  return(graph)
+# Recipe method
+#' @inherit graph_eigenvalues title
+#' @inheritParams graph_eigenvalues
+#' @param x A recipe from recipes library
+#' @param data A data frame.
+#' @inherit graph_eigenvalues return
+#' @inherit graph_eigenvalues details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#' library(recipes)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#'
+#' # Add 5 unrelated variables
+#' train <- train %>%
+#'   mutate(
+#'     U1 = runif(300, -1, 1),
+#'     U2 = runif(300, -1, 1),
+#'     U3 = runif(300, -1, 1),
+#'     U4 = runif(300, -1, 1),
+#'     U5 = runif(300, -1, 1)
+#'   )
+#'
+#' rec_obj <- recipe(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, data = train)
+#'
+#' graph_eigenvalues(rec_obj, train)
+#' @export
+graph_eigenvalues.recipe <- function(x, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
+  ellipsis::check_dots_empty()
+  processed <- hardhat::mold(x, data)
+  graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }

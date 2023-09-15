@@ -1,6 +1,7 @@
 library(mlbench, warn.conflicts = FALSE)
 library(magrittr, warn.conflicts = FALSE)
 library(dplyr, warn.conflicts = FALSE)
+library(recipes, warn.conflicts = FALSE)
 
 ######################
 # Circle data with 2 related variables and 5 unrelated variables
@@ -20,6 +21,8 @@ train <- train %>%
     U5 = runif(500, -1, 1)
   )
 
+rec_obj <- recipe(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, data = train)
+
 xTrain <- train %>%
   select(X1, X2, U1, U2, U3, U4, U5) %>%
   as.matrix()
@@ -29,41 +32,31 @@ yTrain <- train %>%
   as.numeric() %>%
   as.vector()
 
-# Data suggests a subspace with 2 dimensions. The correct answer.
-graph <- graph_eigenvalues(xTrain, yTrain, 50)
-
-test_that("Validate structure", {
-  expect_true(all(class(graph) == c("gg", "ggplot")))
+test_that("No errors?", {
+  expect_no_error(graph_eigenvalues(train[, 1:2], yTrain))
+  expect_no_error(graph_eigenvalues(Y ~ X1 + X2, train))
+  expect_no_error(graph_eigenvalues(xTrain, yTrain))
+  expect_no_error(graph_eigenvalues(rec_obj, train))
 })
-
-rm(graph)
 
 ###############################################
 # All legitimate values of weighted work
 ###############################################
 
-test_that("Validate structure", {
-  expect_true(all(class(graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd")) == c("gg", "ggplot")))
-})
-
-test_that("Validate structure", {
-  expect_true(all(class(graph_eigenvalues(xTrain, yTrain, 50, TRUE, "mcd")) == c("gg", "ggplot")))
+test_that("No errors?", {
+  expect_no_error(graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd"))
+  expect_no_error(graph_eigenvalues(xTrain, yTrain, 50, TRUE, "mcd"))
 })
 
 
 ###############################################
 # All legitimate values of sphere work
 ###############################################
-test_that("Validate structure", {
-  expect_true(all(class(graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mve")) == c("gg", "ggplot")))
-})
-
-test_that("Validate structure", {
-  expect_true(all(class(graph_eigenvalues(xTrain, yTrain, 50, TRUE, "mcd")) == c("gg", "ggplot")))
-})
-
-test_that("Validate structure", {
-  expect_true(all(class(graph_eigenvalues(xTrain, yTrain, 50, TRUE, "classical")) == c("gg", "ggplot")))
+test_that("No errors?", {
+  expect_no_error(graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mve"))
+  expect_no_error(graph_eigenvalues(xTrain, yTrain, 50, FALSE, "mcd"))
+  expect_no_error(graph_eigenvalues(xTrain, yTrain, 50, FALSE, "classical"))
+  expect_no_error(graph_eigenvalues(xTrain, yTrain, 50, FALSE, "none"))
 })
 
 ###############################################
@@ -75,6 +68,29 @@ test_that("Defalut values match?", {
   expect_true(formals(graph_eigenvalues)$sphere == formals(sub_dann)$sphere)
 })
 
+test_that("Defalut values match?", {
+  expect_true(formals(graph_eigenvalues)$neighborhood_size == formals(graph_eigenvalues.default)$neighborhood_size)
+  expect_true(formals(graph_eigenvalues)$weighted == formals(graph_eigenvalues.default)$weighted)
+  expect_true(formals(graph_eigenvalues)$sphere == formals(graph_eigenvalues.default)$sphere)
+})
+
+test_that("Defalut values match?", {
+  expect_true(formals(graph_eigenvalues)$weighted == formals(graph_eigenvalues.formula)$weighted)
+  expect_true(formals(graph_eigenvalues)$sphere == formals(graph_eigenvalues.formula)$sphere)
+})
+
+test_that("Defalut values match?", {
+  expect_true(formals(graph_eigenvalues)$neighborhood_size == formals(graph_eigenvalues.matrix)$neighborhood_size)
+  expect_true(formals(graph_eigenvalues)$weighted == formals(graph_eigenvalues.matrix)$weighted)
+  expect_true(formals(graph_eigenvalues)$sphere == formals(graph_eigenvalues.matrix)$sphere)
+})
+
+test_that("Defalut values match?", {
+  expect_true(formals(graph_eigenvalues.formula)$neighborhood_size == formals(graph_eigenvalues.recipe)$neighborhood_size)
+  expect_true(formals(graph_eigenvalues)$weighted == formals(graph_eigenvalues.recipe)$weighted)
+  expect_true(formals(graph_eigenvalues)$sphere == formals(graph_eigenvalues.recipe)$sphere)
+})
+
 ###############################################
 # Input checking
 ###############################################
@@ -82,6 +98,7 @@ test_that("Defalut values match?", {
 # Data checks
 #######
 chars <- matrix("A", nrow = 5, ncol = 2)
+colnames(chars) <- c("X1", "X2")
 test_that("Nonnumeric inputs error", {
   expect_error(graph_eigenvalues(chars, yTrain, 50, FALSE, "mcd"), NULL)
   expect_error(graph_eigenvalues(xTrain, chars, 50, FALSE, "mcd"), NULL)
@@ -114,6 +131,7 @@ rm(noDataxTrain, noDatayTrain)
 #######
 # non data checks
 #######
+
 test_that("neighborhood_size checks works", {
   expect_error(graph_eigenvalues(xTrain, yTrain, c(2, 3), FALSE, "mcd"), NULL)
   expect_error(graph_eigenvalues(xTrain, yTrain, "3", FALSE, "mcd"), NULL)
@@ -130,6 +148,27 @@ test_that("sphere checks works", {
   expect_error(graph_eigenvalues(xTrain, yTrain, 3, FALSE, c("mcd", "mcd")), NULL)
   expect_error(graph_eigenvalues(xTrain, yTrain, 3, FALSE, FALSE), NULL)
   expect_error(graph_eigenvalues(xTrain, yTrain, 3, FALSE, "foo"), NULL)
+})
+
+set.seed(1)
+xTrain <- matrix(0, nrow = 100, ncol = 2)
+
+xTrain[, 1] <- runif(100, -10, 1)
+xTrain[, 2] <- runif(100, -1, 1)
+yTrain <- c(rep(1, 50), rep(2, 50))
+
+colnames(xTrain) <- c("X1", "X2")
+
+xTrainDF <- tibble::tibble(X1 = xTrain[, 1], X2 = xTrain[, 2])
+colnames(xTrainDF) <- c("X1", "X2")
+dat <- dplyr::mutate(xTrainDF, Y = yTrain)
+rec_obj <- recipe(formula = Y ~ X1 + X2, data = dat)
+
+test_that("... checks works", {
+  expect_error(graph_eigenvalues(x = xTrainDF, y = yTrain, neighborhood_sizee = 2), NULL)
+  expect_error(graph_eigenvalues(formula = Y ~ X1 + X2, data = dat, neighborhood_sizee = 2), NULL)
+  expect_error(graph_eigenvalues(x = xTrain, y = yTrain, neighborhood_sizee = 2), NULL)
+  expect_error(graph_eigenvalues(x = rec_obj, data = dat, neighborhood_sizee = 2), NULL)
 })
 
 rm(train)

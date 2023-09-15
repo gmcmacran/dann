@@ -1,134 +1,372 @@
-#' Discriminant Adaptive Nearest Neighbor Classification
-#'
-#' @param xTrain Train features. Something easily converted to a numeric matrix.
-#' @param yTrain Train classes. Something easily converted to a numeric vector.
-#' @param xTest Test features. Something easily converted to a numeric matrix.
-#' @param k The number of data points used for final classification.
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
-#' @param probability Should probabilities instead of classes be returned?
-#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
+#################
+# constructor
+#################
 #' @keywords internal
-dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(floor(nrow(xTrain) / 5), 50), epsilon = 1, probability = FALSE) {
-  ###################################
-  # Input checking
-  ###################################
-  # Convert to matrices
-  if (!is.matrix(xTrain)) {
-    xTrain <- as.matrix(xTrain)
-  }
-  if (!is.vector(yTrain)) {
-    yTrain <- as.vector(yTrain)
-  }
-  if (!is.matrix(xTest)) {
-    xTest <- as.matrix(xTest)
+new_dann <- function(X, Y, k, neighborhood_size, epsilon, levels, blueprint) {
+  # X is valid.
+  if (!is.numeric(X)) {
+    stop("`X` should be a numeric matrix.", call. = FALSE)
   }
 
-  # Confirm conversion worked
-  if (!is.matrix(xTrain)) {
-    stop("Was not able to convert argment xTrain to a matrix.")
-  }
-  if (!is.vector(yTrain)) {
-    stop("Was not able to convert argment yTrain to a vector.")
-  }
-  if (!is.matrix(xTest)) {
-    stop("Was not able to convert argment xTest to a matrix.")
+  if (!is.matrix(X)) {
+    stop("`X` should be a numeric matrix.", call. = FALSE)
   }
 
-  # Confirm numeric
-  if (!is.numeric(xTrain)) {
-    stop("Argument xTrain should be numeric.")
-  }
-  if (!is.numeric(yTrain)) {
-    stop("Argument yTrain should be numeric.")
-  }
-  if (!is.numeric(xTest)) {
-    stop("Argument xTest should be numeric.")
+  if (!ncol(X) >= 1) {
+    stop("`X` should have at least one column.", call. = FALSE)
   }
 
-  # Missing values.
-  if (anyNA(xTrain)) {
-    stop("Argument xTrain should not have any NA values.")
-  }
-  if (anyNA(yTrain)) {
-    stop("Argument yTrain should not have any NA values.")
-  }
-  if (anyNA(xTest)) {
-    stop("Argument xTest should not have any NA values.")
+  if (!nrow(X) >= 1) {
+    stop("`X` should have at least one row.", call. = FALSE)
   }
 
-  # Confirm structure looks right
-  if (ncol(xTrain) != ncol(xTest)) {
-    stop("Argument xTrain and xTest should have the same number of columns.")
-  }
-  if (nrow(xTrain) != length(yTrain)) {
-    stop("nrow(xTrain) should match length(yTrain).")
-  }
-  if (ncol(xTrain) < 1) {
-    stop("Argument xTrain should have at least one column.")
-  }
-  if (ncol(xTest) < 1) {
-    stop("Argument xTest should have at least one column.")
-  }
-  if (nrow(xTrain) < 1) {
-    stop("Argument xTrain should have at least one row.")
-  }
-  if (length(yTrain) < 1) {
-    stop("Argument yTrain should have positive length.")
-  }
-  if (nrow(xTest) < 1) {
-    stop("Argument xTest should have at least one row.")
+  if (anyNA(X)) {
+    stop("`X` should not contain NA.", call. = FALSE)
   }
 
-  # k is valid
+  # Y is valid.
+  if (!is.numeric(Y)) {
+    stop("`Y` should be a numeric vector.", call. = FALSE)
+  }
+
+  if (!is.vector(Y)) {
+    stop("`Y` should be a numeric vector.", call. = FALSE)
+  }
+
+  if (!length(Y) >= 1) {
+    stop("`Y` should have positive length.", call. = FALSE)
+  }
+
+  if (anyNA(Y)) {
+    stop("`Y` should not contain NA.", call. = FALSE)
+  }
+
+  if (nrow(X) != length(Y)) {
+    stop("`Y` should have the same length as nrow('X').", call. = FALSE)
+  }
+
+  # levels is valid
+  if (!length(levels) > 1) {
+    stop("'Y should contain at least two classes.", call. = FALSE)
+  }
+
+  # k is valid.
   if (length(k) != 1) {
-    stop("Argument k be at length 1 vector.")
+    stop("'k' should be at length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(k)) {
-    stop("Argument k should be numeric.")
+    stop("'k' should be numeric.", call. = FALSE)
   }
-  if (k > nrow(xTrain)) {
-    stop("Argument k should be less than or equal to the numer of rows in xTrain.")
+  if (k > nrow(X)) {
+    stop("'k' should be less than or equal to the numer of rows in 'X'", call. = FALSE)
   }
   if (k <= 0) {
-    stop("Argument k should be at least 1.")
+    stop("'k' should be at least 1.", call. = FALSE)
+  }
+  if (k != round(k)) {
+    stop("'k' should a positive whole number.", call. = FALSE)
   }
 
   # neighborhood_size is valid
   if (length(neighborhood_size) != 1) {
-    stop("Argument neighborhood_size be at length 1 vector.")
+    stop("'neighborhood_size' should be at length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(neighborhood_size)) {
-    stop("Argument neighborhood_size should be numeric.")
+    stop("'neighborhood_size' should be numeric.", call. = FALSE)
   }
-  if (neighborhood_size > nrow(xTrain)) {
-    stop("Argument neighborhood_size should be less than or equal to the numer of rows in xTrain.")
+  if (neighborhood_size > nrow(X)) {
+    stop("'neighborhood_size' should be less than or equal to the numer of rows in 'X'.", call. = FALSE)
   }
   if (neighborhood_size <= 1) {
-    stop("Argument neighborhood_size should be at least 2.")
+    stop("'neighborhood_size' should be at least 2.", call. = FALSE)
   }
   if (k > neighborhood_size) {
-    stop("Argument k should be less than argument neighborhood_size.")
+    stop("'k' should be less than 'neighborhood_size'.", call. = FALSE)
+  }
+  if (neighborhood_size != round(neighborhood_size)) {
+    stop("'neighborhood_size' should a positive whole number.", call. = FALSE)
   }
 
   # epsilon is valid
   if (length(epsilon) != 1) {
-    stop("Argument epsilon be at length 1 vector.")
+    stop("'epsilon' be at length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(epsilon)) {
-    stop("Argument epsilon should be numeric.")
+    stop("'epsilon' should be numeric.", call. = FALSE)
   }
-  if (epsilon < 0) {
-    stop("Argument epsilon should be at least 0.")
+  if (!epsilon >= 0) {
+    stop("'epsilon' should be at least 0.", call. = FALSE)
   }
 
-  # probability is valid
-  if (length(probability) != 1) {
-    stop("Argument probability be at length 1 vector.")
+  # epsilon is valid
+  if (length(epsilon) != 1) {
+    stop("'epsilon' be at length 1 vector.", call. = FALSE)
   }
-  if (!is.logical(probability)) {
-    stop("Argument probability should be logical.")
+  if (!is.numeric(epsilon)) {
+    stop("'epsilon' should be numeric.", call. = FALSE)
   }
+  if (!epsilon >= 0) {
+    stop("'epsilon' should be at least 0.", call. = FALSE)
+  }
+
+  hardhat::new_model(
+    X = X,
+    Y = Y,
+    k = k,
+    neighborhood_size = neighborhood_size,
+    epsilon = epsilon,
+    levels = levels,
+    blueprint = blueprint,
+    class = "dann"
+  )
+}
+
+#################
+# training function
+#################
+#' @keywords internal
+dann_impl <- function(predictors, outcomes, k, neighborhood_size, epsilon, levels) {
+  list(
+    X = predictors,
+    Y = outcomes,
+    k = k,
+    neighborhood_size = neighborhood_size,
+    epsilon = epsilon,
+    levels = levels
+  )
+}
+
+#################
+# bridge
+#################
+#' @keywords internal
+fix_dann_params <- function(k, neighborhood_size, epsilon, data) {
+  if (k < 1) {
+    k <- 1
+    msg <- paste("k cannot be less than 1. Changing to ", k, ".", sep = "")
+    message(msg)
+  }
+  if (k > nrow(data)) {
+    k <- nrow(data)
+    msg <- paste("k cannot be greater than nrow(data). Changing to ", k, ".", sep = "")
+    message(msg)
+  }
+  if (k > neighborhood_size || neighborhood_size < 2) {
+    neighborhood_size <- pmax(k, 2)
+    msg <- paste("Changing neighborhood_size to ", neighborhood_size, ".", sep = "")
+    message(msg)
+  }
+  if (neighborhood_size > nrow(data)) {
+    neighborhood_size <- nrow(data)
+    msg <- paste("neighborhood_size cannot be greater than nrow(data). Changing to ", neighborhood_size, ".", sep = "")
+    message(msg)
+  }
+  if (epsilon < 0) {
+    epsilon <- 0
+    msg <- paste("epsilon cannot be less than zero. Changing to ", epsilon, ".", sep = "")
+    message(msg)
+  }
+  betterParams <- list(k = k, neighborhood_size = neighborhood_size, epsilon = epsilon)
+  return(betterParams)
+}
+
+#' @keywords internal
+dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
+  predictors <- processed$predictors
+  predictors <- as.matrix(predictors)
+  hardhat::validate_predictors_are_numeric(predictors)
+
+  outcomes <- processed$outcomes[[1]]
+  hardhat::validate_outcomes_are_univariate(outcomes)
+  if (!is.factor(outcomes)) {
+    outcomes <- factor(outcomes)
+  }
+  levels <- levels(outcomes)
+
+  # Safely convert factor to  numeric
+  temp <- rep(NA_real_, length(outcomes))
+  for (i in seq(levels(outcomes))) {
+    temp[outcomes == levels(outcomes)[i]] <- i
+  }
+  temp <- temp - 1
+  outcomes <- temp
+
+  betterParams <- fix_dann_params(k, neighborhood_size, epsilon, predictors)
+  k <- betterParams$k
+  neighborhood_size <- betterParams$neighborhood_size
+  epsilon <- betterParams$epsilon
+  rm(betterParams)
+
+  fit <- dann_impl(predictors, outcomes, k, neighborhood_size, epsilon, levels)
+
+  new_dann(
+    X = fit$X,
+    Y = fit$Y,
+    k = fit$k,
+    neighborhood_size = fit$neighborhood_size,
+    epsilon = fit$epsilon,
+    levels = fit$levels,
+    blueprint = processed$blueprint
+  )
+}
+
+#################
+# User interface
+#################
+#' @title Discriminant Adaptive Nearest Neighbor Classification
+#' @param x A matrix or a dataframe.
+#' @param ... Additional parameters passed to methods.
+#' @param k The number of data points used for final classification.
+#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
+#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
+#' @return  An S3 class of type dann.
+#' @details
+#' This is an implementation of Hastie and Tibshirani's
+#' [Discriminant Adaptive Nearest
+#' Neighbor Classification publication.](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
+#' @export
+dann <- function(x, ..., k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
+  UseMethod("dann")
+}
+
+# Default
+#' @inherit dann title
+#' @inheritParams dann
+#' @param x A data frame.
+#' @inherit dann return
+#' @inherit dann details
+#' @export
+dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
+  stop(
+    "`dann()` is not defined for a '", class(x)[1], "'.",
+    call. = FALSE
+  )
+}
+
+# XY method - data frame
+#' @inherit dann title
+#' @inheritParams dann
+#' @param x A data frame.
+#' @param y A vector.
+#' @inherit dann return
+#' @inherit dann details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#' y <- train$Y
+#' x <- train[, 1:2]
+#'
+#' dann(x, y)
+#' @export
+dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
+  ellipsis::check_dots_empty()
+  processed <- hardhat::mold(x, y)
+  dann_bridge(processed, k, neighborhood_size, epsilon)
+}
+
+# XY method - matrix
+#' @inherit dann title
+#' @inheritParams dann
+#' @param x A matrix.
+#' @param y A vector.
+#' @inherit dann return
+#' @inherit dann details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#' y <- as.numeric(train$Y)
+#' x <- cbind(train$X1, train$X2)
+#'
+#' dann(x, y)
+#' @export
+dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
+  ellipsis::check_dots_empty()
+  processed <- hardhat::mold(x, y)
+  dann_bridge(processed, k, neighborhood_size, epsilon)
+}
+
+# Formula method
+#' @inherit dann title
+#' @inheritParams dann
+#' @param formula A formula. Y ~ X1 + X2
+#' @param data A data frame.
+#' @inherit dann return
+#' @inherit dann details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#'
+#' dann(Y ~ X1 + X2, train)
+#' @export
+dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, ...) {
+  ellipsis::check_dots_empty()
+  hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
+  processed <- hardhat::mold(formula, data)
+  dann_bridge(processed, k, neighborhood_size, epsilon)
+}
+
+# Recipe method
+#' @inherit dann title
+#' @inheritParams dann
+#' @param x A recipe from recipes library
+#' @param data A data frame.
+#' @inherit dann return
+#' @inherit dann details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#' library(recipes)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#'
+#' rec_obj <- recipe(Y ~ X1 + X2, data = train)
+#'
+#' dann(rec_obj, train)
+#' @export
+dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, ...) {
+  ellipsis::check_dots_empty()
+  processed <- hardhat::mold(x, data)
+  dann_bridge(processed, k, neighborhood_size, epsilon)
+}
+
+#################
+# prediction functions
+#################
+#' @keywords internal
+dann_predict_base <- function(object, predictors, probability) {
+  xTrain <- object$X
+  yTrain <- object$Y
+  k <- object$k
+  neighborhood_size <- object$neighborhood_size
+  epsilon <- object$epsilon
+
+  xTest <- predictors
 
   ###################################
   # Shift classes if needed. Need min(yTrain) > 0
@@ -247,168 +485,83 @@ dann_source <- function(xTrain, yTrain, xTest, k = 5, neighborhood_size = max(fl
   return(predictions)
 }
 
-#' Discriminant Adaptive Nearest Neighbor Classification
-#'
-#' @param xTrain Train features. Something easily converted to a numeric matrix.
-#'               Generally columns should have mean zero and standard deviation one beforehand.
-#' @param yTrain Train classes. Something easily converted to a numeric vector.
-#' @param xTest Test features. Something easily converted to a numeric matrix.
-#'              Generally columns should be centered and scaled according to xTrain beforehand.
-#' @param k The number of data points used for final classification.
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
-#' @param probability Should probabilities instead of classes be returned?
-#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
-#' @details
-#' This is an implementation of Hastie and Tibshirani's
-#' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-#' Neighbor Classification publication.}.
-#' The code is a port of Christopher Jenness's
-#' python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
-#' @examples
-#' library(dann)
-#' library(mlbench)
-#' library(magrittr)
-#' library(dplyr)
-#' library(ggplot2)
-#'
-#' ######################
-#' # Circle Data
-#' ######################
-#' set.seed(1)
-#' train <- mlbench.circle(300, 2) %>%
-#'   tibble::as_tibble()
-#' colnames(train) <- c("X1", "X2", "Y")
-#'
-#' ggplot(train, aes(x = X1, y = X2, colour = Y)) +
-#'   geom_point() +
-#'   labs(title = "Train Data")
-#'
-#' xTrain <- train %>%
-#'   select(X1, X2) %>%
-#'   as.matrix()
-#'
-#' yTrain <- train %>%
-#'   pull(Y) %>%
-#'   as.numeric() %>%
-#'   as.vector()
-#'
-#' test <- mlbench.circle(100, 2) %>%
-#'   tibble::as_tibble()
-#' colnames(test) <- c("X1", "X2", "Y")
-#'
-#' ggplot(test, aes(x = X1, y = X2, colour = Y)) +
-#'   geom_point() +
-#'   labs(title = "Test Data")
-#'
-#' xTest <- test %>%
-#'   select(X1, X2) %>%
-#'   as.matrix()
-#'
-#' yTest <- test %>%
-#'   pull(Y) %>%
-#'   as.numeric() %>%
-#'   as.vector()
-#'
-#' dannPreds <- dann(
-#'   xTrain = xTrain, yTrain = yTrain, xTest = xTest,
-#'   k = 3, neighborhood_size = 50, epsilon = 1,
-#'   probability = FALSE
-#' )
-#' mean(dannPreds == yTest) # An accurate model.
-#'
-#' rm(train, test)
-#' rm(xTrain, yTrain)
-#' rm(xTest, yTest)
-#' rm(dannPreds)
-#' @export
-dann <- compiler::cmpfun(f = dann_source, options = list(optimize = 3))
+#' @keywords internal
+dann_predict_class <- function(object, predictors) {
+  obsLevels <- object$levels
+  out <- dann_predict_base(object = object, predictors = predictors, probability = FALSE)
+  temp <- rep(NA_character_, length(out))
+  for (i in seq(obsLevels)) {
+    temp[out == (i - 1)] <- obsLevels[i]
+  }
+  out <- factor(x = temp, levels = obsLevels)
+  out <- hardhat::spruce_class(out)
+  return(out)
+}
 
-#' Discriminant Adaptive Nearest Neighbor Classification
-#'
-#' @param formula An object of class formula. (Y ~ X1 + X2)
-#' @param train A data frame or tibble containing training data.
-#' @param test A data frame or tibble containing test data.
-#' @param k The number of data points used for final classification.
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
-#' @param probability Should probabilities instead of classes be returned?
-#' @return  A numeric vector containing predicted class or a numeric matrix containing class probabilities.
-#' @details
-#' This is an implementation of Hastie and Tibshirani's
-#' \href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest
-#' Neighbor Classification publication.}.
-#' The code is a port of Christopher Jenness's
-#' python \href{https://github.com/christopherjenness/ML-lib}{implementation.}
-#' @examples
-#' library(dann)
-#' library(mlbench)
-#' library(magrittr)
-#' library(dplyr)
-#' library(ggplot2)
-#'
-#' ######################
-#' # Circle Data
-#' ######################
-#' set.seed(1)
-#' train <- mlbench.circle(300, 2) %>%
-#'   tibble::as_tibble()
-#' colnames(train) <- c("X1", "X2", "Y")
-#' train <- train %>%
-#'   mutate(Y = as.numeric(Y))
-#'
-#' ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) +
-#'   geom_point() +
-#'   labs(title = "Train Data", color = "Y")
-#'
-#' test <- mlbench.circle(100, 2) %>%
-#'   tibble::as_tibble()
-#' colnames(test) <- c("X1", "X2", "Y")
-#' test <- test %>%
-#'   mutate(Y = as.numeric(Y))
-#'
-#' ggplot(test, aes(x = X1, y = X2, colour = as.factor(Y))) +
-#'   geom_point() +
-#'   labs(title = "Test Data", color = "Y")
-#'
-#' dannPreds <- dann_df(
-#'   formula = Y ~ X1 + X2,
-#'   train = train, test = test,
-#'   k = 3, neighborhood_size = 50, epsilon = 1,
-#'   probability = FALSE
-#' )
-#' mean(dannPreds == test$Y) # An accurate model.
-#'
-#' rm(train, test)
-#' rm(dannPreds)
-#' @export
-dann_df <- function(formula, train, test, k = 5, neighborhood_size = max(floor(nrow(train) / 5), 50), epsilon = 1, probability = FALSE) {
-  if (!rlang::is_formula(formula)) {
-    stop("Argument formula is not a formula.")
+#' @keywords internal
+dann_predict_prob <- function(object, predictors) {
+  obsLevels <- object$levels
+  out <- dann_predict_base(object = object, predictors = predictors, probability = TRUE)
+  out <- hardhat::spruce_prob(obsLevels, out)
+  return(out)
+}
+
+#' @keywords internal
+predict_dann_bridge <- function(type, object, predictors) {
+  if (length(type) != 1) {
+    stop("'type' should have length one.", call. = FALSE)
   }
 
-  if (!is.data.frame(train)) {
-    stop("Argument train is not dataframe.")
-  }
-  if (nrow(train) < 1) {
-    stop("Argument train does not contain data.")
-  }
+  type <- rlang::arg_match(type, c("class", "prob"))
 
-  if (!is.data.frame(test)) {
-    stop("Argument test is not dataframe.")
+  predictors <- as.matrix(predictors)
+  if (anyNA(predictors)) {
+    stop("'new_data' must not contain missing values.")
   }
-  if (nrow(test) < 1) {
-    stop("Argument test does not contain data.")
-  }
+  hardhat::validate_predictors_are_numeric(predictors)
 
-  xTrain <- as.matrix(train[all.vars(formula)[2:length(all.vars(formula))]])
-  yTrain <- as.matrix(train[all.vars(formula)[1]])
-  xTest <- as.matrix(test[all.vars(formula)[2:length(all.vars(formula))]])
-
-  dannPreds <- dann(
-    xTrain, yTrain, xTest,
-    k, neighborhood_size, epsilon, probability
+  switch(type,
+    class = dann_predict_class(object, predictors),
+    prob = dann_predict_prob(object, predictors)
   )
+}
 
-  return(dannPreds)
+#' @inherit dann title
+#' @param object of class inheriting from "dann"
+#' @param new_data A data frame.
+#' @param type Type of prediction. (class, prob)
+#' @param ... unused
+#' @return  A data frame containing either class or class probabilities. Adheres to tidy models standards.
+#' @inherit dann details
+#' @examples
+#' library(dann)
+#' library(mlbench)
+#' library(magrittr)
+#' library(dplyr)
+#'
+#' set.seed(1)
+#' train <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(train) <- c("X1", "X2", "Y")
+#'
+#' test <- mlbench.circle(300, 2) %>%
+#'   tibble::as_tibble()
+#' colnames(test) <- c("X1", "X2", "Y")
+#'
+#' model <- dann(Y ~ X1 + X2, train)
+#' predict(model, test, "class")
+#'
+#' predict(model, test, "prob")
+#' @importFrom stats predict
+#' @export
+predict.dann <- function(object, new_data, type = "class", ...) {
+  ellipsis::check_dots_empty()
+
+  processed <- hardhat::forge(new_data, object$blueprint)
+
+  out <- predict_dann_bridge(type, object, processed$predictors)
+
+  hardhat::validate_prediction_size(out, new_data)
+
+  out
 }
