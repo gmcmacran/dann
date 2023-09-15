@@ -4,7 +4,7 @@
 \alias{predict.dann}
 \title{Discriminant Adaptive Nearest Neighbor Classification}
 \usage{
-\method{predict}{dann}(object, new_data, type = "class")
+\method{predict}{dann}(object, new_data, type = "class", ...)
 }
 \arguments{
 \item{object}{of class inheriting from "dann"}
@@ -12,6 +12,8 @@
 \item{new_data}{A data frame.}
 
 \item{type}{Type of prediction. (class, prob)}
+
+\item{...}{unused}
 }
 \value{
 A data frame containing either class or class probabilities. Adheres to tidy models standards.

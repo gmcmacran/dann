@@ -4,7 +4,7 @@
 \alias{predict.sub_dann}
 \title{Discriminant Adaptive Nearest Neighbor With Subspace Reduction}
 \usage{
-\method{predict}{sub_dann}(object, new_data, type = "class")
+\method{predict}{sub_dann}(object, new_data, type = "class", ...)
 }
 \arguments{
 \item{object}{of class inheriting from "sub_dann"}
@@ -12,6 +12,8 @@
 \item{new_data}{A data frame.}
 
 \item{type}{Type of prediction. (class, prob)}
+
+\item{...}{unused}
 }
 \value{
 A data frame containing either class or class probabilities. Adheres to tidy models standards.

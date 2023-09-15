@@ -530,6 +530,7 @@ predict_dann_bridge <- function(type, object, predictors) {
 #' @param object of class inheriting from "dann"
 #' @param new_data A data frame.
 #' @param type Type of prediction. (class, prob)
+#' @param ... unused
 #' @return  A data frame containing either class or class probabilities. Adheres to tidy models standards.
 #' @inherit dann details
 #' @examples
@@ -551,8 +552,11 @@ predict_dann_bridge <- function(type, object, predictors) {
 #' predict(model, test, "class")
 #'
 #' predict(model, test, "prob")
+#' @importFrom stats predict
 #' @export
-predict.dann <- function(object, new_data, type = "class") {
+predict.dann <- function(object, new_data, type = "class", ...) {
+  ellipsis::check_dots_empty()
+
   processed <- hardhat::forge(new_data, object$blueprint)
 
   out <- predict_dann_bridge(type, object, processed$predictors)
