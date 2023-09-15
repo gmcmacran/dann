@@ -1,4 +1,4 @@
-#' Print dann model.
+#' Print dann model
 #'
 #' @param x a dann model.
 #' @param ... arguments passed to other methods.
@@ -21,13 +21,14 @@ print.dann <- function(x, ...) {
   for (i in seq_len(length(params))) {
     msg <- paste(params[i][1], ":", paste(x[[params[i]]], collapse = ", "), collapse = " ")
     cat(msg)
+    cat("\n")
   }
   invisible(x)
 }
 
 #' Print dann model.
 #'
-#' @param x a dann model.
+#' @param x a dann model
 #' @param ... arguments passed to other methods.
 #' @examples
 #' library(dann)
@@ -48,6 +49,7 @@ print.sub_dann <- function(x, ...) {
   for (i in seq_len(length(params))) {
     msg <- paste(params[i][1], ":", paste(x[[params[i]]], collapse = ", "), collapse = " ")
     cat(msg)
+    cat("\n")
   }
   invisible(x)
 }
