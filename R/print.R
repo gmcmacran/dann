@@ -20,7 +20,7 @@ print.dann <- function(x, ...) {
   params <- c("k", "neighborhood_size", "epsilon", "levels")
   for (i in seq_len(length(params))) {
     msg <- paste(params[i][1], ":", paste(x[[params[i]]], collapse = ", "), collapse = " ")
-    print(msg)
+    cat(msg)
   }
   invisible(x)
 }
@@ -47,7 +47,7 @@ print.sub_dann <- function(x, ...) {
   params <- c("k", "neighborhood_size", "epsilon", "weighted", "sphere", "numDim", "levels")
   for (i in seq_len(length(params))) {
     msg <- paste(params[i][1], ":", paste(x[[params[i]]], collapse = ", "), collapse = " ")
-    print(msg)
+    cat(msg)
   }
   invisible(x)
 }
