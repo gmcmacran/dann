@@ -253,7 +253,7 @@ graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(flo
 # Recipe method
 #' @inherit graph_eigenvalues title
 #' @inheritParams graph_eigenvalues
-#' @param x A recipe from recipes library
+#' @param x A recipe from recipes library.
 #' @param data A data frame.
 #' @inherit graph_eigenvalues return
 #' @inherit graph_eigenvalues details

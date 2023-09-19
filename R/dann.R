@@ -329,7 +329,7 @@ dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nro
 # Recipe method
 #' @inherit dann title
 #' @inheritParams dann
-#' @param x A recipe from recipes library
+#' @param x A recipe from recipes library.
 #' @param data A data frame.
 #' @inherit dann return
 #' @inherit dann details

@@ -375,7 +375,7 @@ sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor
 # Recipe method
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
-#' @param x A recipe from recipes library
+#' @param x A recipe from recipes library.
 #' @param data A data frame.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
