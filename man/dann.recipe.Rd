@@ -14,7 +14,7 @@
 )
 }
 \arguments{
-\item{x}{A recipe from recipes library}
+\item{x}{A recipe from recipes library.}
 
 \item{data}{A data frame.}
 

@@ -7,7 +7,7 @@
 \method{print}{sub_dann}(x, ...)
 }
 \arguments{
-\item{x}{a dann model}
+\item{x}{a sub_dann model}
 
 \item{...}{arguments passed to other methods.}
 }

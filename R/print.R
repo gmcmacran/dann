@@ -28,7 +28,7 @@ print.dann <- function(x, ...) {
 
 #' Print dann model.
 #'
-#' @param x a dann model
+#' @param x a sub_dann model
 #' @param ... arguments passed to other methods.
 #' @examples
 #' library(dann)
