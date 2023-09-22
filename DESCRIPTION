@@ -25,14 +25,12 @@ Imports:
 RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 3.0.0),
-    knitr (>= 1.22),
     rmarkdown (>= 1.18),
     covr (>= 3.2.1),
     mlbench (>= 2.1-1),
     dplyr (>= 0.8.0.1),
     magrittr (>= 1.5),
     recipes
-VignetteBuilder: knitr
 LinkingTo: 
     Rcpp,
     RcppArmadillo
