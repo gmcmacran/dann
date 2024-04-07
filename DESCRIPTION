@@ -1,7 +1,7 @@
 Package: dann
 Type: Package
 Title: Discriminant Adaptive Nearest Neighbor Classification
-Version: 1.0.0
+Version: 1.0.1
 Author: Greg McMahan
 Maintainer: Greg McMahan <gmcmacran@gmail.com>
 Description: Discriminant Adaptive Nearest Neighbor Classification is a 
@@ -36,3 +36,5 @@ LinkingTo:
     RcppArmadillo
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
+URL: https://github.com/gmcmacran/dann
+BugReports: https://github.com/gmcmacran/dann/issues
