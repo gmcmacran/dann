@@ -50,6 +50,7 @@ In this example, simulated data is made. The overall trend is a circle
 inside a square.
 
 ``` r
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10, fig.height = 10)
 library(dann)
 library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
@@ -188,6 +189,7 @@ the number of large eigenvalues. The graph suggests 2 (the correct
 answer).
 
 ``` r
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10, fig.height = 10)
 graph_eigenvalues(
   formula = Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5,
   data = train,
