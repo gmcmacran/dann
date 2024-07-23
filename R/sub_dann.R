@@ -312,7 +312,7 @@ sub_dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5
 #' sub_dann(x, y)
 #' @export
 sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2), ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, y)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
 }
@@ -340,7 +340,7 @@ sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(
 #' sub_dann(x, y)
 #' @export
 sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2), ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, y)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
 }
@@ -366,7 +366,7 @@ sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #' sub_dann(Y ~ X1 + X2, train)
 #' @export
 sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(data) / 2), ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
@@ -396,7 +396,7 @@ sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor
 #' sub_dann(rec_obj, train)
 #' @export
 sub_dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(data) / 2), ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, data)
   sub_dann_bridge(processed, k, neighborhood_size, epsilon, weighted, sphere, numDim)
 }
@@ -496,7 +496,7 @@ predict_sub_dann_bridge <- function(type, object, predictors) {
 #' @importFrom stats predict
 #' @export
 predict.sub_dann <- function(object, new_data, type = "class", ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
 
   processed <- hardhat::forge(new_data, object$blueprint)
 
