@@ -51,5 +51,5 @@ print.sub_dann <- function(x, ...) {
     cat(msg)
     cat("\n")
   }
-  invisible(x)
+  # invisible(x)
 }
