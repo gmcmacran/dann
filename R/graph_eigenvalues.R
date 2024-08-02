@@ -169,7 +169,7 @@ graph_eigenvalues.default <- function(x, neighborhood_size = max(floor(nrow(x) /
 #' graph_eigenvalues(x, y)
 #' @export
 graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, y)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }
@@ -208,7 +208,7 @@ graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nro
 #' graph_eigenvalues(x, y)
 #' @export
 graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, y)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }
@@ -244,7 +244,7 @@ graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x)
 #' graph_eigenvalues(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, train)
 #' @export
 graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
@@ -284,7 +284,7 @@ graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(flo
 #' graph_eigenvalues(rec_obj, train)
 #' @export
 graph_eigenvalues.recipe <- function(x, data, neighborhood_size = max(floor(nrow(data) / 5), 50), weighted = FALSE, sphere = "mcd", ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, data)
   graph_eigenvalues_bridge(processed, neighborhood_size, weighted, sphere)
 }

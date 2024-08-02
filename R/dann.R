@@ -266,7 +266,7 @@ dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 5
 #' dann(x, y)
 #' @export
 dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, y)
   dann_bridge(processed, k, neighborhood_size, epsilon)
 }
@@ -294,7 +294,7 @@ dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #' dann(x, y)
 #' @export
 dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, y)
   dann_bridge(processed, k, neighborhood_size, epsilon)
 }
@@ -320,7 +320,7 @@ dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5),
 #' dann(Y ~ X1 + X2, train)
 #' @export
 dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   hardhat::validate_no_formula_duplication(formula = formula, original = TRUE)
   processed <- hardhat::mold(formula, data)
   dann_bridge(processed, k, neighborhood_size, epsilon)
@@ -350,7 +350,7 @@ dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nro
 #' dann(rec_obj, train)
 #' @export
 dann.recipe <- function(x, data, k = 5, neighborhood_size = max(floor(nrow(data) / 5), 50), epsilon = 1, ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
   processed <- hardhat::mold(x, data)
   dann_bridge(processed, k, neighborhood_size, epsilon)
 }
@@ -555,7 +555,7 @@ predict_dann_bridge <- function(type, object, predictors) {
 #' @importFrom stats predict
 #' @export
 predict.dann <- function(object, new_data, type = "class", ...) {
-  ellipsis::check_dots_empty()
+  rlang::check_dots_empty()
 
   processed <- hardhat::forge(new_data, object$blueprint)
 
