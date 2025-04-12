@@ -1,8 +1,9 @@
 ## Test environments
-* R Release on windows (github actions)
-* R Release on macOS (github actions)
-* R Release on ubuntu (github actions)
+* R release on macOS (github actions)
+* R release on windows (github actions)
+* R release on ubuntu (github actions)
 * R devel on ubuntu (github actions)
+* R old release on ubuntu (github actions)
 
 ## R CMD check results
 
@@ -11,4 +12,4 @@
 
 ## Downstream dependencies
 
-There are no downstream dependencies.
+Tests pass for single dependency.
