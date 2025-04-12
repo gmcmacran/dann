@@ -1,9 +1,9 @@
 linters: linters_with_defaults(
  brace_linter = brace_linter(allow_single_line = TRUE),
- cyclocomp_linter = NULL,
  line_length_linter = NULL,
  object_name_linter = NULL,
  seq_linter = NULL,
+ return_linter = NULL,
  duplicate_argument_linter = duplicate_argument_linter(),
  equals_na_linter = equals_na_linter(),
  namespace_linter = namespace_linter(),
