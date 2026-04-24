@@ -379,18 +379,6 @@ dann_predict_base <- function(object, predictors, probability) {
     shifted <- FALSE
   }
 
-
-  ###################################
-  # Calculate predictions
-  ###################################
-
-  if (!probability) {
-    predictions <- rep(-1, nrow(xTest))
-  } else {
-    predictions <- matrix(0, nrow = nrow(xTest), ncol = length(unique(yTrain)))
-    colnames(predictions) <- stringr::str_c("Class", as.character(sort(unique(yTrain))))
-  }
-
   NCOLX <- ncol(xTrain)
 
   ###################################
@@ -410,66 +398,28 @@ dann_predict_base <- function(object, predictors, probability) {
     Y_class_presidence[which(yTrain == names(Y_counts)[i])] <- i
   }
 
-  for (i in seq_len(nrow(xTest))) {
-    ###########
-    # Find neighborhood for x[i,]
-    ###########
-    distances <- calc_distance_C(xTrain, xTest[i, ])
+  ###################################
+  # Calculate predictions via C++ (with OpenMP parallelization)
+  ###################################
+  unique_classes <- sort(unique(yTrain))
 
-    nearest_neighbors <- order(distances, Y_class_presidence, yTrain)[1:neighborhood_size]
-    neighborhood_xTrain <- xTrain[nearest_neighbors, 1:NCOLX, drop = FALSE]
-    neighborhood_X_mean <- colMeans(neighborhood_xTrain)
-    neighborhood_y <- yTrain[nearest_neighbors]
-    neighborhood_classes <- unique(neighborhood_y)
+  result <- dann_predict_all_C(
+    xTrain = xTrain[, 1:NCOLX, drop = FALSE],
+    yTrain = yTrain,
+    xTest = xTest[, 1:NCOLX, drop = FALSE],
+    k = k,
+    neighborhood_size = neighborhood_size,
+    epsilon = epsilon,
+    y_class_precedence = Y_class_presidence,
+    unique_classes = unique_classes,
+    probability = probability
+  )
 
-    ###########
-    # Between and within matrices
-    ###########
-    class_frequencies <- vector(mode = "numeric", length = length(neighborhood_classes))
-    within_class_cov <- matrix(0, nrow = NCOLX, ncol = NCOLX)
-    between_class_cov <- matrix(0, nrow = NCOLX, ncol = NCOLX)
-
-    for (kth in seq_len(length(neighborhood_classes))) {
-      target_class <- neighborhood_classes[kth]
-      class_indices <- which(neighborhood_y == target_class)
-      class_frequencies[target_class] <- sum(neighborhood_y == target_class) / neighborhood_size
-
-      class_covariance <- stats::var(neighborhood_xTrain[class_indices, 1:ncol(neighborhood_xTrain), drop = FALSE])
-      # Deal with 1 row in class edge case
-      if (all(is.na(class_covariance))) {
-        class_covariance <- matrix(0, nrow = nrow(class_covariance), ncol = ncol(class_covariance))
-      }
-
-      within_class_cov <- class_covariance * class_frequencies[target_class] + within_class_cov
-      class_mean <- colMeans(neighborhood_xTrain[class_indices, 1:ncol(neighborhood_xTrain), drop = FALSE])
-      between_class_cov <- outer(class_mean - neighborhood_X_mean, class_mean - neighborhood_X_mean) *
-        class_frequencies[target_class] + between_class_cov
-    }
-
-    # W* = W^-.5
-    # B* = W*BW*
-    W_star <- within_class_cov^.5
-    W_star[which(is.na(W_star))] <- 0
-
-    W_star <- MASS::ginv(W_star)
-    B_star <- W_star %*% between_class_cov %*% W_star
-    I <- diag(NCOLX)
-
-    sigma <- W_star %*% (B_star + epsilon * I) %*% W_star
-
-    ###########
-    # DANN distance using sigma
-    ###########
-    distances <- vector(mode = "numeric", length = nrow(xTrain))
-    for (kth in seq_len(length(distances))) {
-      distances[kth] <- DANN_distance_C(xTest[i, 1:NCOLX, drop = FALSE], xTrain[kth, 1:NCOLX, drop = FALSE], sigma)
-    }
-    nearest <- order(distances, Y_class_presidence, yTrain)[1:k]
-    if (!probability) {
-      predictions[i] <- MODE(yTrain[nearest])
-    } else {
-      predictions[i, ] <- class_proportions(yTrain[nearest], sort(unique(yTrain)))
-    }
+  if (!probability) {
+    predictions <- as.vector(result$predictions)
+  } else {
+    predictions <- result$predictions
+    colnames(predictions) <- stringr::str_c("Class", as.character(unique_classes))
   }
 
   ###################################
