@@ -32,7 +32,9 @@ Models:
 
 This package implements DANN and sub-DANN in section 4.1 of the
 publication and is based on Christopher Jenness’s python
-[implementation.](https://github.com/christopherjenness/ML-lib)
+[implementation](https://github.com/christopherjenness/ML-lib). C++ and
+RcppArmadillo are used for calculations. If R is built with OpenMP
+support, calculations are multithreaded.
 
 ## Example 1: dann
 
