@@ -98,17 +98,6 @@ new_dann <- function(X, Y, k, neighborhood_size, epsilon, levels, blueprint) {
     stop("'epsilon' should be at least 0.", call. = FALSE)
   }
 
-  # epsilon is valid
-  if (length(epsilon) != 1) {
-    stop("'epsilon' be at length 1 vector.", call. = FALSE)
-  }
-  if (!is.numeric(epsilon)) {
-    stop("'epsilon' should be numeric.", call. = FALSE)
-  }
-  if (!epsilon >= 0) {
-    stop("'epsilon' should be at least 0.", call. = FALSE)
-  }
-
   hardhat::new_model(
     X = X,
     Y = Y,
