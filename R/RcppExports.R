@@ -2,28 +2,9 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @keywords internal
-#' Function to calculate dann distance between one training data points and one test point.
-DANN_distance_C <- function(x0, x1, sigma) {
-    .Call(`_dann_DANN_distance_C`, x0, x1, sigma)
-}
-
-#' @keywords internal
-#' Function to calculate dann distance between all training data points and one test point.
-#' Vectorized version of DANN_distance_C - computes all distances in a single call.
-DANN_distances_C <- function(xTrain, xTest, sigma) {
-    .Call(`_dann_DANN_distances_C`, xTrain, xTest, sigma)
-}
-
-#' @keywords internal
 #' Full DANN prediction loop in C++ with OpenMP parallelization.
 #' Replicates the behavior of the R dann_predict_base outer loop.
 dann_predict_all_C <- function(xTrain, yTrain, xTest, k, neighborhood_size, epsilon, y_class_precedence, unique_classes, probability) {
     .Call(`_dann_dann_predict_all_C`, xTrain, yTrain, xTest, k, neighborhood_size, epsilon, y_class_precedence, unique_classes, probability)
-}
-
-#' @keywords internal
-#' Function to calculate distance between all training data points and one test point.
-calc_distance_C <- function(trainX, testX) {
-    .Call(`_dann_calc_distance_C`, trainX, testX)
 }
 

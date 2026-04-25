@@ -10,31 +10,6 @@ using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' @keywords internal
-//' Function to calculate dann distance between one training data points and one test point.
-// [[Rcpp::export]]
-arma::vec DANN_distance_C(const arma::rowvec & x0, const arma::rowvec & x1, const arma::mat &  sigma) {
-  arma::vec distance = (x0- x1) * sigma * (x0 - x1).t();
-  return distance;
-}
-
-//' @keywords internal
-//' Function to calculate dann distance between all training data points and one test point.
-//' Vectorized version of DANN_distance_C - computes all distances in a single call.
-// [[Rcpp::export]]
-arma::vec DANN_distances_C(const arma::mat & xTrain, const arma::rowvec & xTest, const arma::mat & sigma) {
-  int N = xTrain.n_rows;
-  arma::vec distances(N);
-
-  for (int i = 0; i < N; i++) {
-    arma::rowvec diff = xTest - xTrain.row(i);
-    arma::vec d = diff * sigma * diff.t();
-    distances(i) = d(0);
-  }
-
-  return distances;
-}
-
 // Helper: compute Euclidean distances from all training rows to one test point
 static arma::vec euclidean_distances(const arma::mat & xTrain, const arma::rowvec & xTest) {
   int N = xTrain.n_rows;

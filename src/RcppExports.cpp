@@ -11,32 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// DANN_distance_C
-arma::vec DANN_distance_C(const arma::rowvec& x0, const arma::rowvec& x1, const arma::mat& sigma);
-RcppExport SEXP _dann_DANN_distance_C(SEXP x0SEXP, SEXP x1SEXP, SEXP sigmaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type x0(x0SEXP);
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type x1(x1SEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(DANN_distance_C(x0, x1, sigma));
-    return rcpp_result_gen;
-END_RCPP
-}
-// DANN_distances_C
-arma::vec DANN_distances_C(const arma::mat& xTrain, const arma::rowvec& xTest, const arma::mat& sigma);
-RcppExport SEXP _dann_DANN_distances_C(SEXP xTrainSEXP, SEXP xTestSEXP, SEXP sigmaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type xTrain(xTrainSEXP);
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type xTest(xTestSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(DANN_distances_C(xTrain, xTest, sigma));
-    return rcpp_result_gen;
-END_RCPP
-}
 // dann_predict_all_C
 Rcpp::List dann_predict_all_C(const arma::mat& xTrain, const arma::vec& yTrain, const arma::mat& xTest, int k, int neighborhood_size, double epsilon, const arma::vec& y_class_precedence, const arma::vec& unique_classes, bool probability);
 RcppExport SEXP _dann_dann_predict_all_C(SEXP xTrainSEXP, SEXP yTrainSEXP, SEXP xTestSEXP, SEXP kSEXP, SEXP neighborhood_sizeSEXP, SEXP epsilonSEXP, SEXP y_class_precedenceSEXP, SEXP unique_classesSEXP, SEXP probabilitySEXP) {
@@ -56,24 +30,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// calc_distance_C
-NumericVector calc_distance_C(NumericMatrix trainX, NumericVector testX);
-RcppExport SEXP _dann_calc_distance_C(SEXP trainXSEXP, SEXP testXSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type trainX(trainXSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type testX(testXSEXP);
-    rcpp_result_gen = Rcpp::wrap(calc_distance_C(trainX, testX));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_dann_DANN_distance_C", (DL_FUNC) &_dann_DANN_distance_C, 3},
-    {"_dann_DANN_distances_C", (DL_FUNC) &_dann_DANN_distances_C, 3},
     {"_dann_dann_predict_all_C", (DL_FUNC) &_dann_dann_predict_all_C, 9},
-    {"_dann_calc_distance_C", (DL_FUNC) &_dann_calc_distance_C, 2},
     {NULL, NULL, 0}
 };
 
