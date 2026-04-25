@@ -13,17 +13,17 @@ library(recipes, warn.conflicts = FALSE)
 # same results.
 
 set.seed(1)
-train <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
+train <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) |>
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 
-xTrain <- train %>%
-  select(X1, X2) %>%
+xTrain <- train |>
+  select(X1, X2) |>
   as.matrix()
 
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTrain <- train |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
 rec_obj <- recipe(Y ~ X1 + X2, data = train)

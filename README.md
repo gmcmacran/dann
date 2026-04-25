@@ -58,10 +58,10 @@ library(mlbench)
 set.seed(1)
 
 # Create training data
-train <- mlbench.circle(500, 2) %>%
+train <- mlbench.circle(500, 2) |>
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
-train <- train %>%
+train <- train |>
   mutate(Y = as.numeric(Y))
 
 ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) +
@@ -69,7 +69,7 @@ ggplot(train, aes(x = X1, y = X2, colour = as.factor(Y))) +
   labs(title = "Train Data", colour = "Y")
 ```
 
-<img src="man/figures/README-Circle-1.png" width="100%" />
+<img src="man/figures/README-Circle-1.png" alt="" width="100%" />
 
 To train a model, call dann.
 
@@ -81,10 +81,10 @@ To get class predictions, call predict with type equal to “class”
 
 ``` r
 # Create test data
-test <- mlbench.circle(500, 2) %>%
+test <- mlbench.circle(500, 2) |>
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "Y")
-test <- test %>%
+test <- test |>
   mutate(Y = as.numeric(Y))
 
 yhat <- predict(object = model, new_data = test, type = "class")
@@ -154,12 +154,12 @@ unrelated. Will sub_dann to better than dann?
 # Circle data with unrelated variables
 ######################
 set.seed(1)
-train <- mlbench.circle(500, 2) %>%
+train <- mlbench.circle(500, 2) |>
   tibble::as_tibble()
 colnames(train)[1:3] <- c("X1", "X2", "Y")
 
 # Add 5 unrelated variables
-train <- train %>%
+train <- train |>
   mutate(
     U1 = runif(500, -1, 1),
     U2 = runif(500, -1, 1),
@@ -168,12 +168,12 @@ train <- train %>%
     U5 = runif(500, -1, 1)
   )
 
-test <- mlbench.circle(500, 2) %>%
+test <- mlbench.circle(500, 2) |>
   tibble::as_tibble()
 colnames(test)[1:3] <- c("X1", "X2", "Y")
 
 # Add 5 unrelated variables
-test <- test %>%
+test <- test |>
   mutate(
     U1 = runif(500, -1, 1),
     U2 = runif(500, -1, 1),
@@ -198,7 +198,7 @@ graph_eigenvalues(
 )
 ```
 
-<img src="man/figures/README-graph-1.png" width="100%" />
+<img src="man/figures/README-graph-1.png" alt="" width="100%" />
 
 ``` r
 dann_model <- dann(
@@ -228,8 +228,8 @@ well.
 ``` r
 library(yardstick)
 dann_yhat <- predict(object = dann_model, new_data = test, type = "prob")
-dann_yhat <- test %>%
-  select(Y) %>%
+dann_yhat <- test |>
+  select(Y) |>
   bind_cols(dann_yhat)
 roc_auc(data = dann_yhat, truth = Y, event_level = "first", .pred_1)
 #> # A tibble: 1 × 3
@@ -242,8 +242,8 @@ sub_dann provides a major improvement.
 
 ``` r
 sub_dann_yhat <- predict(object = sub_dann_model, new_data = test, type = "prob")
-sub_dann_yhat <- test %>%
-  select(Y) %>%
+sub_dann_yhat <- test |>
+  select(Y) |>
   bind_cols(sub_dann_yhat)
 roc_auc(data = sub_dann_yhat, truth = Y, event_level = "first", .pred_1)
 #> # A tibble: 1 × 3
