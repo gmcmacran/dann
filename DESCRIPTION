@@ -1,7 +1,7 @@
 Package: dann
 Type: Package
 Title: Discriminant Adaptive Nearest Neighbor Classification
-Version: 1.0.2
+Version: 1.1.0
 Authors@R: 
     person("Greg", "McMahan", , "gmcmacran@gmail.com", role = c("aut", "cre"))
 Description: Discriminant Adaptive Nearest Neighbor Classification is a 
