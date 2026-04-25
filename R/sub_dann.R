@@ -98,17 +98,6 @@ new_sub_dann <- function(X, Y, k, neighborhood_size, epsilon, weighted, sphere, 
     stop("'epsilon' should be at least 0.", call. = FALSE)
   }
 
-  # epsilon is valid
-  if (length(epsilon) != 1) {
-    stop("'epsilon' be at length 1 vector.", call. = FALSE)
-  }
-  if (!is.numeric(epsilon)) {
-    stop("'epsilon' should be numeric.", call. = FALSE)
-  }
-  if (!epsilon >= 0) {
-    stop("'epsilon' should be at least 0.", call. = FALSE)
-  }
-
   # weighted is valid
   if (length(weighted) != 1) {
     stop("'weighted' should be a length 1 vector.", call. = FALSE)

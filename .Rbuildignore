@@ -6,3 +6,6 @@
 ^\.github$
 ^cran-comments\.md$
 ^.lintr$
+^\.positai$
+^\.claude$
+^CLAUDE\.md$

@@ -1,7 +1,7 @@
 Package: dann
 Type: Package
 Title: Discriminant Adaptive Nearest Neighbor Classification
-Version: 1.0.2
+Version: 1.1.0
 Authors@R: 
     person("Greg", "McMahan", , "gmcmacran@gmail.com", role = c("aut", "cre"))
 Description: Discriminant Adaptive Nearest Neighbor Classification is a 
@@ -11,17 +11,15 @@ Description: Discriminant Adaptive Nearest Neighbor Classification is a
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports: 
-    MASS (>= 7.3),
     stats (>= 3.5.3),
     tibble (>= 2.1.1),
     ggplot2 (>= 3.1.1),
     stringr (>= 1.4.0),
-    purrr (>= 0.3.2),
     rlang (>= 1.0.0),
     fpc (>= 2.1-11.1),
     Rcpp (>= 1.0.1),
     hardhat
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
     testthat (>= 3.0.0),
     rmarkdown (>= 1.18),

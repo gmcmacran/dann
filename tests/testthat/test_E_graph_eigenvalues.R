@@ -7,12 +7,12 @@ library(recipes, warn.conflicts = FALSE)
 # Circle data with 2 related variables and 5 unrelated variables
 ######################
 set.seed(1)
-train <- mlbench.circle(500, 2) %>%
+train <- mlbench.circle(500, 2) |>
   tibble::as_tibble()
 colnames(train)[1:3] <- c("X1", "X2", "Y")
 
 # Add 5 unrelated variables
-train <- train %>%
+train <- train |>
   mutate(
     U1 = runif(500, -1, 1),
     U2 = runif(500, -1, 1),
@@ -23,13 +23,13 @@ train <- train %>%
 
 rec_obj <- recipe(Y ~ X1 + X2 + U1 + U2 + U3 + U4 + U5, data = train)
 
-xTrain <- train %>%
-  select(X1, X2, U1, U2, U3, U4, U5) %>%
+xTrain <- train |>
+  select(X1, X2, U1, U2, U3, U4, U5) |>
   as.matrix()
 
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTrain <- train |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
 test_that("No errors?", {

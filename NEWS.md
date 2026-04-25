@@ -1,3 +1,6 @@
+# dann v 1.1.0
+  Move most calculations to C++.
+
 # dann v 1.0.2
   First build on mint.
   Remove return linter.

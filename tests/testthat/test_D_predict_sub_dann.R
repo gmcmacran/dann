@@ -11,30 +11,30 @@ library(tibble, warn.conflicts = FALSE)
 # Problem 1
 ######################
 set.seed(1)
-train <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
+train <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) |>
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 
-xTrain <- train %>%
-  select(X1, X2) %>%
+xTrain <- train |>
+  select(X1, X2) |>
   as.matrix()
 
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTrain <- train |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
-test <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) %>%
+test <- mlbench.2dnormals(1000, cl = 2, r = sqrt(2), sd = .2) |>
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "Y")
 
-xTest <- test %>%
-  select(X1, X2) %>%
+xTest <- test |>
+  select(X1, X2) |>
   as.matrix()
 
-yTest <- test %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTest <- test |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
 model <- sub_dann(xTrain, yTrain, 5, 50, 1, FALSE, "mcd", 2)
@@ -59,30 +59,30 @@ rm(model, sub_dannPreds)
 # Problem 2
 ######################
 set.seed(1)
-train <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) %>%
+train <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) |>
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "X3", "Y")
 
-xTrain <- train %>%
-  select(X1, X2, X3) %>%
+xTrain <- train |>
+  select(X1, X2, X3) |>
   as.matrix()
 
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTrain <- train |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
-test <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) %>%
+test <- mlbench.hypercube(n = 1000, d = 3, sides = rep(1, 3), sd = 0.1) |>
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "X3", "Y")
 
-xTest <- test %>%
-  select(X1, X2, X3) %>%
+xTest <- test |>
+  select(X1, X2, X3) |>
   as.matrix()
 
-yTest <- test %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTest <- test |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
 model <- sub_dann(xTrain, yTrain, 5, 60, 1, FALSE, "mcd", 3)
@@ -150,30 +150,30 @@ rm(model, sub_dannPreds)
 # Generate problem
 ######################
 set.seed(1)
-train <- mlbench.circle(20, 2) %>%
+train <- mlbench.circle(20, 2) |>
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 
-xTrain <- train %>%
-  select(X1, X2) %>%
+xTrain <- train |>
+  select(X1, X2) |>
   as.matrix()
 
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTrain <- train |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
-test <- mlbench.circle(20, 2) %>%
+test <- mlbench.circle(20, 2) |>
   tibble::as_tibble()
 colnames(test) <- c("X1", "X2", "Y")
 
-xTest <- test %>%
-  select(X1, X2) %>%
+xTest <- test |>
+  select(X1, X2) |>
   as.matrix()
 
-yTest <- test %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTest <- test |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
 ######################
@@ -216,17 +216,17 @@ rm(k, ks)
 ###############################################
 
 set.seed(1)
-train <- mlbench.2dnormals(50, cl = 2, r = sqrt(2), sd = .2) %>%
+train <- mlbench.2dnormals(50, cl = 2, r = sqrt(2), sd = .2) |>
   tibble::as_tibble()
 colnames(train) <- c("X1", "X2", "Y")
 
-xTrain <- train %>%
-  select(X1, X2) %>%
+xTrain <- train |>
+  select(X1, X2) |>
   as.matrix()
 
-yTrain <- train %>%
-  pull(Y) %>%
-  as.numeric() %>%
+yTrain <- train |>
+  pull(Y) |>
+  as.numeric() |>
   as.vector()
 
 rec_obj <- recipe(Y ~ X1 + X2, data = train)
