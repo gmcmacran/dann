@@ -47,49 +47,49 @@ new_dann <- function(X, Y, k, neighborhood_size, epsilon, levels, blueprint) {
 
   # levels is valid
   if (!length(levels) > 1) {
-    stop("'Y should contain at least two classes.", call. = FALSE)
+    stop("'Y' should contain at least two classes.", call. = FALSE)
   }
 
   # k is valid.
   if (length(k) != 1) {
-    stop("'k' should be at length 1 vector.", call. = FALSE)
+    stop("'k' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(k)) {
     stop("'k' should be numeric.", call. = FALSE)
   }
   if (k > nrow(X)) {
-    stop("'k' should be less than or equal to the numer of rows in 'X'", call. = FALSE)
+    stop("'k' should be less than or equal to the number of rows in 'X'.", call. = FALSE)
   }
   if (k <= 0) {
     stop("'k' should be at least 1.", call. = FALSE)
   }
   if (k != round(k)) {
-    stop("'k' should a positive whole number.", call. = FALSE)
+    stop("'k' should be a positive whole number.", call. = FALSE)
   }
 
   # neighborhood_size is valid
   if (length(neighborhood_size) != 1) {
-    stop("'neighborhood_size' should be at length 1 vector.", call. = FALSE)
+    stop("'neighborhood_size' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(neighborhood_size)) {
     stop("'neighborhood_size' should be numeric.", call. = FALSE)
   }
   if (neighborhood_size > nrow(X)) {
-    stop("'neighborhood_size' should be less than or equal to the numer of rows in 'X'.", call. = FALSE)
+    stop("'neighborhood_size' should be less than or equal to the number of rows in 'X'.", call. = FALSE)
   }
   if (neighborhood_size <= 1) {
     stop("'neighborhood_size' should be at least 2.", call. = FALSE)
   }
   if (k > neighborhood_size) {
-    stop("'k' should be less than 'neighborhood_size'.", call. = FALSE)
+    stop("'k' should be less than or equal to 'neighborhood_size'.", call. = FALSE)
   }
   if (neighborhood_size != round(neighborhood_size)) {
-    stop("'neighborhood_size' should a positive whole number.", call. = FALSE)
+    stop("'neighborhood_size' should be a positive whole number.", call. = FALSE)
   }
 
   # epsilon is valid
   if (length(epsilon) != 1) {
-    stop("'epsilon' be at length 1 vector.", call. = FALSE)
+    stop("'epsilon' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(epsilon)) {
     stop("'epsilon' should be numeric.", call. = FALSE)
@@ -210,16 +210,16 @@ dann_bridge <- function(processed, k, neighborhood_size, epsilon) {
 # User interface
 #################
 #' @title Discriminant Adaptive Nearest Neighbor Classification
-#' @param x A matrix or a dataframe.
+#' @param x A matrix, data frame, formula, or recipe.
 #' @param ... Additional parameters passed to methods.
-#' @param k The number of data points used for final classification.
-#' @param neighborhood_size The number of data points used to calculate between and within class covariance.
-#' @param epsilon Diagonal elements of a diagonal matrix. 1 is the identity matrix.
-#' @return  An S3 class of type dann.
+#' @param k The number of nearest neighbors used to classify a point. Identical to k in standard k nearest neighbors.
+#' @param neighborhood_size The number of nearest neighbors used to estimate the between and within class covariance matrices that shape the neighborhood.
+#' @param epsilon Softening parameter. Scales the identity matrix added to the between class covariance, which keeps the neighborhood from collapsing onto the class boundary. 1 matches the publication.
+#' @return An S3 class of type dann.
 #' @details
 #' This is an implementation of Hastie and Tibshirani's
-#' [Discriminant Adaptive Nearest
-#' Neighbor Classification publication.](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
+#' [Discriminant Adaptive Nearest Neighbor
+#' Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
 #' @export
 dann <- function(x, ..., k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1) {
   UseMethod("dann")
@@ -228,7 +228,7 @@ dann <- function(x, ..., k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50),
 # Default
 #' @inherit dann title
 #' @inheritParams dann
-#' @param x A data frame.
+#' @param x An object for which no `dann()` method exists.
 #' @inherit dann return
 #' @inherit dann details
 #' @export
@@ -243,7 +243,7 @@ dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5), 5
 #' @inherit dann title
 #' @inheritParams dann
 #' @param x A data frame.
-#' @param y A vector.
+#' @param y A vector of outcomes. Numeric, character, and factor are all accepted.
 #' @inherit dann return
 #' @inherit dann details
 #' @examples
@@ -271,7 +271,7 @@ dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 #' @inherit dann title
 #' @inheritParams dann
 #' @param x A matrix.
-#' @param y A vector.
+#' @param y A vector of outcomes. Numeric, character, and factor are all accepted.
 #' @inherit dann return
 #' @inherit dann details
 #' @examples
@@ -298,8 +298,8 @@ dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) / 5),
 # Formula method
 #' @inherit dann title
 #' @inheritParams dann
-#' @param formula A formula. Y ~ X1 + X2
-#' @param data A data frame.
+#' @param formula A formula specifying the outcome and predictors. For example, Y ~ X1 + X2.
+#' @param data A data frame containing the variables in `formula` or in the recipe.
 #' @inherit dann return
 #' @inherit dann details
 #' @examples
@@ -325,8 +325,8 @@ dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor(nro
 # Recipe method
 #' @inherit dann title
 #' @inheritParams dann
-#' @param x A recipe from recipes library.
-#' @param data A data frame.
+#' @param x A recipe from the recipes package.
+#' @param data A data frame containing the variables in `formula` or in the recipe.
 #' @inherit dann return
 #' @inherit dann details
 #' @examples
@@ -478,11 +478,11 @@ predict_dann_bridge <- function(type, object, predictors) {
 }
 
 #' @inherit dann title
-#' @param object of class inheriting from "dann"
-#' @param new_data A data frame.
-#' @param type Type of prediction. (class, prob)
-#' @param ... unused
-#' @return  A data frame containing either class or class probabilities. Adheres to tidy models standards.
+#' @param object A fitted model of class dann.
+#' @param new_data A data frame of predictors to score.
+#' @param type Type of prediction. One of "class" or "prob".
+#' @param ... Not used.
+#' @return A data frame of predicted classes or class probabilities. Adheres to tidymodels standards.
 #' @inherit dann details
 #' @examples
 #' library(dann)

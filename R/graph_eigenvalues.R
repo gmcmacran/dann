@@ -38,7 +38,7 @@ graph_eigenvalues_base <- function(xTrain, yTrain,
     stop("Argument neighborhood_size should be numeric.")
   }
   if (neighborhood_size > nrow(xTrain)) {
-    stop("Argument neighborhood_size should be less than or equal to the numer of rows in xTrain.")
+    stop("Argument neighborhood_size should be less than or equal to the number of rows in xTrain.")
   }
   if (neighborhood_size <= 1) {
     stop("Argument neighborhood_size should be at least 2.")
@@ -60,7 +60,7 @@ graph_eigenvalues_base <- function(xTrain, yTrain,
     stop("Argument sphere should be a character vector.")
   }
   if (!(sphere %in% c("mve", "mcd", "classical", "none"))) {
-    stop("Argument sphere should be a one mve, mcd, classical or none.")
+    stop("Argument sphere should be one of mve, mcd, classical or none.")
   }
 
   # Find subspace
@@ -109,12 +109,13 @@ graph_eigenvalues_bridge <- function(processed, neighborhood_size, weighted, sph
 #################
 # User interface
 #################
-#' @title A helper for sub_dann
+#' @title A helper for choosing sub_dann's numDim
 #' @inheritParams sub_dann
-#' @return  A ggplot2 graph.
-#' @details This function plots the eigenvalues found by [fpc::ncoord()]. The user
-#' should make a judgement call on how many eigenvalues are large and set sub_dann's
-#' numDim to that number.
+#' @return A ggplot2 graph.
+#' @details This function plots the eigenvalues found by [fpc::ncoord()] against their
+#' rank order. Judge how many eigenvalues are large and set [sub_dann()]'s numDim to
+#' that number. Keep neighborhood_size, weighted, and sphere consistent between this
+#' function and [sub_dann()] so the two look at the same subspace.
 #' @importFrom rlang .data
 #' @export
 graph_eigenvalues <- function(x, ..., neighborhood_size = max(floor(nrow(x) / 5), 50), weighted = FALSE, sphere = "mcd") {
@@ -124,7 +125,7 @@ graph_eigenvalues <- function(x, ..., neighborhood_size = max(floor(nrow(x) / 5)
 # Default
 #' @inherit graph_eigenvalues title
 #' @inheritParams graph_eigenvalues
-#' @param x A data frame.
+#' @param x An object for which no `graph_eigenvalues()` method exists.
 #' @inherit graph_eigenvalues return
 #' @inherit graph_eigenvalues details
 #' @export
@@ -139,7 +140,7 @@ graph_eigenvalues.default <- function(x, neighborhood_size = max(floor(nrow(x) /
 #' @inherit graph_eigenvalues title
 #' @inheritParams graph_eigenvalues
 #' @param x A data frame.
-#' @param y A vector.
+#' @param y A vector of outcomes. Numeric, character, and factor are all accepted.
 #' @inherit graph_eigenvalues return
 #' @inherit graph_eigenvalues details
 #' @examples
@@ -153,7 +154,7 @@ graph_eigenvalues.default <- function(x, neighborhood_size = max(floor(nrow(x) /
 #'   tibble::as_tibble()
 #' colnames(train) <- c("X1", "X2", "Y")
 #'
-#' #' # Add 5 unrelated variables
+#' # Add 5 unrelated variables
 #' train <- train %>%
 #'   mutate(
 #'     U1 = runif(300, -1, 1),
@@ -178,7 +179,7 @@ graph_eigenvalues.data.frame <- function(x, y, neighborhood_size = max(floor(nro
 #' @inherit graph_eigenvalues title
 #' @inheritParams graph_eigenvalues
 #' @param x A matrix.
-#' @param y A vector.
+#' @param y A vector of outcomes. Numeric, character, and factor are all accepted.
 #' @inherit graph_eigenvalues return
 #' @inherit graph_eigenvalues details
 #' @examples
@@ -216,8 +217,8 @@ graph_eigenvalues.matrix <- function(x, y, neighborhood_size = max(floor(nrow(x)
 # Formula method
 #' @inherit graph_eigenvalues title
 #' @inheritParams graph_eigenvalues
-#' @param formula A formula. Y ~ X1 + X1
-#' @param data A data frame.
+#' @param formula A formula specifying the outcome and predictors. For example, Y ~ X1 + X2.
+#' @param data A data frame containing the variables in `formula` or in the recipe.
 #' @inherit graph_eigenvalues return
 #' @inherit graph_eigenvalues details
 #' @examples
@@ -253,8 +254,8 @@ graph_eigenvalues.formula <- function(formula, data, neighborhood_size = max(flo
 # Recipe method
 #' @inherit graph_eigenvalues title
 #' @inheritParams graph_eigenvalues
-#' @param x A recipe from recipes library.
-#' @param data A data frame.
+#' @param x A recipe from the recipes package.
+#' @param data A data frame containing the variables in `formula` or in the recipe.
 #' @inherit graph_eigenvalues return
 #' @inherit graph_eigenvalues details
 #' @examples

@@ -26,24 +26,24 @@ An implementation of Hastie and Tibshirani's Discriminant Adaptive Nearest Neigh
 
 ## Package Introduction
 
-In k nearest neighbors, the shape of the neighborhood is usually circular. Discriminant Adaptive Nearest Neighbor (dann) is a variation of k nearest neighbors where the shape of the neighborhood is data driven. The neighborhood is elongated along class boundaries and shrunk in the orthogonal direction. See [Discriminate Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) by Hastie and Tibshirani.
+In k nearest neighbors, the shape of the neighborhood is usually circular. Discriminant Adaptive Nearest Neighbor (dann) is a variation of k nearest neighbors where the shape of the neighborhood is data driven. The neighborhood is elongated along class boundaries and shrunk in the orthogonal direction. See [Discriminant Adaptive Nearest Neighbor Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf) by Hastie and Tibshirani.
 
 Models:
 
 -   dann
--   sub-dann
+-   sub_dann
 
-This package implements DANN and sub-DANN in section 4.1 of the publication and is based on Christopher Jenness's python [implementation](https://github.com/christopherjenness/ML-lib). C++ and RcppArmadillo are used for calculations. If R is built with OpenMP support, calculations are multithreaded.
+This package implements the dann and sub-dann models described in section 4.1 of the publication and is based on Christopher Jenness's python [implementation](https://github.com/christopherjenness/ML-lib). Calculations are done in C++ with RcppArmadillo. If R is built with OpenMP support, they are multithreaded.
 
 ## Example 1: dann
 
 Arguments:
 
--   k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors.
--   neighborhood_size - The number of data points used to estimate a good shape for the neighborhood.
--   epsilon - Softening parameter. Usually has the least affect on performance.
+-   k - The number of nearest neighbors used to classify a point. Identical to k in standard k nearest neighbors.
+-   neighborhood_size - The number of nearest neighbors used to estimate a good shape for the neighborhood.
+-   epsilon - Softening parameter. Usually has the least effect on performance.
 
-In this example, simulated data is made. The overall trend is a circle inside a square.
+In this example, data is simulated. The overall trend is a circle inside a square.
 
 ```{r Circle}
 knitr::opts_chunk$set(echo = TRUE, fig.width = 10, fig.height = 10)
@@ -72,7 +72,7 @@ To train a model, call dann.
 model <- dann(formula = Y ~ X1 + X2, data = train, k = 5, neighborhood_size = 50, epsilon = 1)
 ```
 
-To get class predictions, call predict with type equal to "class"
+To get class predictions, call predict with type equal to "class".
 
 ```{r CircleThree}
 # Create test data
@@ -86,7 +86,7 @@ yhat <- predict(object = model, new_data = test, type = "class")
 yhat
 ```
 
-To get probabilities, call predict with type equal to "prob"
+To get probabilities, call predict with type equal to "prob".
 
 ```{r CircleFour}
 yhat <- predict(object = model, new_data = test, type = "prob")
@@ -95,18 +95,18 @@ yhat
 
 ## Example 2: sub_dann
 
-In general, dann will struggle as unrelated variables are intermingled with informative variables. To deal with this, sub_dann projects the data onto a unique subspace and then calls dann on the subspace.
+dann struggles when unrelated variables are intermingled with informative ones. sub_dann deals with this by projecting the data onto a lower dimensional subspace and then calling dann on that subspace. In general, it does better than dann in this situation.
 
-# Arguments
+Arguments:
 
--   k - The number of points in the neighborhood. Identical to k in standard k nearest neighbors.
--   neighborhood_size - The number of data points used to estimate a good shape for the neighborhood.
--   epsilon - Softening parameter. Usually has the least affect on performance.
--   weighted - Should the individual between class covariance matrices be weighted? FALSE corresponds to original publication.
--   sphere - Type of covariance matrix to calculate.
+-   k - The number of nearest neighbors used to classify a point. Identical to k in standard k nearest neighbors.
+-   neighborhood_size - The number of nearest neighbors used to estimate a good shape for the neighborhood.
+-   epsilon - Softening parameter. Usually has the least effect on performance.
+-   weighted - Should the individual between class covariance matrices be weighted? FALSE matches the original publication.
+-   sphere - Type of covariance matrix used to sphere the data.
 -   numDim - The number of dimensions to project the predictor variables on to.
 
-In the below example there are 2 related variables and 5 that are unrelated. Will sub_dann to better than dann?
+In the example below, 2 variables are related to the outcome and 5 are not.
 
 ```{r exampleP1}
 ######################
@@ -177,7 +177,7 @@ sub_dann_model <- sub_dann(
 )
 ```
 
-As expected, the dann model using all features does not fit the data well.
+As expected, the dann model fit on all seven variables has the lower AUC.
 
 ```{r exampleP3}
 library(yardstick)
@@ -188,7 +188,7 @@ dann_yhat <- test |>
 roc_auc(data = dann_yhat, truth = Y, event_level = "first", .pred_1)
 ```
 
-sub_dann provides a major improvement.
+sub_dann, fit on the two dimensional subspace, does better.
 
 ```{r exampleP4}
 sub_dann_yhat <- predict(object = sub_dann_model, new_data = test, type = "prob")

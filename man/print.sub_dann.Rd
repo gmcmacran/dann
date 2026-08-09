@@ -2,17 +2,20 @@
 % Please edit documentation in R/print.R
 \name{print.sub_dann}
 \alias{print.sub_dann}
-\title{Print dann model.}
+\title{Print sub_dann model}
 \usage{
 \method{print}{sub_dann}(x, ...)
 }
 \arguments{
-\item{x}{a sub_dann model}
+\item{x}{A sub_dann model.}
 
-\item{...}{arguments passed to other methods.}
+\item{...}{Not used.}
+}
+\value{
+The model, invisibly. Called for the side effect of printing.
 }
 \description{
-Print dann model.
+Print sub_dann model
 }
 \examples{
 library(dann)
