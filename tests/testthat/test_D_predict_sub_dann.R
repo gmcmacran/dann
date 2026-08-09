@@ -312,3 +312,23 @@ test_that("probability checks works", {
   expect_error(predict(model, xTest, "foo"), NULL)
   expect_error(predict(model, xTest, c("class", "prob")), NULL)
 })
+
+###############################################
+# Levels carrying no training rows
+###############################################
+set.seed(2)
+emptyN <- 200
+emptyX <- data.frame(X1 = runif(emptyN, -1, 1), X2 = runif(emptyN, -1, 1))
+emptyY <- factor(ifelse(emptyX$X1^2 + emptyX$X2^2 < .5, "a", "c"), levels = c("a", "b", "c"))
+
+model <- sub_dann(emptyX, emptyY, k = 5, neighborhood_size = 40, numDim = 2)
+subDannProbs <- predict(model, emptyX, "prob")
+
+test_that("Unused level still gets a probability column", {
+  expect_equal(model$levels, c("a", "b", "c"))
+  expect_equal(names(subDannProbs), c(".pred_a", ".pred_b", ".pred_c"))
+  expect_true(all(subDannProbs$.pred_b == 0))
+  expect_true(all(abs(rowSums(subDannProbs) - 1) < 1e-12))
+})
+
+rm(emptyN, emptyX, emptyY, model, subDannProbs)

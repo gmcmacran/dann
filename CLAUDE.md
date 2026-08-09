@@ -67,7 +67,13 @@ The main entry point is `dann_predict_all_C`. Per test point it:
 1. Computes Euclidean distances to all training points
 2. Picks the `neighborhood_size` nearest neighbors via a 3-key sort (distance, class precedence, class value)
 3. Computes within-class and between-class covariance matrices on the neighborhood
-4. Derives the DANN sigma matrix: `W*(B* + εI)W*` where `W* = pinv(sqrt(W))`
+4. Derives the DANN sigma matrix: `W*(B* + εI)W*` where `W* = W^(-1/2)`, the
+   symmetric matrix square root (Hastie & Tibshirani eq. 2). It comes from an
+   eigendecomposition of the within-class covariance; eigenvalues below a
+   `sqrt(eps)` relative cutoff are dropped instead of inverted, since sigma
+   amplifies each kept direction by `1/eigenvalue`. Note this is a true matrix
+   square root, not an element-wise one — an element-wise root does not sphere
+   the space and breaks the metric's invariance to orthogonal transformations.
 5. Re-ranks all training points by DANN distance, takes the top `k`, and returns the mode or class proportions
 
 The outer loop over test observations is parallelized with `#pragma omp parallel for`. OpenMP flags are set in `src/Makevars`.

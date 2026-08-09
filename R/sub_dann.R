@@ -407,8 +407,12 @@ sub_dann_predict_base <- function(object, predictors, probability) {
   xTrain2 <- subspace$proj[, 1:numDim, drop = FALSE]
   xTest2 <- xTest %*% subspace$units[, 1:numDim, drop = FALSE]
 
-  # Get predictions
-  dannModel <- dann.matrix(x = xTrain2, y = yTrain, k = k, neighborhood_size = neighborhood_size, epsilon = epsilon)
+  # Get predictions. Hand the inner model a factor over this model's full set
+  # of levels. Passing the integer codes would let factor() rebuild the levels
+  # from the observed values alone, dropping any level with no training rows.
+  yTrainFactor <- factor(object$levels[yTrain + 1], levels = object$levels)
+
+  dannModel <- dann.matrix(x = xTrain2, y = yTrainFactor, k = k, neighborhood_size = neighborhood_size, epsilon = epsilon)
 
   predictions <- dann_predict_base(object = dannModel, predictors = xTest2, probability = probability)
 

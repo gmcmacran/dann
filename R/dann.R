@@ -130,6 +130,13 @@ dann_impl <- function(predictors, outcomes, k, neighborhood_size, epsilon, level
 #################
 #' @keywords internal
 fix_dann_params <- function(k, neighborhood_size, epsilon, data) {
+  # A valid neighborhood_size is at least 2 and at most nrow(data), so with
+  # fewer than two rows there is nothing to clamp toward. Catch it here rather
+  # than letting the constructor reject a corrected value further downstream.
+  if (nrow(data) < 2) {
+    stop("Training data should have at least two rows.", call. = FALSE)
+  }
+
   if (k < 1) {
     k <- 1
     msg <- paste("k cannot be less than 1. Changing to ", k, ".", sep = "")
@@ -390,7 +397,13 @@ dann_predict_base <- function(object, predictors, probability) {
   ###################################
   # Calculate predictions via C++ (with OpenMP parallelization)
   ###################################
-  unique_classes <- sort(unique(yTrain))
+  # One column per level, not per observed class. A level carrying no training
+  # rows still needs a (zero) probability column, otherwise the result has
+  # fewer columns than hardhat::spruce_prob expects.
+  all_classes <- seq_along(object$levels) - 1
+  if (shifted) {
+    all_classes <- all_classes + shiftedBy
+  }
 
   result <- dann_predict_all_C(
     xTrain = xTrain[, 1:NCOLX, drop = FALSE],
@@ -400,7 +413,7 @@ dann_predict_base <- function(object, predictors, probability) {
     neighborhood_size = neighborhood_size,
     epsilon = epsilon,
     y_class_precedence = Y_class_presidence,
-    unique_classes = unique_classes,
+    unique_classes = all_classes,
     probability = probability
   )
 
@@ -408,15 +421,14 @@ dann_predict_base <- function(object, predictors, probability) {
     predictions <- as.vector(result$predictions)
   } else {
     predictions <- result$predictions
-    colnames(predictions) <- stringr::str_c("Class", as.character(unique_classes))
+    colnames(predictions) <- stringr::str_c("Class", as.character(all_classes))
   }
 
   ###################################
   # Shift classes back if needed.
   ###################################
   if (shifted && probability) {
-    yTrain <- yTrain - shiftedBy
-    colnames(predictions) <- stringr::str_c("Class", as.character(sort(unique(yTrain))))
+    colnames(predictions) <- stringr::str_c("Class", as.character(all_classes - shiftedBy))
   } else if (shifted && !probability) {
     predictions <- predictions - shiftedBy
   }
