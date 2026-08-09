@@ -1,13 +1,15 @@
 Package: dann
 Type: Package
 Title: Discriminant Adaptive Nearest Neighbor Classification
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: 
     person("Greg", "McMahan", , "gmcmacran@gmail.com", role = c("aut", "cre"))
 Description: Discriminant Adaptive Nearest Neighbor Classification is a 
     variation of k nearest neighbors where the shape of the neighborhood is 
-    data driven. This package implements dann and sub_dann from
-    Hastie (1996) <https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf>.
+    data driven. The neighborhood is elongated along class boundaries and 
+    shrunk in the orthogonal direction. This package implements dann and 
+    sub_dann from Hastie (1996) 
+    <https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Imports: 

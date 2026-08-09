@@ -7,23 +7,23 @@
 \method{predict}{dann}(object, new_data, type = "class", ...)
 }
 \arguments{
-\item{object}{of class inheriting from "dann"}
+\item{object}{A fitted model of class dann.}
 
-\item{new_data}{A data frame.}
+\item{new_data}{A data frame of predictors to score.}
 
-\item{type}{Type of prediction. (class, prob)}
+\item{type}{Type of prediction. One of "class" or "prob".}
 
-\item{...}{unused}
+\item{...}{Not used.}
 }
 \value{
-A data frame containing either class or class probabilities. Adheres to tidy models standards.
+A data frame of predicted classes or class probabilities. Adheres to tidymodels standards.
 }
 \description{
 Discriminant Adaptive Nearest Neighbor Classification
 }
 \details{
 This is an implementation of Hastie and Tibshirani's
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification}.
 }
 \examples{
 library(dann)

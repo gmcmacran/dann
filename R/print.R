@@ -1,7 +1,8 @@
 #' Print dann model
 #'
-#' @param x a dann model.
-#' @param ... arguments passed to other methods.
+#' @param x A dann model.
+#' @param ... Not used.
+#' @return The model, invisibly. Called for the side effect of printing.
 #' @examples
 #' library(dann)
 #' library(mlbench)
@@ -26,10 +27,11 @@ print.dann <- function(x, ...) {
   invisible(x)
 }
 
-#' Print dann model.
+#' Print sub_dann model
 #'
-#' @param x a sub_dann model
-#' @param ... arguments passed to other methods.
+#' @param x A sub_dann model.
+#' @param ... Not used.
+#' @return The model, invisibly. Called for the side effect of printing.
 #' @examples
 #' library(dann)
 #' library(mlbench)

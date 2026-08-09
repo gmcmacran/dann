@@ -160,3 +160,20 @@ test_that("... checks works", {
   expect_error(dann(x = xTrain, y = yTrain, k = 2, neighborhood_size = 2, epsilonn = 1), NULL)
   expect_error(dann(x = rec_obj, data = dat, k = 2, neighborhood_size = 2, epsilonn = 1), NULL)
 })
+
+#######
+# Too few rows to build any neighborhood
+#######
+oneRowX <- matrix(c(1, 2), nrow = 1, ncol = 2)
+colnames(oneRowX) <- c("X1", "X2")
+oneRowY <- factor("a", levels = c("a", "b"))
+
+# A neighborhood_size must be at least 2 and at most nrow(x), so a single row
+# cannot be corrected into a usable model. Error rather than clamping to a
+# value the constructor then rejects.
+test_that("Fewer than two rows errors", {
+  expect_error(dann(oneRowX, oneRowY, k = 5), "at least two rows")
+  expect_error(sub_dann(oneRowX, oneRowY, k = 5), "at least two rows")
+})
+
+rm(oneRowX, oneRowY)

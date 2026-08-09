@@ -16,13 +16,13 @@
 \arguments{
 \item{x}{A data frame.}
 
-\item{y}{A vector.}
+\item{y}{A vector of outcomes. Numeric, character, and factor are all accepted.}
 
-\item{k}{The number of data points used for final classification.}
+\item{k}{The number of nearest neighbors used to classify a point. Identical to k in standard k nearest neighbors.}
 
-\item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
+\item{neighborhood_size}{The number of nearest neighbors used to estimate the between and within class covariance matrices that shape the neighborhood.}
 
-\item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
+\item{epsilon}{Softening parameter. Scales the identity matrix added to the between class covariance, which keeps the neighborhood from collapsing onto the class boundary. 1 matches the publication.}
 
 \item{...}{Additional parameters passed to methods.}
 }
@@ -34,7 +34,7 @@ Discriminant Adaptive Nearest Neighbor Classification
 }
 \details{
 This is an implementation of Hastie and Tibshirani's
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification}.
 }
 \examples{
 library(dann)

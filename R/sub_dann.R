@@ -47,49 +47,49 @@ new_sub_dann <- function(X, Y, k, neighborhood_size, epsilon, weighted, sphere, 
 
   # levels is valid
   if (!length(levels) > 1) {
-    stop("'Y should contain at least two classes.", call. = FALSE)
+    stop("'Y' should contain at least two classes.", call. = FALSE)
   }
 
   # k is valid.
   if (length(k) != 1) {
-    stop("'k' should be at length 1 vector.", call. = FALSE)
+    stop("'k' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(k)) {
     stop("'k' should be numeric.", call. = FALSE)
   }
   if (k > nrow(X)) {
-    stop("'k' should be less than or equal to the numer of rows in 'X'", call. = FALSE)
+    stop("'k' should be less than or equal to the number of rows in 'X'.", call. = FALSE)
   }
   if (k <= 0) {
     stop("'k' should be at least 1.", call. = FALSE)
   }
   if (k != round(k)) {
-    stop("'k' should a positive whole number.", call. = FALSE)
+    stop("'k' should be a positive whole number.", call. = FALSE)
   }
 
   # neighborhood_size is valid
   if (length(neighborhood_size) != 1) {
-    stop("'neighborhood_size' should be at length 1 vector.", call. = FALSE)
+    stop("'neighborhood_size' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(neighborhood_size)) {
     stop("'neighborhood_size' should be numeric.", call. = FALSE)
   }
   if (neighborhood_size > nrow(X)) {
-    stop("'neighborhood_size' should be less than or equal to the numer of rows in 'X'.", call. = FALSE)
+    stop("'neighborhood_size' should be less than or equal to the number of rows in 'X'.", call. = FALSE)
   }
   if (neighborhood_size <= 1) {
     stop("'neighborhood_size' should be at least 2.", call. = FALSE)
   }
   if (k > neighborhood_size) {
-    stop("'k' should be less than 'neighborhood_size'.", call. = FALSE)
+    stop("'k' should be less than or equal to 'neighborhood_size'.", call. = FALSE)
   }
   if (neighborhood_size != round(neighborhood_size)) {
-    stop("'neighborhood_size' should a positive whole number.", call. = FALSE)
+    stop("'neighborhood_size' should be a positive whole number.", call. = FALSE)
   }
 
   # epsilon is valid
   if (length(epsilon) != 1) {
-    stop("'epsilon' be at length 1 vector.", call. = FALSE)
+    stop("'epsilon' should be a length 1 vector.", call. = FALSE)
   }
   if (!is.numeric(epsilon)) {
     stop("'epsilon' should be numeric.", call. = FALSE)
@@ -114,7 +114,7 @@ new_sub_dann <- function(X, Y, k, neighborhood_size, epsilon, weighted, sphere, 
     stop("'sphere' should be a character vector.", call. = FALSE)
   }
   if (!(sphere %in% c("mve", "mcd", "classical", "none"))) {
-    stop("'sphere' should be a one mve, mcd, classical or none.", call. = FALSE)
+    stop("'sphere' should be one of mve, mcd, classical or none.", call. = FALSE)
   }
 
   # numDim is valid
@@ -248,17 +248,18 @@ sub_dann_bridge <- function(processed, k, neighborhood_size, epsilon, weighted, 
 #################
 #' @title Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 #' @inheritParams dann
-#' @param weighted weighted argument to ncoord. See [fpc::ncoord()] for details.
-#' @param sphere One of "mcd", "mve", "classical", or "none" See [fpc::ncoord()] for details.
-#' @param numDim Dimension of subspace used by dann. See [fpc::ncoord()] for details.
-#' @return  An S3 class of type sub_dann
+#' @param weighted Should the between class covariance matrices be weighted? FALSE matches the publication. Passed to [fpc::ncoord()].
+#' @param sphere Type of covariance matrix used to sphere the data. One of "mcd", "mve", "classical", or "none". Passed to [fpc::ncoord()].
+#' @param numDim Number of dimensions in the subspace dann is fit on. [graph_eigenvalues()] helps choose a value.
+#' @return An S3 class of type sub_dann.
 #' @details
 #' An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
-#' [Discriminant Adaptive Nearest
-#' Neighbor Classification publication.](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
+#' [Discriminant Adaptive Nearest Neighbor
+#' Classification](https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf).
 #'
-#' dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
-#' will generally be more performant in this scenario.
+#' dann's performance suffers when unrelated variables are included in the model. sub_dann first
+#' projects the predictors onto a lower dimensional subspace found by [fpc::ncoord()] and then fits
+#' dann on that subspace. Simulations show sub_dann generally performs better in this scenario.
 #' @export
 sub_dann <- function(x, ..., k = 5, neighborhood_size = max(floor(nrow(x) / 5), 50), epsilon = 1, weighted = FALSE, sphere = "mcd", numDim = ceiling(ncol(x) / 2)) {
   UseMethod("sub_dann")
@@ -267,7 +268,7 @@ sub_dann <- function(x, ..., k = 5, neighborhood_size = max(floor(nrow(x) / 5), 
 # Default
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
-#' @param x A data frame.
+#' @param x An object for which no `sub_dann()` method exists.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
 #' @export
@@ -282,7 +283,7 @@ sub_dann.default <- function(x, k = 5, neighborhood_size = max(floor(nrow(x) / 5
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
 #' @param x A data frame.
-#' @param y A vector.
+#' @param y A vector of outcomes. Numeric, character, and factor are all accepted.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
 #' @examples
@@ -310,7 +311,7 @@ sub_dann.data.frame <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
 #' @param x A matrix.
-#' @param y A vector.
+#' @param y A vector of outcomes. Numeric, character, and factor are all accepted.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
 #' @examples
@@ -337,8 +338,8 @@ sub_dann.matrix <- function(x, y, k = 5, neighborhood_size = max(floor(nrow(x) /
 # Formula method
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
-#' @param formula A formula. Y ~ X1 + X2
-#' @param data A data frame.
+#' @param formula A formula specifying the outcome and predictors. For example, Y ~ X1 + X2.
+#' @param data A data frame containing the variables in `formula` or in the recipe.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
 #' @examples
@@ -364,8 +365,8 @@ sub_dann.formula <- function(formula, data, k = 5, neighborhood_size = max(floor
 # Recipe method
 #' @inherit sub_dann title
 #' @inheritParams sub_dann
-#' @param x A recipe from recipes library.
-#' @param data A data frame.
+#' @param x A recipe from the recipes package.
+#' @param data A data frame containing the variables in `formula` or in the recipe.
 #' @inherit sub_dann return
 #' @inherit sub_dann details
 #' @examples
@@ -407,8 +408,12 @@ sub_dann_predict_base <- function(object, predictors, probability) {
   xTrain2 <- subspace$proj[, 1:numDim, drop = FALSE]
   xTest2 <- xTest %*% subspace$units[, 1:numDim, drop = FALSE]
 
-  # Get predictions
-  dannModel <- dann.matrix(x = xTrain2, y = yTrain, k = k, neighborhood_size = neighborhood_size, epsilon = epsilon)
+  # Get predictions. Hand the inner model a factor over this model's full set
+  # of levels. Passing the integer codes would let factor() rebuild the levels
+  # from the observed values alone, dropping any level with no training rows.
+  yTrainFactor <- factor(object$levels[yTrain + 1], levels = object$levels)
+
+  dannModel <- dann.matrix(x = xTrain2, y = yTrainFactor, k = k, neighborhood_size = neighborhood_size, epsilon = epsilon)
 
   predictions <- dann_predict_base(object = dannModel, predictors = xTest2, probability = probability)
 
@@ -457,11 +462,11 @@ predict_sub_dann_bridge <- function(type, object, predictors) {
 }
 
 #' @inherit sub_dann title
-#' @param object of class inheriting from "sub_dann"
-#' @param new_data A data frame.
-#' @param type Type of prediction. (class, prob)
-#' @param ... unused
-#' @return  A data frame containing either class or class probabilities. Adheres to tidy models standards.
+#' @param object A fitted model of class sub_dann.
+#' @param new_data A data frame of predictors to score.
+#' @param type Type of prediction. One of "class" or "prob".
+#' @param ... Not used.
+#' @return A data frame of predicted classes or class probabilities. Adheres to tidymodels standards.
 #' @inherit sub_dann details
 #' @examples
 #' library(dann)

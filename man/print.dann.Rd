@@ -7,9 +7,12 @@
 \method{print}{dann}(x, ...)
 }
 \arguments{
-\item{x}{a dann model.}
+\item{x}{A dann model.}
 
-\item{...}{arguments passed to other methods.}
+\item{...}{Not used.}
+}
+\value{
+The model, invisibly. Called for the side effect of printing.
 }
 \description{
 Print dann model

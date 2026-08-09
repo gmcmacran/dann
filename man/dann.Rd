@@ -7,15 +7,15 @@
 dann(x, ..., k = 5, neighborhood_size = max(floor(nrow(x)/5), 50), epsilon = 1)
 }
 \arguments{
-\item{x}{A matrix or a dataframe.}
+\item{x}{A matrix, data frame, formula, or recipe.}
 
 \item{...}{Additional parameters passed to methods.}
 
-\item{k}{The number of data points used for final classification.}
+\item{k}{The number of nearest neighbors used to classify a point. Identical to k in standard k nearest neighbors.}
 
-\item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
+\item{neighborhood_size}{The number of nearest neighbors used to estimate the between and within class covariance matrices that shape the neighborhood.}
 
-\item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
+\item{epsilon}{Softening parameter. Scales the identity matrix added to the between class covariance, which keeps the neighborhood from collapsing onto the class boundary. 1 matches the publication.}
 }
 \value{
 An S3 class of type dann.
@@ -25,5 +25,5 @@ Discriminant Adaptive Nearest Neighbor Classification
 }
 \details{
 This is an implementation of Hastie and Tibshirani's
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification}.
 }

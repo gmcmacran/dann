@@ -19,34 +19,35 @@
 \arguments{
 \item{x}{A data frame.}
 
-\item{y}{A vector.}
+\item{y}{A vector of outcomes. Numeric, character, and factor are all accepted.}
 
-\item{k}{The number of data points used for final classification.}
+\item{k}{The number of nearest neighbors used to classify a point. Identical to k in standard k nearest neighbors.}
 
-\item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
+\item{neighborhood_size}{The number of nearest neighbors used to estimate the between and within class covariance matrices that shape the neighborhood.}
 
-\item{epsilon}{Diagonal elements of a diagonal matrix. 1 is the identity matrix.}
+\item{epsilon}{Softening parameter. Scales the identity matrix added to the between class covariance, which keeps the neighborhood from collapsing onto the class boundary. 1 matches the publication.}
 
-\item{weighted}{weighted argument to ncoord. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
+\item{weighted}{Should the between class covariance matrices be weighted? FALSE matches the publication. Passed to \code{\link[fpc:ncoord]{fpc::ncoord()}}.}
 
-\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
+\item{sphere}{Type of covariance matrix used to sphere the data. One of "mcd", "mve", "classical", or "none". Passed to \code{\link[fpc:ncoord]{fpc::ncoord()}}.}
 
-\item{numDim}{Dimension of subspace used by dann. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
+\item{numDim}{Number of dimensions in the subspace dann is fit on. \code{\link[=graph_eigenvalues]{graph_eigenvalues()}} helps choose a value.}
 
 \item{...}{Additional parameters passed to methods.}
 }
 \value{
-An S3 class of type sub_dann
+An S3 class of type sub_dann.
 }
 \description{
 Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 }
 \details{
 An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification}.
 
-dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
-will generally be more performant in this scenario.
+dann's performance suffers when unrelated variables are included in the model. sub_dann first
+projects the predictors onto a lower dimensional subspace found by \code{\link[fpc:ncoord]{fpc::ncoord()}} and then fits
+dann on that subspace. Simulations show sub_dann generally performs better in this scenario.
 }
 \examples{
 library(dann)

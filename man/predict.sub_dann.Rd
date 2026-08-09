@@ -7,26 +7,27 @@
 \method{predict}{sub_dann}(object, new_data, type = "class", ...)
 }
 \arguments{
-\item{object}{of class inheriting from "sub_dann"}
+\item{object}{A fitted model of class sub_dann.}
 
-\item{new_data}{A data frame.}
+\item{new_data}{A data frame of predictors to score.}
 
-\item{type}{Type of prediction. (class, prob)}
+\item{type}{Type of prediction. One of "class" or "prob".}
 
-\item{...}{unused}
+\item{...}{Not used.}
 }
 \value{
-A data frame containing either class or class probabilities. Adheres to tidy models standards.
+A data frame of predicted classes or class probabilities. Adheres to tidymodels standards.
 }
 \description{
 Discriminant Adaptive Nearest Neighbor With Subspace Reduction
 }
 \details{
 An implementation of Hastie and Tibshirani's sub-dann in section 4.1 of
-\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification publication.}.
+\href{https://web.stanford.edu/~hastie/Papers/dann_IEEE.pdf}{Discriminant Adaptive Nearest Neighbor Classification}.
 
-dann's performance suffers when noise variables are included in the model. Simulations show sub_dann
-will generally be more performant in this scenario.
+dann's performance suffers when unrelated variables are included in the model. sub_dann first
+projects the predictors onto a lower dimensional subspace found by \code{\link[fpc:ncoord]{fpc::ncoord()}} and then fits
+dann on that subspace. Simulations show sub_dann generally performs better in this scenario.
 }
 \examples{
 library(dann)

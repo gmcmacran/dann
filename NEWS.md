@@ -1,3 +1,8 @@
+# dann v 1.2.0
+  Fix the matrix square root in the fitting algorithm. The within class covariance
+  matrix is now inverted and square rooted through its eigendecomposition instead of
+  element by element, which matches the publication.
+
 # dann v 1.1.0
   Move most calculations to C++.
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph_eigenvalues.R
 \name{graph_eigenvalues.matrix}
 \alias{graph_eigenvalues.matrix}
-\title{A helper for sub_dann}
+\title{A helper for choosing sub_dann's numDim}
 \usage{
 \method{graph_eigenvalues}{matrix}(
   x,
@@ -16,13 +16,13 @@
 \arguments{
 \item{x}{A matrix.}
 
-\item{y}{A vector.}
+\item{y}{A vector of outcomes. Numeric, character, and factor are all accepted.}
 
-\item{neighborhood_size}{The number of data points used to calculate between and within class covariance.}
+\item{neighborhood_size}{The number of nearest neighbors used to estimate the between and within class covariance matrices that shape the neighborhood.}
 
-\item{weighted}{weighted argument to ncoord. See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
+\item{weighted}{Should the between class covariance matrices be weighted? FALSE matches the publication. Passed to \code{\link[fpc:ncoord]{fpc::ncoord()}}.}
 
-\item{sphere}{One of "mcd", "mve", "classical", or "none" See \code{\link[fpc:ncoord]{fpc::ncoord()}} for details.}
+\item{sphere}{Type of covariance matrix used to sphere the data. One of "mcd", "mve", "classical", or "none". Passed to \code{\link[fpc:ncoord]{fpc::ncoord()}}.}
 
 \item{...}{Additional parameters passed to methods.}
 }
@@ -30,12 +30,13 @@
 A ggplot2 graph.
 }
 \description{
-A helper for sub_dann
+A helper for choosing sub_dann's numDim
 }
 \details{
-This function plots the eigenvalues found by \code{\link[fpc:ncoord]{fpc::ncoord()}}. The user
-should make a judgement call on how many eigenvalues are large and set sub_dann's
-numDim to that number.
+This function plots the eigenvalues found by \code{\link[fpc:ncoord]{fpc::ncoord()}} against their
+rank order. Judge how many eigenvalues are large and set \code{\link[=sub_dann]{sub_dann()}}'s numDim to
+that number. Keep neighborhood_size, weighted, and sphere consistent between this
+function and \code{\link[=sub_dann]{sub_dann()}} so the two look at the same subspace.
 }
 \examples{
 library(dann)

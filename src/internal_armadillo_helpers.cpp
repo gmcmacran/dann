@@ -108,6 +108,10 @@ Rcpp::List dann_predict_all_C(const arma::mat & xTrain,
   // Identity matrix (constant, shared across iterations)
   arma::mat I = arma::eye(P, P);
 
+  // Set if any eigendecomposition fails. Checked after the parallel region;
+  // throwing out of an OpenMP loop would call std::terminate.
+  int decomp_failed = 0;
+
   #ifdef _OPENMP
   #pragma omp parallel for schedule(dynamic)
   #endif
@@ -156,28 +160,64 @@ Rcpp::List dann_predict_all_C(const arma::mat & xTrain,
         class_data.row(ci) = neighborhood_xTrain.row(class_idx[ci]);
       }
 
-      // Covariance (like stats::var in R, uses N-1 denominator)
-      arma::mat class_covariance;
-      if (class_idx.size() > 1) {
-        class_covariance = arma::cov(class_data);
-      } else {
-        // Single observation: R's var() returns NA matrix, code sets to zeros
-        class_covariance.zeros(P, P);
-      }
-
-      within_class_cov += class_covariance * class_freq;
-
       arma::rowvec class_mean = arma::mean(class_data, 0);
+
+      // Within class sum-of-squares, Hastie & Tibshirani (1996) eq. (8):
+      // sum over classes of sum_{y_i = j} (x_i - xbar_j)(x_i - xbar_j)',
+      // divided by the total weight. Observations are unweighted here, so
+      // that total is neighborhood_size. Note there is no (n_j - 1) divisor,
+      // so a class holding a single observation contributes zero on its own
+      // and needs no special case.
+      arma::mat centered = class_data;
+      centered.each_row() -= class_mean;
+      within_class_cov += (centered.t() * centered) / (double)neighborhood_size;
+
+      // Between class sum-of-squares, eq. (8).
       arma::rowvec diff = class_mean - neighborhood_X_mean;
       between_class_cov += (diff.t() * diff) * class_freq;
     }
 
-    // Step 4: Compute sigma
-    // W_star = element-wise sqrt of within_class_cov, NaN -> 0, then pseudoinverse
-    arma::mat W_star = arma::sqrt(within_class_cov);  // element-wise sqrt
-    W_star.replace(arma::datum::nan, 0.0);             // replace NaN with 0
+    // Step 4: Compute sigma. Hastie & Tibshirani (1996), equation (2), p. 608:
+    //   sigma = W^(-1/2) [ W^(-1/2) B W^(-1/2) + epsilon I ] W^(-1/2)
+    // W^(-1/2) is the symmetric matrix square root -- the transformation that
+    // spheres the space with respect to W, so that W^(-1/2) W W^(-1/2) = I.
+    // It is built from the eigendecomposition of the within-class covariance,
+    // which is symmetric and positive semi-definite by construction.
+    arma::mat W_sym = 0.5 * (within_class_cov + within_class_cov.t());
 
-    W_star = arma::pinv(W_star);                       // Moore-Penrose pseudoinverse
+    arma::vec eigval;
+    arma::mat eigvec;
+    if (!arma::eig_sym(eigval, eigvec, W_sym)) {
+      #ifdef _OPENMP
+      #pragma omp atomic write
+      #endif
+      decomp_failed = 1;
+      continue;
+    }
+
+    // W is PSD, so clamp any eigenvalue round-off has pushed below zero.
+    double max_eigval = eigval.max();
+    if (max_eigval < 0.0) {
+      max_eigval = 0.0;
+    }
+    eigval = arma::clamp(eigval, 0.0, max_eigval);
+
+    // Drop directions whose spread is numerically indistinguishable from zero
+    // rather than inverting them. The relative sqrt(eps) cutoff is the one
+    // MASS::ginv used here before this loop was ported to C++, and it is
+    // applied on the eigenvalue scale: because sigma involves W^(-1/2) twice,
+    // an eigenvalue at the cutoff is amplified by 1/eigval, so a looser rule
+    // lets round-off directions dominate every DANN distance.
+    double tol = std::sqrt(arma::datum::eps) * max_eigval;
+
+    arma::vec inv_sv(P, arma::fill::zeros);
+    for (int j = 0; j < P; j++) {
+      if (eigval(j) > tol) {
+        inv_sv(j) = 1.0 / std::sqrt(eigval(j));
+      }
+    }
+
+    arma::mat W_star = eigvec * arma::diagmat(inv_sv) * eigvec.t();
 
     arma::mat B_star = W_star * between_class_cov * W_star;
     arma::mat sigma = W_star * (B_star + epsilon * I) * W_star;
@@ -204,6 +244,10 @@ Rcpp::List dann_predict_all_C(const arma::mat & xTrain,
     } else {
       pred_prob.row(i) = compute_class_proportions(nearest_y, unique_classes);
     }
+  }
+
+  if (decomp_failed) {
+    Rcpp::stop("Eigendecomposition of the within-class covariance matrix failed.");
   }
 
   // Return results as a list
