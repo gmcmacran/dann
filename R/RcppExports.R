@@ -2,6 +2,19 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @keywords internal
+#' Set the thread count. 0 restores the default. Returns the previous
+#' setting, unresolved, so a caller can put it back exactly as it was.
+dann_set_threads_C <- function(n) {
+    .Call(`_dann_dann_set_threads_C`, n)
+}
+
+#' @keywords internal
+#' Number of threads dann would use for its next prediction.
+dann_get_threads_C <- function() {
+    .Call(`_dann_dann_get_threads_C`)
+}
+
+#' @keywords internal
 #' Full DANN prediction loop in C++ with OpenMP parallelization.
 #' Replicates the behavior of the R dann_predict_base outer loop.
 dann_predict_all_C <- function(xTrain, yTrain, xTest, k, neighborhood_size, epsilon, y_class_precedence, unique_classes, probability) {

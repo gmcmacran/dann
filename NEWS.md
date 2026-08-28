@@ -1,3 +1,9 @@
+# dann v 1.3.0
+  Add dann_set_threads and dann_get_threads to control how many threads dann
+  uses. The count applies to dann's parallel region alone, so other OpenMP
+  packages in the session are unaffected. The default is unchanged: every core
+  the OpenMP runtime offers.
+
 # dann v 1.2.0
   Fix the matrix square root in the fitting algorithm. The within class covariance
   matrix is now inverted and square rooted through its eigendecomposition instead of
