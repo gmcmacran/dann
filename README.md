@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# DANN
+# DANN <a><img src="man/figures/logo.png" align="right" height="138" alt="a nametag" /></a>
 
 <!-- badges: start -->
 

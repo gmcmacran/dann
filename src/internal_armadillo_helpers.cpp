@@ -10,6 +10,62 @@ using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
+// Number of threads dann uses for its own parallel region. 0 means "let the
+// OpenMP runtime decide", which is the default and honors OMP_NUM_THREADS.
+// Deliberately package local state rather than omp_set_num_threads(), which
+// would write the runtime's global thread count and change how every other
+// OpenMP package in the session behaves.
+static int dann_n_threads = 0;
+
+// Resolve the count to hand the num_threads clause below.
+static int dann_resolve_threads() {
+#ifdef _OPENMP
+  return dann_n_threads > 0 ? dann_n_threads : omp_get_max_threads();
+#else
+  return 1;
+#endif
+}
+
+//' @keywords internal
+//' Set the thread count. 0 restores the default. Returns the previous
+//' setting, unresolved, so a caller can put it back exactly as it was.
+// [[Rcpp::export]]
+int dann_set_threads_C(int n) {
+  int previous = dann_n_threads;
+  dann_n_threads = n;
+  return previous;
+}
+
+//' @keywords internal
+//' Number of threads dann would use for its next prediction.
+// [[Rcpp::export]]
+int dann_get_threads_C() {
+  return dann_resolve_threads();
+}
+
+//' @keywords internal
+//' Threads the OpenMP runtime makes available, or 1 when built without OpenMP.
+//' This is the ceiling dann_set_threads clamps to.
+// [[Rcpp::export]]
+int dann_max_threads_C() {
+#ifdef _OPENMP
+  return omp_get_max_threads();
+#else
+  return 1;
+#endif
+}
+
+//' @keywords internal
+//' Whether the package was compiled with OpenMP support.
+// [[Rcpp::export]]
+bool dann_has_openmp_C() {
+#ifdef _OPENMP
+  return true;
+#else
+  return false;
+#endif
+}
+
 // Helper: compute Euclidean distances from all training rows to one test point
 static arma::vec euclidean_distances(const arma::mat & xTrain, const arma::rowvec & xTest) {
   int N = xTrain.n_rows;
@@ -113,7 +169,8 @@ Rcpp::List dann_predict_all_C(const arma::mat & xTrain,
   int decomp_failed = 0;
 
   #ifdef _OPENMP
-  #pragma omp parallel for schedule(dynamic)
+  const int n_threads = dann_resolve_threads();
+  #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
   #endif
   for (int i = 0; i < M; i++) {
     arma::rowvec xTest_i = xTest.row(i);

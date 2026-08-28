@@ -474,6 +474,8 @@ predict_sub_dann_bridge <- function(type, object, predictors) {
 #' library(magrittr)
 #' library(dplyr)
 #'
+#' dann_set_threads(2) # cran thread limit
+#'
 #' set.seed(1)
 #' train <- mlbench.circle(300, 2) %>%
 #'   tibble::as_tibble()
