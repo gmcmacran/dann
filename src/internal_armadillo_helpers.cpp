@@ -43,6 +43,29 @@ int dann_get_threads_C() {
   return dann_resolve_threads();
 }
 
+//' @keywords internal
+//' Threads the OpenMP runtime makes available, or 1 when built without OpenMP.
+//' This is the ceiling dann_set_threads clamps to.
+// [[Rcpp::export]]
+int dann_max_threads_C() {
+#ifdef _OPENMP
+  return omp_get_max_threads();
+#else
+  return 1;
+#endif
+}
+
+//' @keywords internal
+//' Whether the package was compiled with OpenMP support.
+// [[Rcpp::export]]
+bool dann_has_openmp_C() {
+#ifdef _OPENMP
+  return true;
+#else
+  return false;
+#endif
+}
+
 // Helper: compute Euclidean distances from all training rows to one test point
 static arma::vec euclidean_distances(const arma::mat & xTrain, const arma::rowvec & xTest) {
   int N = xTrain.n_rows;

@@ -3,11 +3,14 @@
 \name{dann_set_threads}
 \alias{dann_set_threads}
 \alias{dann_get_threads}
+\alias{dann_has_openmp}
 \title{Control the number of threads dann uses}
 \usage{
 dann_set_threads(n = NULL)
 
 dann_get_threads()
+
+dann_has_openmp()
 }
 \arguments{
 \item{n}{The number of threads to use. A positive whole number, or NULL to
@@ -17,6 +20,7 @@ restore the default.}
 \code{dann_set_threads} returns the previous setting invisibly: a positive
 whole number, or NULL if dann was using the default. \code{dann_get_threads}
 returns the number of threads the next prediction will use.
+\code{dann_has_openmp} returns TRUE if the package was compiled with OpenMP.
 }
 \description{
 Control the number of threads dann uses
@@ -36,8 +40,18 @@ The setting lasts for the R session. It is not saved between sessions and it
 is not stored on model objects, so a model fit under one setting predicts
 under whatever setting is in force at the time.
 
+\code{n} is clamped to the number of threads the OpenMP runtime makes available,
+with a message, in the same way the model fitting functions clamp \code{k} and
+\code{neighborhood_size}.
+
 Without OpenMP support, prediction runs on a single thread. \code{dann_get_threads}
-then returns 1 no matter what was set.
+then returns 1 no matter what was set, and \code{dann_has_openmp} returns FALSE.
+
+This count covers dann's own loop only. A threaded BLAS answers to its own
+settings, so an R build linked against one can still use more cores than
+\code{dann_get_threads} reports. Those are controlled outside this package,
+through the OPENBLAS_NUM_THREADS or MKL_NUM_THREADS environment variables or
+a helper such as \code{RhpcBLASctl::blas_set_num_threads()}.
 }
 \examples{
 library(dann)

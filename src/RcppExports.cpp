@@ -32,6 +32,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// dann_max_threads_C
+int dann_max_threads_C();
+RcppExport SEXP _dann_dann_max_threads_C() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(dann_max_threads_C());
+    return rcpp_result_gen;
+END_RCPP
+}
+// dann_has_openmp_C
+bool dann_has_openmp_C();
+RcppExport SEXP _dann_dann_has_openmp_C() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(dann_has_openmp_C());
+    return rcpp_result_gen;
+END_RCPP
+}
 // dann_predict_all_C
 Rcpp::List dann_predict_all_C(const arma::mat& xTrain, const arma::vec& yTrain, const arma::mat& xTest, int k, int neighborhood_size, double epsilon, const arma::vec& y_class_precedence, const arma::vec& unique_classes, bool probability);
 RcppExport SEXP _dann_dann_predict_all_C(SEXP xTrainSEXP, SEXP yTrainSEXP, SEXP xTestSEXP, SEXP kSEXP, SEXP neighborhood_sizeSEXP, SEXP epsilonSEXP, SEXP y_class_precedenceSEXP, SEXP unique_classesSEXP, SEXP probabilitySEXP) {
@@ -55,6 +75,8 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_dann_dann_set_threads_C", (DL_FUNC) &_dann_dann_set_threads_C, 1},
     {"_dann_dann_get_threads_C", (DL_FUNC) &_dann_dann_get_threads_C, 0},
+    {"_dann_dann_max_threads_C", (DL_FUNC) &_dann_dann_max_threads_C, 0},
+    {"_dann_dann_has_openmp_C", (DL_FUNC) &_dann_dann_has_openmp_C, 0},
     {"_dann_dann_predict_all_C", (DL_FUNC) &_dann_dann_predict_all_C, 9},
     {NULL, NULL, 0}
 };

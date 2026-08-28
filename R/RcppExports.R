@@ -15,6 +15,19 @@ dann_get_threads_C <- function() {
 }
 
 #' @keywords internal
+#' Threads the OpenMP runtime makes available, or 1 when built without OpenMP.
+#' This is the ceiling dann_set_threads clamps to.
+dann_max_threads_C <- function() {
+    .Call(`_dann_dann_max_threads_C`)
+}
+
+#' @keywords internal
+#' Whether the package was compiled with OpenMP support.
+dann_has_openmp_C <- function() {
+    .Call(`_dann_dann_has_openmp_C`)
+}
+
+#' @keywords internal
 #' Full DANN prediction loop in C++ with OpenMP parallelization.
 #' Replicates the behavior of the R dann_predict_base outer loop.
 dann_predict_all_C <- function(xTrain, yTrain, xTest, k, neighborhood_size, epsilon, y_class_precedence, unique_classes, probability) {
